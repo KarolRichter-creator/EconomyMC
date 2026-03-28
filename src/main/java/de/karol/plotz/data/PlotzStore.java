@@ -85,22 +85,13 @@ public final class PlotzStore {
         OWNED_PLOTS.add(plot);
     }
 
-    public static void upsertOwnedClaim(UUID ownerId, String ownerName, boolean capital, String location) {
-        removeOwnedPlotByLocation(location);
-
-        OWNED_PLOTS.add(new PlotEntry(
-            ownerId,
-            ownerName,
-            capital ? "Capital Claim" : "Normal Claim",
-            capital,
-            1,
-            location,
-            "Synced from Open Parties and Claims"
-        ));
-    }
-
-    public static void removeOwnedPlotByLocation(String location) {
-        OWNED_PLOTS.removeIf(p -> p.location().equals(location));
+    public static void upsertOwnedGroupedClaim(PlotEntry plot) {
+        OWNED_PLOTS.removeIf(p ->
+            p.ownerId().equals(plot.ownerId()) &&
+            "Synced from Open Parties and Claims".equals(p.description()) &&
+            p.location().equals(plot.location())
+        );
+        OWNED_PLOTS.add(plot);
     }
 
     public static void clearOwnedClaimsFor(UUID ownerId) {
@@ -108,6 +99,10 @@ public final class PlotzStore {
             p.ownerId().equals(ownerId) &&
             "Synced from Open Parties and Claims".equals(p.description())
         );
+    }
+
+    public static void removeOwnedPlotByLocation(String location) {
+        OWNED_PLOTS.removeIf(p -> p.location().equals(location));
     }
 
     public static List<PlotEntry> getOwnedPlots(UUID ownerId) {

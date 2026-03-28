@@ -25,7 +25,7 @@ public class PlotzMyPlotsMenu extends ChestMenu {
 
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzMyPlotsMenu(containerId, inventory, player),
-            Component.literal("Mein Besitz")
+            Component.literal("My Plots")
         ));
     }
 
@@ -42,7 +42,7 @@ public class PlotzMyPlotsMenu extends ChestMenu {
 
     private void refresh() {
         for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, ItemStack.EMPTY);
+            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
         List<PlotzStore.PlotEntry> plots = PlotzStore.getOwnedPlots(viewer.getUUID());
@@ -65,7 +65,8 @@ public class PlotzMyPlotsMenu extends ChestMenu {
             slot++;
         }
 
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cZurück"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cBack"));
+        MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
     }
 

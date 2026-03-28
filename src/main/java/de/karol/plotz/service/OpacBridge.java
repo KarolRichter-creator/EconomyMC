@@ -15,7 +15,12 @@ import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
 import xaero.pac.common.server.api.OpenPACServerAPI;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -72,20 +77,88 @@ public final class OpacBridge {
                 ResourceLocation dimension = entry.getKey();
                 IPlayerDimensionClaimsAPI dimClaims = entry.getValue();
 
+                Set<ChunkPos> allChunks = new HashSet<>();
+
                 dimClaims.getStream().forEach((IPlayerClaimPosListAPI posList) -> {
-                    posList.getStream().forEach((ChunkPos chunkPos) -> {
-                        boolean capital = PlotzLogic.isCapital(new BlockPos(chunkPos.x * 16 + 8, 64, chunkPos.z * 16 + 8));
-                        PlotzStore.upsertOwnedClaim(
-                            player.getUUID(),
-                            player.getGameProfile().getName(),
-                            capital,
-                            formatLocation(dimension, chunkPos.x, chunkPos.z)
-                        );
-                    });
+                    posList.getStream().forEach(allChunks::add);
                 });
+
+                for (Set<ChunkPos> group : groupConnectedChunks(allChunks)) {
+                    if (group.isEmpty()) {
+                        continue;
+                    }
+
+                    int minX = Integer.MAX_VALUE;
+                    int maxX = Integer.MIN_VALUE;
+                    int minZ = Integer.MAX_VALUE;
+                    int maxZ = Integer.MIN_VALUE;
+
+                    for (ChunkPos chunk : group) {
+                        minX = Math.min(minX, chunk.x);
+                        maxX = Math.max(maxX, chunk.x);
+                        minZ = Math.min(minZ, chunk.z);
+                        maxZ = Math.max(maxZ, chunk.z);
+                    }
+
+                    int centerChunkX = (minX + maxX) / 2;
+                    int centerChunkZ = (minZ + maxZ) / 2;
+                    boolean capital = PlotzLogic.isCapital(new BlockPos(centerChunkX * 16 + 8, 64, centerChunkZ * 16 + 8));
+
+                    String location = dimension + " | Chunks " + minX + "," + minZ + " -> " + maxX + "," + maxZ;
+
+                    PlotzStore.upsertOwnedGroupedClaim(new PlotzStore.PlotEntry(
+                        player.getUUID(),
+                        player.getGameProfile().getName(),
+                        capital ? "Capital Plot" : "Plot",
+                        capital,
+                        group.size(),
+                        location,
+                        "Synced from Open Parties and Claims"
+                    ));
+                }
             });
         } catch (Exception ignored) {
         }
+    }
+
+    private static Set<Set<ChunkPos>> groupConnectedChunks(Set<ChunkPos> chunks) {
+        Set<Set<ChunkPos>> groups = new HashSet<>();
+        Set<ChunkPos> remaining = new HashSet<>(chunks);
+
+        while (!remaining.isEmpty()) {
+            ChunkPos start = remaining.iterator().next();
+            remaining.remove(start);
+
+            Set<ChunkPos> group = new HashSet<>();
+            ArrayDeque<ChunkPos> queue = new ArrayDeque<>();
+            queue.add(start);
+
+            while (!queue.isEmpty()) {
+                ChunkPos current = queue.poll();
+                if (!group.add(current)) {
+                    continue;
+                }
+
+                for (ChunkPos neighbor : neighbors(current)) {
+                    if (remaining.remove(neighbor)) {
+                        queue.add(neighbor);
+                    }
+                }
+            }
+
+            groups.add(group);
+        }
+
+        return groups;
+    }
+
+    private static java.util.List<ChunkPos> neighbors(ChunkPos pos) {
+        java.util.List<ChunkPos> list = new ArrayList<>(4);
+        list.add(new ChunkPos(pos.x + 1, pos.z));
+        list.add(new ChunkPos(pos.x - 1, pos.z));
+        list.add(new ChunkPos(pos.x, pos.z + 1));
+        list.add(new ChunkPos(pos.x, pos.z - 1));
+        return list;
     }
 
     private static void handleChunkChange(ResourceLocation dimension, int chunkX, int chunkZ, IPlayerChunkClaimAPI claim) {
@@ -94,12 +167,16 @@ public final class OpacBridge {
         }
 
         String key = dimension + "|" + chunkX + "|" + chunkZ;
-        String location = formatLocation(dimension, chunkX, chunkZ);
         UUID previousOwner = CLAIM_OWNER_CACHE.get(key);
 
         if (claim == null) {
             CLAIM_OWNER_CACHE.remove(key);
-            PlotzStore.removeOwnedPlotByLocation(location);
+            if (previousOwner != null) {
+                ServerPlayer oldOwner = server.getPlayerList().getPlayer(previousOwner);
+                if (oldOwner != null) {
+                    syncOwnedClaims(oldOwner);
+                }
+            }
             return;
         }
 
@@ -130,7 +207,6 @@ public final class OpacBridge {
                 try {
                     OpenPACServerAPI.get(server).getServerClaimsManager().unclaim(dimension, chunkX, chunkZ);
                     CLAIM_OWNER_CACHE.remove(key);
-                    PlotzStore.removeOwnedPlotByLocation(location);
                     player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                         capital
                             ? "§cClaim reverted: you need a capital claim credit."
@@ -151,15 +227,13 @@ public final class OpacBridge {
             ));
         }
 
-        PlotzStore.upsertOwnedClaim(
-            newOwner,
-            player.getGameProfile().getName(),
-            capital,
-            location
-        );
-    }
+        syncOwnedClaims(player);
 
-    private static String formatLocation(ResourceLocation dimension, int chunkX, int chunkZ) {
-        return dimension + " | Chunk " + chunkX + ", " + chunkZ;
+        if (previousOwner != null) {
+            ServerPlayer oldOwner = server.getPlayerList().getPlayer(previousOwner);
+            if (oldOwner != null) {
+                syncOwnedClaims(oldOwner);
+            }
+        }
     }
 }

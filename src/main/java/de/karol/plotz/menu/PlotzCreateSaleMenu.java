@@ -78,6 +78,7 @@ public class PlotzCreateSaleMenu extends ChestMenu {
             "§cBack"
         ));
 
+        MenuUtil.putPlayerInfoHead(box, viewer, 18);
         broadcastChanges();
     }
 

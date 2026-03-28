@@ -63,6 +63,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
         if (listing == null) {
             box.setItem(13, MenuUtil.named(Items.BARRIER, "§cListing no longer exists"));
             box.setItem(22, MenuUtil.named(Items.BARRIER, "§cBack"));
+            MenuUtil.putPlayerInfoHead(box, viewer, 18);
             broadcastChanges();
             return;
         }
@@ -89,6 +90,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
             box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aBuy Plot"));
         }
 
+        MenuUtil.putPlayerInfoHead(box, viewer, 18);
         broadcastChanges();
     }
 

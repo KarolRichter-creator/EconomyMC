@@ -25,7 +25,7 @@ public class PlotzMySalesMenu extends ChestMenu {
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzMySalesMenu(containerId, inventory, player),
-            Component.literal("Meine Verkäufe")
+            Component.literal("My Sales")
         ));
     }
 
@@ -44,7 +44,7 @@ public class PlotzMySalesMenu extends ChestMenu {
         listingIdsBySlot.clear();
 
         for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, ItemStack.EMPTY);
+            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
         List<PlotzStore.Listing> listings = PlotzStore.getListingsBySeller(viewer.getUUID());
@@ -68,7 +68,8 @@ public class PlotzMySalesMenu extends ChestMenu {
             slot++;
         }
 
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cZurück"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cBack"));
+        MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
     }
 

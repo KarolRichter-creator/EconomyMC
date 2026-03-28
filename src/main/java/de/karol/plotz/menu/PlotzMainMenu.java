@@ -94,8 +94,10 @@ public class PlotzMainMenu extends ChestMenu {
 
         box.setItem(25, MenuUtil.named(
             Items.PAPER,
-            "§7Claim credits can now be bought without party requirement"
+            "§7Use /plotzadmin pos1, pos2, setcapital to define the capital"
         ));
+
+        MenuUtil.putPlayerInfoHead(box, viewer, 18);
 
         broadcastChanges();
     }
