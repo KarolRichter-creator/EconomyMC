@@ -17,23 +17,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlotzMarketMenu extends ChestMenu {
+public class PlotzMySalesMenu extends ChestMenu {
     private final ServerPlayer viewer;
     private final SimpleContainer box;
     private final Map<Integer, String> listingIdsBySlot = new HashMap<>();
 
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
-            (containerId, inventory, p) -> new PlotzMarketMenu(containerId, inventory, player),
-            Component.literal("Plotz Markt")
+            (containerId, inventory, p) -> new PlotzMySalesMenu(containerId, inventory, player),
+            Component.literal("Meine Verkäufe")
         ));
     }
 
-    public PlotzMarketMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
+    public PlotzMySalesMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
         this(containerId, inventory, viewer, new SimpleContainer(54));
     }
 
-    private PlotzMarketMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
+    private PlotzMySalesMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
         super(MenuType.GENERIC_9x6, containerId, inventory, box, 6);
         this.viewer = viewer;
         this.box = box;
@@ -47,7 +47,7 @@ public class PlotzMarketMenu extends ChestMenu {
             box.setItem(i, ItemStack.EMPTY);
         }
 
-        List<PlotzStore.Listing> listings = PlotzStore.getListings();
+        List<PlotzStore.Listing> listings = PlotzStore.getListingsBySeller(viewer.getUUID());
         int slot = 10;
 
         for (PlotzStore.Listing listing : listings) {
@@ -60,9 +60,9 @@ public class PlotzMarketMenu extends ChestMenu {
 
             box.setItem(slot, MenuUtil.named(
                 listing.capital() ? Items.ENCHANTED_BOOK : Items.BOOK,
-                (listing.capital() ? "§6" : "§e")
+                (listing.capital() ? "§6" : "§d")
                     + listing.title()
-                    + " §7| " + listing.price() + "$ | " + listing.chunkCount() + " Chunks"
+                    + " §7| " + listing.price() + "$"
             ));
             listingIdsBySlot.put(slot, listing.listingId());
             slot++;
@@ -85,7 +85,7 @@ public class PlotzMarketMenu extends ChestMenu {
 
         String listingId = listingIdsBySlot.get(slotId);
         if (listingId != null) {
-            PlotzListingDetailMenu.open(sp, listingId, false);
+            PlotzListingDetailMenu.open(sp, listingId, true);
         }
     }
 

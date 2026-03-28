@@ -1,15 +1,11 @@
 package de.karol.plotz.menu;
 
-import de.karol.plotz.config.PlotzConfig;
-import de.karol.plotz.data.MarketListingData;
-import de.karol.plotz.data.OwnedPlotData;
-import de.karol.plotz.data.PlayerCreditsData;
-import de.karol.plotz.data.SaleDraftData;
-import de.karol.plotz.service.EconomyService;
-import net.minecraft.core.component.DataComponents;
+import de.karol.plotz.data.PlotzStore;
+import de.karol.plotz.service.PlotzLogic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
@@ -17,11 +13,12 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.SimpleMenuProvider;
+
+import java.util.UUID;
 
 public class PlotzMainMenu extends ChestMenu {
     private final ServerPlayer viewer;
-    private final SimpleContainer plotzContainer;
+    private final SimpleContainer box;
 
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
@@ -30,62 +27,72 @@ public class PlotzMainMenu extends ChestMenu {
         ));
     }
 
-    public PlotzMainMenu(int containerId, Inventory playerInventory, ServerPlayer viewer) {
-        this(containerId, playerInventory, viewer, new SimpleContainer(27));
+    public PlotzMainMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
+        this(containerId, inventory, viewer, new SimpleContainer(27));
     }
 
-    private PlotzMainMenu(int containerId, Inventory playerInventory, ServerPlayer viewer, SimpleContainer container) {
-        super(MenuType.GENERIC_9x3, containerId, playerInventory, container, 3);
+    private PlotzMainMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
+        super(MenuType.GENERIC_9x3, containerId, inventory, box, 3);
         this.viewer = viewer;
-        this.plotzContainer = container;
+        this.box = box;
         refresh();
     }
 
     private void refresh() {
-        for (int i = 0; i < plotzContainer.getContainerSize(); i++) {
-            plotzContainer.setItem(i, ItemStack.EMPTY);
+        for (int i = 0; i < box.getContainerSize(); i++) {
+            box.setItem(i, ItemStack.EMPTY);
         }
 
-        plotzContainer.setItem(11, named(Items.BOOK,
-            "§eNormale Claim-Chunks kaufen",
-            "Normal: " + PlayerCreditsData.getNormalCredits(viewer.getUUID()) + " | Preis: " + PlotzConfig.NORMAL_CHUNK_PRICE + "$"));
+        UUID id = viewer.getUUID();
+        boolean capitalHere = PlotzLogic.isCapital(viewer.blockPosition());
 
-        plotzContainer.setItem(13, named(Items.ENCHANTED_BOOK,
-            "§6Hauptstadt-Claim-Chunks kaufen",
-            "Hauptstadt: " + PlayerCreditsData.getCapitalCredits(viewer.getUUID()) + " | Preis: " + PlotzConfig.CAPITAL_CHUNK_PRICE + "$"));
+        box.setItem(11, MenuUtil.named(
+            Items.BOOK,
+            "§eNormale Claim-Chunks kaufen §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
+        ));
 
-        plotzContainer.setItem(15, named(Items.EMERALD,
-            "§aNeuen Verkauf anlegen",
-            "Erstellt aktuell einen einfachen Verkaufsentwurf"));
+        box.setItem(13, MenuUtil.named(
+            Items.ENCHANTED_BOOK,
+            "§6Hauptstadt-Claim-Chunks kaufen §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
+        ));
 
-        plotzContainer.setItem(20, named(Items.MAP,
-            "§bMein Besitz",
-            "Grundstücke: " + OwnedPlotData.getPlotsOf(viewer.getUUID()).size()));
+        box.setItem(15, MenuUtil.named(
+            Items.EMERALD,
+            "§aNeuen Verkauf anlegen"
+        ));
 
-        plotzContainer.setItem(22, named(Items.WRITABLE_BOOK,
-            "§dMeine Verkäufe",
-            "Angebote: " + MarketListingData.getBySeller(viewer.getUUID()).size()));
+        box.setItem(19, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? "§6Aktuelle Position: Hauptstadt" : "§7Aktuelle Position: Normal"
+        ));
 
-        plotzContainer.setItem(24, named(Items.CHEST,
-            "§3Marktangebote",
-            "Anzahl: " + MarketListingData.getListings().size()));
+        box.setItem(20, MenuUtil.named(
+            Items.MAP,
+            "§bMein Besitz §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
+        ));
+
+        box.setItem(22, MenuUtil.named(
+            Items.WRITABLE_BOOK,
+            "§dMeine Verkäufe §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
+        ));
+
+        box.setItem(24, MenuUtil.named(
+            Items.CHEST,
+            "§3Marktangebote §7(" + PlotzStore.getListings().size() + ")"
+        ));
 
         broadcastChanges();
     }
 
-    private ItemStack named(net.minecraft.world.item.Item item, String title, String sub) {
-        ItemStack stack = new ItemStack(item);
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(title + " §7(" + sub + ")"));
-        return stack;
-    }
-
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) return;
+        if (!(player instanceof ServerPlayer sp)) {
+            return;
+        }
 
         if (slotId == 11) {
-            if (EconomyService.tryCharge(sp, PlotzConfig.NORMAL_CHUNK_PRICE)) {
-                PlayerCreditsData.addNormalCredits(sp.getUUID(), 1);
+            if (PlotzLogic.tryCharge(sp, PlotzLogic.NORMAL_CHUNK_PRICE)) {
+                PlotzStore.addNormalCredit(sp.getUUID(), 1);
                 sp.sendSystemMessage(Component.literal("§a1 normaler Claim-Chunk gekauft."));
                 refresh();
             } else {
@@ -95,8 +102,8 @@ public class PlotzMainMenu extends ChestMenu {
         }
 
         if (slotId == 13) {
-            if (EconomyService.tryCharge(sp, PlotzConfig.CAPITAL_CHUNK_PRICE)) {
-                PlayerCreditsData.addCapitalCredits(sp.getUUID(), 1);
+            if (PlotzLogic.tryCharge(sp, PlotzLogic.CAPITAL_CHUNK_PRICE)) {
+                PlotzStore.addCapitalCredit(sp.getUUID(), 1);
                 sp.sendSystemMessage(Component.literal("§a1 Hauptstadt-Claim-Chunk gekauft."));
                 refresh();
             } else {
@@ -106,14 +113,24 @@ public class PlotzMainMenu extends ChestMenu {
         }
 
         if (slotId == 15) {
-            SaleDraftData.addDraft(new SaleDraftData.SaleDraft(
+            boolean capital = PlotzLogic.isCapital(sp.blockPosition());
+
+            PlotzStore.addListing(new PlotzStore.Listing(
+                java.util.UUID.randomUUID().toString(),
                 sp.getUUID(),
+                sp.getGameProfile().getName(),
                 "Grundstück von " + sp.getGameProfile().getName(),
-                5000,
-                "Aktuelle Position: X=" + sp.blockPosition().getX() + " Z=" + sp.blockPosition().getZ(),
-                "Einfacher Verkaufsentwurf"
+                capital ? 8000 : 5000,
+                capital,
+                1,
+                "X=" + sp.blockPosition().getX() + " Z=" + sp.blockPosition().getZ(),
+                capital ? "Grundstück in der Hauptstadt" : "Grundstück außerhalb der Hauptstadt",
+                "Einfacher Startpreis",
+                "Noch keine genaue Bauwert-Prüfung"
             ));
-            sp.sendSystemMessage(Component.literal("§aEin einfacher Verkaufsentwurf wurde erstellt."));
+
+            sp.sendSystemMessage(Component.literal("§aEin einfacher Verkaufsentwurf wurde erstellt und in den Markt gelegt."));
+            refresh();
             return;
         }
 
@@ -123,13 +140,12 @@ public class PlotzMainMenu extends ChestMenu {
         }
 
         if (slotId == 22) {
-            sp.sendSystemMessage(Component.literal("§dEigene Verkäufe: " + MarketListingData.getBySeller(sp.getUUID()).size()));
+            PlotzMySalesMenu.open(sp);
             return;
         }
 
         if (slotId == 24) {
             PlotzMarketMenu.open(sp);
-            return;
         }
     }
 

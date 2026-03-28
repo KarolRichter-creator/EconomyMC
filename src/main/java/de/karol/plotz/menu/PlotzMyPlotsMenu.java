@@ -1,7 +1,6 @@
 package de.karol.plotz.menu;
 
-import de.karol.plotz.data.OwnedPlotData;
-import net.minecraft.core.component.DataComponents;
+import de.karol.plotz.data.PlotzStore;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -18,7 +17,7 @@ import java.util.List;
 
 public class PlotzMyPlotsMenu extends ChestMenu {
     private final ServerPlayer viewer;
-    private final SimpleContainer plotsContainer;
+    private final SimpleContainer box;
 
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
@@ -27,41 +26,43 @@ public class PlotzMyPlotsMenu extends ChestMenu {
         ));
     }
 
-    public PlotzMyPlotsMenu(int containerId, Inventory playerInventory, ServerPlayer viewer) {
-        this(containerId, playerInventory, viewer, new SimpleContainer(54));
+    public PlotzMyPlotsMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
+        this(containerId, inventory, viewer, new SimpleContainer(54));
     }
 
-    private PlotzMyPlotsMenu(int containerId, Inventory playerInventory, ServerPlayer viewer, SimpleContainer container) {
-        super(MenuType.GENERIC_9x6, containerId, playerInventory, container, 6);
+    private PlotzMyPlotsMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
+        super(MenuType.GENERIC_9x6, containerId, inventory, box, 6);
         this.viewer = viewer;
-        this.plotsContainer = container;
+        this.box = box;
         refresh();
     }
 
     private void refresh() {
-        for (int i = 0; i < plotsContainer.getContainerSize(); i++) {
-            plotsContainer.setItem(i, ItemStack.EMPTY);
+        for (int i = 0; i < box.getContainerSize(); i++) {
+            box.setItem(i, ItemStack.EMPTY);
         }
 
-        List<OwnedPlotData.PlotEntry> plots = OwnedPlotData.getPlotsOf(viewer.getUUID());
+        List<PlotzStore.PlotEntry> plots = PlotzStore.getOwnedPlots(viewer.getUUID());
         int slot = 10;
-        for (OwnedPlotData.PlotEntry plot : plots) {
-            if (slot % 9 == 8) slot++;
-            if (slot >= 44) break;
 
-            ItemStack map = new ItemStack(plot.capital() ? Items.FILLED_MAP : Items.MAP);
-            map.set(DataComponents.CUSTOM_NAME, Component.literal(
-                (plot.capital() ? "§6" : "§b") + plot.title()
-                + " §7| " + plot.chunkCount() + " Chunks | " + plot.location()
+        for (PlotzStore.PlotEntry plot : plots) {
+            if (slot % 9 == 8) {
+                slot++;
+            }
+            if (slot >= 44) {
+                break;
+            }
+
+            box.setItem(slot, MenuUtil.named(
+                plot.capital() ? Items.FILLED_MAP : Items.MAP,
+                (plot.capital() ? "§6" : "§b")
+                    + plot.title()
+                    + " §7| " + plot.chunkCount() + " Chunks | " + plot.location()
             ));
-            plotsContainer.setItem(slot, map);
             slot++;
         }
 
-        ItemStack back = new ItemStack(Items.BARRIER);
-        back.set(DataComponents.CUSTOM_NAME, Component.literal("§cZurück"));
-        plotsContainer.setItem(49, back);
-
+        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cZurück"));
         broadcastChanges();
     }
 
