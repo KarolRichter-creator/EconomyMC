@@ -94,7 +94,7 @@ public class PlotzMainMenu extends ChestMenu {
 
         box.setItem(25, MenuUtil.named(
             Items.PAPER,
-            "§7Claim credits currently require an OPAC party"
+            "§7Claim credits can now be bought without party requirement"
         ));
 
         broadcastChanges();
@@ -120,16 +120,6 @@ public class PlotzMainMenu extends ChestMenu {
         }
 
         if (slotId == 10) {
-            if (!OpacBridge.isInstalled()) {
-                sp.sendSystemMessage(Component.literal("§cOpen Parties and Claims is not installed."));
-                return;
-            }
-
-            if (!PlotzLogic.hasRequiredParty(sp)) {
-                sp.sendSystemMessage(Component.literal("§cYou need to create or join an Open Parties and Claims party first."));
-                return;
-            }
-
             boolean charged = PlotzLogic.canBuyNormalCredit(sp);
             if (!charged) {
                 sp.sendSystemMessage(Component.literal("§cYou do not have enough money for a normal claim credit."));
@@ -143,16 +133,6 @@ public class PlotzMainMenu extends ChestMenu {
         }
 
         if (slotId == 12) {
-            if (!OpacBridge.isInstalled()) {
-                sp.sendSystemMessage(Component.literal("§cOpen Parties and Claims is not installed."));
-                return;
-            }
-
-            if (!PlotzLogic.hasRequiredParty(sp)) {
-                sp.sendSystemMessage(Component.literal("§cYou need to create or join an Open Parties and Claims party first."));
-                return;
-            }
-
             boolean charged = PlotzLogic.canBuyCapitalCredit(sp);
             if (!charged) {
                 sp.sendSystemMessage(Component.literal("§cYou do not have enough money for a capital claim credit."));

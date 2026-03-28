@@ -10,10 +10,8 @@ import net.neoforged.fml.ModList;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
-import xaero.pac.common.server.api.OpenPACServerAPI;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,28 +25,8 @@ public final class OpacBridge {
         return ModList.get().isLoaded("openpartiesandclaims");
     }
 
-    public static boolean isPlayerInParty(ServerPlayer player) {
-        if (!isInstalled()) {
-            return false;
-        }
-
-        try {
-            return OpenPACServerAPI.get(player.server)
-                .getPartyManager()
-                .getPartyByMember(player.getUUID()) != null;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static String getPartyStatusText(ServerPlayer player) {
-        if (!isInstalled()) {
-            return "§cOPAC not installed";
-        }
-
-        return isPlayerInParty(player)
-            ? "§aRW / Party found"
-            : "§cNo RW / Party found";
+        return isInstalled() ? "§aOPAC connected" : "§cOPAC not installed";
     }
 
     public static void registerClaimsTracker(OPACServerAddonRegisterEvent event) {
@@ -57,7 +35,6 @@ public final class OpacBridge {
         event.getClaimsManagerTrackerAPI().register(new IClaimsManagerListenerAPI() {
             @Override
             public void onWholeRegionChange(ResourceLocation dimension, int regionX, int regionZ) {
-                // not needed for first version
             }
 
             @Override
@@ -67,7 +44,6 @@ public final class OpacBridge {
 
             @Override
             public void onDimensionChange(ResourceLocation dimension) {
-                // not needed for first version
             }
         });
     }
@@ -78,30 +54,25 @@ public final class OpacBridge {
         }
 
         String key = dimension + "|" + chunkX + "|" + chunkZ;
+        String location = formatLocation(dimension, chunkX, chunkZ);
         UUID previousOwner = CLAIM_OWNER_CACHE.get(key);
 
         if (claim == null) {
             CLAIM_OWNER_CACHE.remove(key);
-            PlotzStore.removeOwnedPlotByLocation(formatLocation(dimension, chunkX, chunkZ));
+            PlotzStore.removeOwnedPlotByLocation(location);
             return;
         }
 
         UUID newOwner = claim.getPlayerId();
         if (newOwner == null) {
-            // best-effort: likely not a normal player claim
             return;
         }
 
-        if (Objects.equals(previousOwner, newOwner)) {
+        if (newOwner.equals(previousOwner)) {
             return;
         }
 
         CLAIM_OWNER_CACHE.put(key, newOwner);
-
-        // only charge on a fresh claim, not on cache refresh / ownership repeat
-        if (previousOwner != null) {
-            return;
-        }
 
         ServerPlayer player = server.getPlayerList().getPlayer(newOwner);
         if (player == null) {
@@ -109,37 +80,35 @@ public final class OpacBridge {
         }
 
         boolean capital = PlotzLogic.isCapital(new BlockPos(chunkX * 16 + 8, 64, chunkZ * 16 + 8));
-        boolean spent = capital
-            ? PlotzStore.spendCapitalCredit(newOwner)
-            : PlotzStore.spendNormalCredit(newOwner);
 
-        if (!spent) {
-            try {
-                OpenPACServerAPI.get(server).getServerClaimsManager().unclaim(dimension, chunkX, chunkZ);
-                CLAIM_OWNER_CACHE.remove(key);
+        if (previousOwner == null) {
+            boolean spent = capital
+                ? PlotzStore.spendCapitalCredit(newOwner)
+                : PlotzStore.spendNormalCredit(newOwner);
+
+            if (!spent) {
                 player.sendSystemMessage(Component.literal(
                     capital
-                        ? "§cClaim reverted: you do not have a capital claim credit."
-                        : "§cClaim reverted: you do not have a normal claim credit."
+                        ? "§cYou need a capital claim credit for this claim."
+                        : "§cYou need a normal claim credit for this claim."
                 ));
-            } catch (Exception e) {
-                player.sendSystemMessage(Component.literal("§cClaim failed and could not be synced correctly."));
+                // Rückgängig machen bauen wir als nächsten Schritt sauberer aus
+                return;
             }
-            return;
+
+            player.sendSystemMessage(Component.literal(
+                capital
+                    ? "§aCapital claim detected. 1 capital credit was used."
+                    : "§aClaim detected. 1 normal credit was used."
+            ));
         }
 
         PlotzStore.upsertOwnedClaim(
             newOwner,
             player.getGameProfile().getName(),
             capital,
-            formatLocation(dimension, chunkX, chunkZ)
+            location
         );
-
-        player.sendSystemMessage(Component.literal(
-            capital
-                ? "§aCapital claim synced. 1 capital credit was used."
-                : "§aClaim synced. 1 normal credit was used."
-        ));
     }
 
     private static String formatLocation(ResourceLocation dimension, int chunkX, int chunkZ) {

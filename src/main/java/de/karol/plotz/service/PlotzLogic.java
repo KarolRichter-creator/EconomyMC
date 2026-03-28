@@ -30,31 +30,21 @@ public final class PlotzLogic {
         return EconomyBridge.addMoney(buyerContext.server, sellerName, amount);
     }
 
-    public static boolean hasRequiredParty(ServerPlayer player) {
-        return OpacBridge.isPlayerInParty(player);
-    }
-
     public static boolean isServerClaimBlocked(ServerPlayer player) {
-        // next step: explicit server-claim detection
+        // TODO: nächster Schritt
         return false;
     }
 
     public static boolean isMinDistanceValid(ServerPlayer player) {
-        // next step: real 700-block distance rule
+        // TODO: nächster Schritt
         return true;
     }
 
     public static boolean canBuyNormalCredit(ServerPlayer player) {
-        if (!hasRequiredParty(player)) {
-            return false;
-        }
         return tryCharge(player, NORMAL_CHUNK_PRICE);
     }
 
     public static boolean canBuyCapitalCredit(ServerPlayer player) {
-        if (!hasRequiredParty(player)) {
-            return false;
-        }
         return tryCharge(player, CAPITAL_CHUNK_PRICE);
     }
 }
