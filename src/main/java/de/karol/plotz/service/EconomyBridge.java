@@ -1,5 +1,6 @@
 package de.karol.plotz.service;
 
+import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,25 +16,31 @@ public final class EconomyBridge {
                 .withPermission(4);
 
             String name = player.getGameProfile().getName();
-            server.getCommands().performPrefixedCommand(source, "eco removemoney " + name + " " + amount);
-            return true;
+            CommandDispatcher<CommandSourceStack> dispatcher = server.getCommands().getDispatcher();
+
+            int result = dispatcher.execute("eco removemoney " + name + " " + amount, source);
+            return result > 0;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public static void addMoney(MinecraftServer server, String playerName, int amount) {
+    public static boolean addMoney(MinecraftServer server, String playerName, int amount) {
         try {
             if (playerName == null || playerName.isBlank() || playerName.equals("System")) {
-                return;
+                return true;
             }
 
             CommandSourceStack source = server.createCommandSourceStack()
                 .withSuppressedOutput()
                 .withPermission(4);
 
-            server.getCommands().performPrefixedCommand(source, "eco addmoney " + playerName + " " + amount);
+            CommandDispatcher<CommandSourceStack> dispatcher = server.getCommands().getDispatcher();
+            int result = dispatcher.execute("eco addmoney " + playerName + " " + amount, source);
+
+            return result > 0;
         } catch (Exception ignored) {
+            return false;
         }
     }
 }

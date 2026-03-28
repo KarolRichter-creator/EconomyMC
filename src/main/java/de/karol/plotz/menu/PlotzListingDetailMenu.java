@@ -19,11 +19,12 @@ public class PlotzListingDetailMenu extends ChestMenu {
     private final SimpleContainer box;
     private final String listingId;
     private final boolean backToMySales;
+    private long lastClickMs = 0L;
 
     public static void open(ServerPlayer player, String listingId, boolean backToMySales) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzListingDetailMenu(containerId, inventory, player, listingId, backToMySales),
-            Component.literal("Grundstücksdetails")
+            Component.literal("Plot Details")
         ));
     }
 
@@ -40,15 +41,28 @@ public class PlotzListingDetailMenu extends ChestMenu {
         refresh();
     }
 
-    private void refresh() {
-        for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, ItemStack.EMPTY);
+    private boolean clickAllowed() {
+        long now = System.currentTimeMillis();
+        if (now - lastClickMs < 250L) {
+            return false;
         }
+        lastClickMs = now;
+        return true;
+    }
+
+    private void fillBackground() {
+        for (int i = 0; i < box.getContainerSize(); i++) {
+            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
+        }
+    }
+
+    private void refresh() {
+        fillBackground();
 
         PlotzStore.Listing listing = PlotzStore.getListingById(listingId);
         if (listing == null) {
-            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cAngebot nicht mehr vorhanden"));
-            box.setItem(22, MenuUtil.named(Items.BARRIER, "§cZurück"));
+            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cListing no longer exists"));
+            box.setItem(22, MenuUtil.named(Items.BARRIER, "§cBack"));
             broadcastChanges();
             return;
         }
@@ -57,14 +71,15 @@ public class PlotzListingDetailMenu extends ChestMenu {
             listing.capital() ? Items.ENCHANTED_BOOK : Items.BOOK,
             (listing.capital() ? "§6" : "§e") + listing.title()
         ));
-        box.setItem(12, MenuUtil.named(Items.GOLD_INGOT, "§6Preis: " + listing.price() + "$"));
-        box.setItem(13, MenuUtil.named(Items.PAPER, "§7Beschreibung: " + listing.description()));
-        box.setItem(14, MenuUtil.named(Items.COMPASS, "§bLage: " + listing.location()));
-        box.setItem(15, MenuUtil.named(Items.BRICKS, "§7Bebauung: " + listing.builtOnPlot()));
-        box.setItem(16, MenuUtil.named(Items.NAME_TAG, "§7Preisbegründung: " + listing.justification()));
-        box.setItem(21, MenuUtil.named(Items.MAP, "§bChunks: " + listing.chunkCount()));
-        box.setItem(22, MenuUtil.named(Items.BARRIER, "§cZurück"));
-        box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aKaufen"));
+        box.setItem(11, MenuUtil.named(Items.GOLD_INGOT, "§6Price: " + listing.price() + "$"));
+        box.setItem(12, MenuUtil.named(Items.MAP, "§bChunks: " + listing.chunkCount()));
+        box.setItem(13, MenuUtil.named(Items.PAPER, "§7Description: " + listing.description()));
+        box.setItem(14, MenuUtil.named(Items.COMPASS, "§bLocation: " + listing.location()));
+        box.setItem(15, MenuUtil.named(Items.BRICKS, "§7Built on plot: " + listing.builtOnPlot()));
+        box.setItem(16, MenuUtil.named(Items.NAME_TAG, "§7Justification: " + listing.justification()));
+
+        box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aBuy Plot"));
 
         broadcastChanges();
     }
@@ -75,7 +90,11 @@ public class PlotzListingDetailMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 22) {
+        if (!clickAllowed()) {
+            return;
+        }
+
+        if (slotId == 21) {
             if (backToMySales) {
                 PlotzMySalesMenu.open(sp);
             } else {
@@ -90,7 +109,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
 
         PlotzStore.Listing listing = PlotzStore.getListingById(listingId);
         if (listing == null) {
-            sp.sendSystemMessage(Component.literal("§cAngebot existiert nicht mehr."));
+            sp.sendSystemMessage(Component.literal("§cListing no longer exists."));
             if (backToMySales) {
                 PlotzMySalesMenu.open(sp);
             } else {
@@ -100,12 +119,13 @@ public class PlotzListingDetailMenu extends ChestMenu {
         }
 
         if (listing.sellerId().equals(sp.getUUID())) {
-            sp.sendSystemMessage(Component.literal("§cDu kannst dein eigenes Grundstück nicht kaufen."));
+            sp.sendSystemMessage(Component.literal("§cYou cannot buy your own plot."));
             return;
         }
 
-        if (!PlotzLogic.tryCharge(sp, listing.price())) {
-            sp.sendSystemMessage(Component.literal("§cNot enough money."));
+        boolean charged = PlotzLogic.tryCharge(sp, listing.price());
+        if (!charged) {
+            sp.sendSystemMessage(Component.literal("§cYou do not have enough money."));
             return;
         }
 
@@ -122,7 +142,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
         ));
 
         PlotzStore.removeListing(listing.listingId());
-        sp.sendSystemMessage(Component.literal("§aDu hast das Grundstück gekauft: " + listing.title()));
+        sp.sendSystemMessage(Component.literal("§aYou bought the plot: " + listing.title()));
         PlotzMyPlotsMenu.open(sp);
     }
 

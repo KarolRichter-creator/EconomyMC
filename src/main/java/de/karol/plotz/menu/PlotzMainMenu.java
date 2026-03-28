@@ -1,6 +1,7 @@
 package de.karol.plotz.menu;
 
 import de.karol.plotz.data.PlotzStore;
+import de.karol.plotz.service.OpacBridge;
 import de.karol.plotz.service.PlotzLogic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class PlotzMainMenu extends ChestMenu {
     private final ServerPlayer viewer;
     private final SimpleContainer box;
+    private long lastClickMs = 0L;
 
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
@@ -38,50 +40,73 @@ public class PlotzMainMenu extends ChestMenu {
         refresh();
     }
 
-    private void refresh() {
+    private void fillBackground() {
         for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, ItemStack.EMPTY);
+            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
+    }
+
+    private void refresh() {
+        fillBackground();
 
         UUID id = viewer.getUUID();
         boolean capitalHere = PlotzLogic.isCapital(viewer.blockPosition());
 
-        box.setItem(11, MenuUtil.named(
+        box.setItem(4, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? "§6Current Position: Capital Zone" : "§7Current Position: Normal Zone"
+        ));
+
+        box.setItem(10, MenuUtil.named(
             Items.BOOK,
-            "§eNormale Claim-Chunks kaufen §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
+            "§eBuy Normal Claim Credits §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
+        ));
+
+        box.setItem(12, MenuUtil.named(
+            Items.ENCHANTED_BOOK,
+            "§6Buy Capital Claim Credits §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
         ));
 
         box.setItem(13, MenuUtil.named(
-            Items.ENCHANTED_BOOK,
-            "§6Hauptstadt-Claim-Chunks kaufen §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
+            Items.NAME_TAG,
+            OpacBridge.getPartyStatusText(viewer)
         ));
 
-        box.setItem(15, MenuUtil.named(
+        box.setItem(14, MenuUtil.named(
             Items.EMERALD,
-            "§aNeuen Verkauf anlegen"
+            "§aCreate Sale Listing"
+        ));
+
+        box.setItem(16, MenuUtil.named(
+            Items.CHEST,
+            "§3Market Listings §7(" + PlotzStore.getListings().size() + ")"
         ));
 
         box.setItem(19, MenuUtil.named(
-            Items.COMPASS,
-            capitalHere ? "§6Aktuelle Position: Hauptstadt" : "§7Aktuelle Position: Normal"
-        ));
-
-        box.setItem(20, MenuUtil.named(
             Items.MAP,
-            "§bMein Besitz §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
+            "§bMy Plots §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
         ));
 
         box.setItem(22, MenuUtil.named(
             Items.WRITABLE_BOOK,
-            "§dMeine Verkäufe §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
+            "§dMy Sales §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
         ));
 
-        box.setItem(24, MenuUtil.named(
-            Items.CHEST,
-            "§3Marktangebote §7(" + PlotzStore.getListings().size() + ")"
+        box.setItem(25, MenuUtil.named(
+            Items.PAPER,
+            "§7Claim credits require an OPAC RW / Party"
         ));
 
         broadcastChanges();
+    }
+
+    private boolean clickAllowed() {
+        long now = System.currentTimeMillis();
+        if (now - lastClickMs < 250L) {
+            return false;
+        }
+        lastClickMs = now;
+        return true;
     }
 
     @Override
@@ -90,62 +115,90 @@ public class PlotzMainMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 11) {
-            if (PlotzLogic.tryCharge(sp, PlotzLogic.NORMAL_CHUNK_PRICE)) {
-                PlotzStore.addNormalCredit(sp.getUUID(), 1);
-                sp.sendSystemMessage(Component.literal("§a1 normaler Claim-Chunk gekauft."));
-                refresh();
-            } else {
-                sp.sendSystemMessage(Component.literal("§cNicht genug Geld."));
-            }
+        if (!clickAllowed()) {
             return;
         }
 
-        if (slotId == 13) {
-            if (PlotzLogic.tryCharge(sp, PlotzLogic.CAPITAL_CHUNK_PRICE)) {
-                PlotzStore.addCapitalCredit(sp.getUUID(), 1);
-                sp.sendSystemMessage(Component.literal("§a1 Hauptstadt-Claim-Chunk gekauft."));
-                refresh();
-            } else {
-                sp.sendSystemMessage(Component.literal("§cNicht genug Geld."));
+        if (slotId == 10) {
+            if (!OpacBridge.isInstalled()) {
+                sp.sendSystemMessage(Component.literal("§cOpen Parties and Claims is not installed."));
+                return;
             }
+
+            if (!PlotzLogic.hasRequiredParty(sp)) {
+                sp.sendSystemMessage(Component.literal("§cYou need to create or join an OPAC RW / Party first."));
+                return;
+            }
+
+            boolean charged = PlotzLogic.canBuyNormalCredit(sp);
+            if (!charged) {
+                sp.sendSystemMessage(Component.literal("§cYou do not have enough money for a normal claim credit."));
+                return;
+            }
+
+            PlotzStore.addNormalCredit(sp.getUUID(), 1);
+            sp.sendSystemMessage(Component.literal("§aBought 1 normal claim credit."));
+            refresh();
             return;
         }
 
-        if (slotId == 15) {
+        if (slotId == 12) {
+            if (!OpacBridge.isInstalled()) {
+                sp.sendSystemMessage(Component.literal("§cOpen Parties and Claims is not installed."));
+                return;
+            }
+
+            if (!PlotzLogic.hasRequiredParty(sp)) {
+                sp.sendSystemMessage(Component.literal("§cYou need to create or join an OPAC RW / Party first."));
+                return;
+            }
+
+            boolean charged = PlotzLogic.canBuyCapitalCredit(sp);
+            if (!charged) {
+                sp.sendSystemMessage(Component.literal("§cYou do not have enough money for a capital claim credit."));
+                return;
+            }
+
+            PlotzStore.addCapitalCredit(sp.getUUID(), 1);
+            sp.sendSystemMessage(Component.literal("§aBought 1 capital claim credit."));
+            refresh();
+            return;
+        }
+
+        if (slotId == 14) {
             boolean capital = PlotzLogic.isCapital(sp.blockPosition());
 
             PlotzStore.addListing(new PlotzStore.Listing(
                 java.util.UUID.randomUUID().toString(),
                 sp.getUUID(),
                 sp.getGameProfile().getName(),
-                "Grundstück von " + sp.getGameProfile().getName(),
+                "Plot by " + sp.getGameProfile().getName(),
                 capital ? 8000 : 5000,
                 capital,
                 1,
                 "X=" + sp.blockPosition().getX() + " Z=" + sp.blockPosition().getZ(),
-                capital ? "Grundstück in der Hauptstadt" : "Grundstück außerhalb der Hauptstadt",
-                "Einfacher Startpreis",
-                "Noch keine genaue Bauwert-Prüfung"
+                capital ? "Plot inside the capital" : "Plot outside the capital",
+                "Basic starter price",
+                "No detailed building value yet"
             ));
 
-            sp.sendSystemMessage(Component.literal("§aEin einfacher Verkaufsentwurf wurde erstellt und in den Markt gelegt."));
+            sp.sendSystemMessage(Component.literal("§aA simple sale listing was created."));
             refresh();
             return;
         }
 
-        if (slotId == 20) {
+        if (slotId == 16) {
+            PlotzMarketMenu.open(sp);
+            return;
+        }
+
+        if (slotId == 19) {
             PlotzMyPlotsMenu.open(sp);
             return;
         }
 
         if (slotId == 22) {
             PlotzMySalesMenu.open(sp);
-            return;
-        }
-
-        if (slotId == 24) {
-            PlotzMarketMenu.open(sp);
         }
     }
 
