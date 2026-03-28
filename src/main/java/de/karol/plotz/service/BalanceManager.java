@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
@@ -22,14 +24,10 @@ public final class BalanceManager {
     private BalanceManager() {}
 
     private static void ensureLoaded() {
-        if (loaded) {
-            return;
-        }
+        if (loaded) return;
         loaded = true;
 
-        if (!Files.exists(FILE)) {
-            return;
-        }
+        if (!Files.exists(FILE)) return;
 
         try (InputStream in = Files.newInputStream(FILE)) {
             PROPS.load(in);
@@ -69,9 +67,7 @@ public final class BalanceManager {
 
     public static boolean removeBalance(UUID playerId, long amount) {
         long current = getBalance(playerId);
-        if (current < amount) {
-            return false;
-        }
+        if (current < amount) return false;
 
         setBalance(playerId, current - amount);
         return true;
@@ -86,5 +82,18 @@ public final class BalanceManager {
         Optional<GameProfile> profile = cache.get(name);
         profile.ifPresent(p -> setBalance(p.getId(), getBalance(p.getId())));
         return profile.map(GameProfile::getId);
+    }
+
+    public static Map<UUID, Long> getAllBalances() {
+        ensureLoaded();
+        Map<UUID, Long> result = new LinkedHashMap<>();
+        for (String key : PROPS.stringPropertyNames()) {
+            try {
+                UUID id = UUID.fromString(key);
+                result.put(id, getBalance(id));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        return result;
     }
 }

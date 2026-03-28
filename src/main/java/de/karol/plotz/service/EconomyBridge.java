@@ -18,7 +18,11 @@ public final class EconomyBridge {
     }
 
     public static boolean removeMoney(ServerPlayer player, int amount) {
-        return BalanceManager.removeBalance(player.getUUID(), amount);
+        boolean success = BalanceManager.removeBalance(player.getUUID(), amount);
+        if (success) {
+            ScoreboardManager.update(player.server);
+        }
+        return success;
     }
 
     public static boolean addMoney(MinecraftServer server, String playerName, int amount) {
@@ -32,6 +36,7 @@ public final class EconomyBridge {
         }
 
         BalanceManager.addBalance(resolved.get(), amount);
+        ScoreboardManager.update(server);
         return true;
     }
 }
