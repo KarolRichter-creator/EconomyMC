@@ -63,8 +63,44 @@ public final class PlotzStore {
         CAPITAL_CREDITS.put(playerId, getCapitalCredits(playerId) + amount);
     }
 
+    public static boolean spendNormalCredit(UUID playerId) {
+        int current = getNormalCredits(playerId);
+        if (current <= 0) {
+            return false;
+        }
+        NORMAL_CREDITS.put(playerId, current - 1);
+        return true;
+    }
+
+    public static boolean spendCapitalCredit(UUID playerId) {
+        int current = getCapitalCredits(playerId);
+        if (current <= 0) {
+            return false;
+        }
+        CAPITAL_CREDITS.put(playerId, current - 1);
+        return true;
+    }
+
     public static void addOwnedPlot(PlotEntry plot) {
         OWNED_PLOTS.add(plot);
+    }
+
+    public static void upsertOwnedClaim(UUID ownerId, String ownerName, boolean capital, String location) {
+        removeOwnedPlotByLocation(location);
+
+        OWNED_PLOTS.add(new PlotEntry(
+            ownerId,
+            ownerName,
+            capital ? "Capital Claim" : "Normal Claim",
+            capital,
+            1,
+            location,
+            "Synced from Open Parties and Claims"
+        ));
+    }
+
+    public static void removeOwnedPlotByLocation(String location) {
+        OWNED_PLOTS.removeIf(p -> p.location().equals(location));
     }
 
     public static List<PlotEntry> getOwnedPlots(UUID ownerId) {

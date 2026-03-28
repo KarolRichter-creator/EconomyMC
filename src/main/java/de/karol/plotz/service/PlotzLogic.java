@@ -35,14 +35,12 @@ public final class PlotzLogic {
     }
 
     public static boolean isServerClaimBlocked(ServerPlayer player) {
-        // TODO: Nächster Schritt:
-        // OPAC server-claim areas prüfen
+        // next step: explicit server-claim detection
         return false;
     }
 
     public static boolean isMinDistanceValid(ServerPlayer player) {
-        // TODO: Nächster Schritt:
-        // echte 700-Block-Regel
+        // next step: real 700-block distance rule
         return true;
     }
 
