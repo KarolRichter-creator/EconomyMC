@@ -1,6 +1,7 @@
 package de.karol.plotz.menu;
 
 import de.karol.plotz.data.PlotzStore;
+import de.karol.plotz.service.OpacBridge;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -20,6 +21,8 @@ public class PlotzMyPlotsMenu extends ChestMenu {
     private final SimpleContainer box;
 
     public static void open(ServerPlayer player) {
+        OpacBridge.syncOwnedClaims(player);
+
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzMyPlotsMenu(containerId, inventory, player),
             Component.literal("Mein Besitz")

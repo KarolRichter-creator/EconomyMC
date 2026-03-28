@@ -2,14 +2,18 @@ package de.karol.plotz.service;
 
 import de.karol.plotz.data.PlotzStore;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import net.neoforged.fml.ModList;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.claims.player.api.IPlayerClaimPosListAPI;
+import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
+import xaero.pac.common.server.api.OpenPACServerAPI;
+import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 
 import java.util.Map;
 import java.util.UUID;
@@ -46,6 +50,42 @@ public final class OpacBridge {
             public void onDimensionChange(ResourceLocation dimension) {
             }
         });
+    }
+
+    public static void syncOwnedClaims(ServerPlayer player) {
+        if (!isInstalled()) {
+            return;
+        }
+
+        try {
+            PlotzStore.clearOwnedClaimsFor(player.getUUID());
+
+            IServerPlayerClaimInfoAPI info = OpenPACServerAPI.get(player.server)
+                .getServerClaimsManager()
+                .getPlayerInfo(player.getUUID());
+
+            if (info == null) {
+                return;
+            }
+
+            info.getStream().forEach(entry -> {
+                ResourceLocation dimension = entry.getKey();
+                IPlayerDimensionClaimsAPI dimClaims = entry.getValue();
+
+                dimClaims.getStream().forEach((IPlayerClaimPosListAPI posList) -> {
+                    posList.getStream().forEach((ChunkPos chunkPos) -> {
+                        boolean capital = PlotzLogic.isCapital(new BlockPos(chunkPos.x * 16 + 8, 64, chunkPos.z * 16 + 8));
+                        PlotzStore.upsertOwnedClaim(
+                            player.getUUID(),
+                            player.getGameProfile().getName(),
+                            capital,
+                            formatLocation(dimension, chunkPos.x, chunkPos.z)
+                        );
+                    });
+                });
+            });
+        } catch (Exception ignored) {
+        }
     }
 
     private static void handleChunkChange(ResourceLocation dimension, int chunkX, int chunkZ, IPlayerChunkClaimAPI claim) {
@@ -87,16 +127,24 @@ public final class OpacBridge {
                 : PlotzStore.spendNormalCredit(newOwner);
 
             if (!spent) {
-                player.sendSystemMessage(Component.literal(
-                    capital
-                        ? "§cYou need a capital claim credit for this claim."
-                        : "§cYou need a normal claim credit for this claim."
-                ));
-                // Rückgängig machen bauen wir als nächsten Schritt sauberer aus
+                try {
+                    OpenPACServerAPI.get(server).getServerClaimsManager().unclaim(dimension, chunkX, chunkZ);
+                    CLAIM_OWNER_CACHE.remove(key);
+                    PlotzStore.removeOwnedPlotByLocation(location);
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                        capital
+                            ? "§cClaim reverted: you need a capital claim credit."
+                            : "§cClaim reverted: you need a normal claim credit."
+                    ));
+                } catch (Exception e) {
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                        "§cClaim detected without credits, but automatic rollback failed."
+                    ));
+                }
                 return;
             }
 
-            player.sendSystemMessage(Component.literal(
+            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                 capital
                     ? "§aCapital claim detected. 1 capital credit was used."
                     : "§aClaim detected. 1 normal credit was used."

@@ -103,6 +103,13 @@ public final class PlotzStore {
         OWNED_PLOTS.removeIf(p -> p.location().equals(location));
     }
 
+    public static void clearOwnedClaimsFor(UUID ownerId) {
+        OWNED_PLOTS.removeIf(p ->
+            p.ownerId().equals(ownerId) &&
+            "Synced from Open Parties and Claims".equals(p.description())
+        );
+    }
+
     public static List<PlotEntry> getOwnedPlots(UUID ownerId) {
         List<PlotEntry> result = new ArrayList<>();
         for (PlotEntry plot : OWNED_PLOTS) {
