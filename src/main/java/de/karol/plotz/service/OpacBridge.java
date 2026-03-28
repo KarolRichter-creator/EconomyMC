@@ -17,7 +17,6 @@ import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -196,9 +195,25 @@ public final class OpacBridge {
             return;
         }
 
-        boolean capital = PlotzLogic.isCapital(new BlockPos(chunkX * 16 + 8, 64, chunkZ * 16 + 8));
+        BlockPos claimPos = new BlockPos(chunkX * 16 + 8, 64, chunkZ * 16 + 8);
+        boolean capital = PlotzLogic.isCapital(claimPos);
 
         if (previousOwner == null) {
+            if (!PlotzLogic.isMinDistanceValid(claimPos, newOwner)) {
+                try {
+                    OpenPACServerAPI.get(server).getServerClaimsManager().unclaim(dimension, chunkX, chunkZ);
+                    CLAIM_OWNER_CACHE.remove(key);
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                        "§cClaim reverted: minimum distance is " + PlotzLogic.MIN_DISTANCE_BLOCKS + " blocks."
+                    ));
+                } catch (Exception e) {
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                        "§cDistance rule failed and automatic rollback failed."
+                    ));
+                }
+                return;
+            }
+
             boolean spent = capital
                 ? PlotzStore.spendCapitalCredit(newOwner)
                 : PlotzStore.spendNormalCredit(newOwner);

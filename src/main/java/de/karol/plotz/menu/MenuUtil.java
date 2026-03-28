@@ -39,11 +39,7 @@ public final class MenuUtil {
                 Component.literal("§7Capital Credits: " + capitalCredits)
             ))
         );
-
-        stack.set(
-            DataComponents.PROFILE,
-            new ResolvableProfile(player.getGameProfile())
-        );
+        stack.set(DataComponents.PROFILE, new ResolvableProfile(player.getGameProfile()));
 
         return stack;
     }

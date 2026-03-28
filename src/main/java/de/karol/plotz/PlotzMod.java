@@ -1,12 +1,16 @@
 package de.karol.plotz;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import de.karol.plotz.menu.PlotzMainMenu;
+import de.karol.plotz.service.BalanceManager;
 import de.karol.plotz.service.CapitalAreaManager;
 import de.karol.plotz.service.DraftInputManager;
 import de.karol.plotz.service.OpacBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +20,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
+
+import java.util.Collection;
 
 @Mod(PlotzMod.MOD_ID)
 public class PlotzMod {
@@ -45,6 +51,48 @@ public class PlotzMod {
                     PlotzMainMenu.open(player);
                     return 1;
                 })
+        );
+
+        dispatcher.register(
+            Commands.literal("pay")
+                .requires(source -> source.hasPermission(0))
+                .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                    .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                        .executes(ctx -> {
+                            if (!(ctx.getSource().getEntity() instanceof ServerPlayer sender)) {
+                                ctx.getSource().sendFailure(Component.literal("Only players can use /pay."));
+                                return 0;
+                            }
+
+                            Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
+                            if (profiles.isEmpty()) {
+                                ctx.getSource().sendFailure(Component.literal("Player not found."));
+                                return 0;
+                            }
+
+                            GameProfile target = profiles.iterator().next();
+                            int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                            if (target.getId().equals(sender.getUUID())) {
+                                ctx.getSource().sendFailure(Component.literal("§cYou cannot pay yourself."));
+                                return 0;
+                            }
+
+                            if (!BalanceManager.removeBalance(sender.getUUID(), amount)) {
+                                ctx.getSource().sendFailure(Component.literal("§cYou do not have enough money."));
+                                return 0;
+                            }
+
+                            BalanceManager.addBalance(target.getId(), amount);
+
+                            sender.sendSystemMessage(Component.literal("§aYou paid $" + amount + " to " + target.getName() + "."));
+                            ServerPlayer onlineTarget = sender.server.getPlayerList().getPlayer(target.getId());
+                            if (onlineTarget != null) {
+                                onlineTarget.sendSystemMessage(Component.literal("§aYou received $" + amount + " from " + sender.getGameProfile().getName() + "."));
+                            }
+
+                            return 1;
+                        })))
         );
 
         dispatcher.register(
@@ -89,6 +137,38 @@ public class PlotzMod {
                     ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area cleared."), false);
                     return 1;
                 }))
+                .then(Commands.literal("setmoney")
+                    .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                        .then(Commands.argument("amount", IntegerArgumentType.integer(0))
+                            .executes(ctx -> {
+                                Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
+                                if (profiles.isEmpty()) {
+                                    ctx.getSource().sendFailure(Component.literal("Player not found."));
+                                    return 0;
+                                }
+
+                                GameProfile target = profiles.iterator().next();
+                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
+                                BalanceManager.setBalance(target.getId(), amount);
+                                ctx.getSource().sendSuccess(() -> Component.literal("§aSet balance of " + target.getName() + " to $" + amount), false);
+                                return 1;
+                            }))))
+                .then(Commands.literal("addmoney")
+                    .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                        .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                            .executes(ctx -> {
+                                Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
+                                if (profiles.isEmpty()) {
+                                    ctx.getSource().sendFailure(Component.literal("Player not found."));
+                                    return 0;
+                                }
+
+                                GameProfile target = profiles.iterator().next();
+                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
+                                BalanceManager.addBalance(target.getId(), amount);
+                                ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to " + target.getName()), false);
+                                return 1;
+                            }))))
         );
     }
 

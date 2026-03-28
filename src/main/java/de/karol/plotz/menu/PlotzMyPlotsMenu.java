@@ -108,6 +108,16 @@ public class PlotzMyPlotsMenu extends ChestMenu {
             return;
         }
 
+        if (PlotzStore.hasListingForLocation(plot.location())) {
+            sp.sendSystemMessage(Component.literal("§cThis plot is already listed in the market."));
+            return;
+        }
+
+        if (PlotzStore.hasAnyDraftForLocation(plot.location())) {
+            sp.sendSystemMessage(Component.literal("§cThis plot already has a sale draft."));
+            return;
+        }
+
         PlotzStore.setDraft(new PlotzStore.SaleDraft(
             sp.getUUID(),
             sp.getGameProfile().getName(),

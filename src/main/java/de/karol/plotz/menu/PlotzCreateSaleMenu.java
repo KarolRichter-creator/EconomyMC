@@ -96,6 +96,11 @@ public class PlotzCreateSaleMenu extends ChestMenu {
             return;
         }
 
+        if (PlotzStore.hasListingForLocation(draft.location())) {
+            sp.sendSystemMessage(Component.literal("§cThis plot is already listed in the market."));
+            return;
+        }
+
         PlotzStore.addListing(new PlotzStore.Listing(
             java.util.UUID.randomUUID().toString(),
             sp.getUUID(),

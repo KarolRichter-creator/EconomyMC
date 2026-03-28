@@ -14,38 +14,6 @@ public final class PlotzStore {
     private static final CopyOnWriteArrayList<Listing> LISTINGS = new CopyOnWriteArrayList<>();
     private static final ConcurrentHashMap<UUID, SaleDraft> SALE_DRAFTS = new ConcurrentHashMap<>();
 
-    static {
-        LISTINGS.add(new Listing(
-            UUID.randomUUID().toString(),
-            UUID.randomUUID(),
-            "System",
-            "Small Riverside Plot",
-            4500,
-            false,
-            3,
-            "Near river, outside capital",
-            "Nice location with enough space for a house and garden",
-            "Good price because of location",
-            "Small house and garden",
-            false
-        ));
-
-        LISTINGS.add(new Listing(
-            UUID.randomUUID().toString(),
-            UUID.randomUUID(),
-            "System",
-            "Capital Market Plot",
-            12000,
-            true,
-            2,
-            "Directly inside the capital",
-            "Perfect for a shop or city villa",
-            "Top location in the city center",
-            "Empty building plot",
-            true
-        ));
-    }
-
     private PlotzStore() {}
 
     public static int getNormalCredits(UUID playerId) {
@@ -66,14 +34,18 @@ public final class PlotzStore {
 
     public static boolean spendNormalCredit(UUID playerId) {
         int current = getNormalCredits(playerId);
-        if (current <= 0) return false;
+        if (current <= 0) {
+            return false;
+        }
         NORMAL_CREDITS.put(playerId, current - 1);
         return true;
     }
 
     public static boolean spendCapitalCredit(UUID playerId) {
         int current = getCapitalCredits(playerId);
-        if (current <= 0) return false;
+        if (current <= 0) {
+            return false;
+        }
         CAPITAL_CREDITS.put(playerId, current - 1);
         return true;
     }
@@ -101,16 +73,24 @@ public final class PlotzStore {
     public static List<PlotEntry> getOwnedPlots(UUID ownerId) {
         List<PlotEntry> result = new ArrayList<>();
         for (PlotEntry plot : OWNED_PLOTS) {
-            if (plot.ownerId().equals(ownerId)) result.add(plot);
+            if (plot.ownerId().equals(ownerId)) {
+                result.add(plot);
+            }
         }
         return result;
     }
 
     public static PlotEntry getOwnedPlot(UUID ownerId, String location) {
         for (PlotEntry plot : OWNED_PLOTS) {
-            if (plot.ownerId().equals(ownerId) && plot.location().equals(location)) return plot;
+            if (plot.ownerId().equals(ownerId) && plot.location().equals(location)) {
+                return plot;
+            }
         }
         return null;
+    }
+
+    public static List<PlotEntry> getAllOwnedPlots() {
+        return new ArrayList<>(OWNED_PLOTS);
     }
 
     public static List<Listing> getListings() {
@@ -120,14 +100,18 @@ public final class PlotzStore {
     public static List<Listing> getListingsBySeller(UUID sellerId) {
         List<Listing> result = new ArrayList<>();
         for (Listing listing : LISTINGS) {
-            if (listing.sellerId().equals(sellerId)) result.add(listing);
+            if (listing.sellerId().equals(sellerId)) {
+                result.add(listing);
+            }
         }
         return result;
     }
 
     public static Listing getListingById(String listingId) {
         for (Listing listing : LISTINGS) {
-            if (listing.listingId().equals(listingId)) return listing;
+            if (listing.listingId().equals(listingId)) {
+                return listing;
+            }
         }
         return null;
     }
@@ -140,6 +124,15 @@ public final class PlotzStore {
         LISTINGS.removeIf(l -> l.listingId().equals(listingId));
     }
 
+    public static boolean hasListingForLocation(String location) {
+        for (Listing listing : LISTINGS) {
+            if (listing.location().equals(location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void setDraft(SaleDraft draft) {
         SALE_DRAFTS.put(draft.ownerId(), draft);
     }
@@ -150,6 +143,15 @@ public final class PlotzStore {
 
     public static void clearDraft(UUID playerId) {
         SALE_DRAFTS.remove(playerId);
+    }
+
+    public static boolean hasAnyDraftForLocation(String location) {
+        for (SaleDraft draft : SALE_DRAFTS.values()) {
+            if (draft.location().equals(location)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void updateDraftPrice(UUID playerId, int price) {
