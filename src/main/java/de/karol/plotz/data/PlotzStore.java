@@ -12,6 +12,7 @@ public final class PlotzStore {
 
     private static final CopyOnWriteArrayList<PlotEntry> OWNED_PLOTS = new CopyOnWriteArrayList<>();
     private static final CopyOnWriteArrayList<Listing> LISTINGS = new CopyOnWriteArrayList<>();
+    private static final ConcurrentHashMap<UUID, SaleDraft> SALE_DRAFTS = new ConcurrentHashMap<>();
 
     static {
         LISTINGS.add(new Listing(
@@ -65,18 +66,14 @@ public final class PlotzStore {
 
     public static boolean spendNormalCredit(UUID playerId) {
         int current = getNormalCredits(playerId);
-        if (current <= 0) {
-            return false;
-        }
+        if (current <= 0) return false;
         NORMAL_CREDITS.put(playerId, current - 1);
         return true;
     }
 
     public static boolean spendCapitalCredit(UUID playerId) {
         int current = getCapitalCredits(playerId);
-        if (current <= 0) {
-            return false;
-        }
+        if (current <= 0) return false;
         CAPITAL_CREDITS.put(playerId, current - 1);
         return true;
     }
@@ -101,18 +98,19 @@ public final class PlotzStore {
         );
     }
 
-    public static void removeOwnedPlotByLocation(String location) {
-        OWNED_PLOTS.removeIf(p -> p.location().equals(location));
-    }
-
     public static List<PlotEntry> getOwnedPlots(UUID ownerId) {
         List<PlotEntry> result = new ArrayList<>();
         for (PlotEntry plot : OWNED_PLOTS) {
-            if (plot.ownerId().equals(ownerId)) {
-                result.add(plot);
-            }
+            if (plot.ownerId().equals(ownerId)) result.add(plot);
         }
         return result;
+    }
+
+    public static PlotEntry getOwnedPlot(UUID ownerId, String location) {
+        for (PlotEntry plot : OWNED_PLOTS) {
+            if (plot.ownerId().equals(ownerId) && plot.location().equals(location)) return plot;
+        }
+        return null;
     }
 
     public static List<Listing> getListings() {
@@ -122,18 +120,14 @@ public final class PlotzStore {
     public static List<Listing> getListingsBySeller(UUID sellerId) {
         List<Listing> result = new ArrayList<>();
         for (Listing listing : LISTINGS) {
-            if (listing.sellerId().equals(sellerId)) {
-                result.add(listing);
-            }
+            if (listing.sellerId().equals(sellerId)) result.add(listing);
         }
         return result;
     }
 
     public static Listing getListingById(String listingId) {
         for (Listing listing : LISTINGS) {
-            if (listing.listingId().equals(listingId)) {
-                return listing;
-            }
+            if (listing.listingId().equals(listingId)) return listing;
         }
         return null;
     }
@@ -144,6 +138,63 @@ public final class PlotzStore {
 
     public static void removeListing(String listingId) {
         LISTINGS.removeIf(l -> l.listingId().equals(listingId));
+    }
+
+    public static void setDraft(SaleDraft draft) {
+        SALE_DRAFTS.put(draft.ownerId(), draft);
+    }
+
+    public static SaleDraft getDraft(UUID playerId) {
+        return SALE_DRAFTS.get(playerId);
+    }
+
+    public static void clearDraft(UUID playerId) {
+        SALE_DRAFTS.remove(playerId);
+    }
+
+    public static void updateDraftPrice(UUID playerId, int price) {
+        SaleDraft draft = SALE_DRAFTS.get(playerId);
+        if (draft == null) return;
+        SALE_DRAFTS.put(playerId, new SaleDraft(
+            draft.ownerId(), draft.ownerName(), draft.title(), draft.capital(), draft.chunkCount(),
+            draft.location(), price, draft.description(), draft.builtOnPlot(), draft.justification(), draft.negotiable()
+        ));
+    }
+
+    public static void updateDraftDescription(UUID playerId, String description) {
+        SaleDraft draft = SALE_DRAFTS.get(playerId);
+        if (draft == null) return;
+        SALE_DRAFTS.put(playerId, new SaleDraft(
+            draft.ownerId(), draft.ownerName(), draft.title(), draft.capital(), draft.chunkCount(),
+            draft.location(), draft.price(), description, draft.builtOnPlot(), draft.justification(), draft.negotiable()
+        ));
+    }
+
+    public static void updateDraftBuilt(UUID playerId, String builtOnPlot) {
+        SaleDraft draft = SALE_DRAFTS.get(playerId);
+        if (draft == null) return;
+        SALE_DRAFTS.put(playerId, new SaleDraft(
+            draft.ownerId(), draft.ownerName(), draft.title(), draft.capital(), draft.chunkCount(),
+            draft.location(), draft.price(), draft.description(), builtOnPlot, draft.justification(), draft.negotiable()
+        ));
+    }
+
+    public static void updateDraftJustification(UUID playerId, String justification) {
+        SaleDraft draft = SALE_DRAFTS.get(playerId);
+        if (draft == null) return;
+        SALE_DRAFTS.put(playerId, new SaleDraft(
+            draft.ownerId(), draft.ownerName(), draft.title(), draft.capital(), draft.chunkCount(),
+            draft.location(), draft.price(), draft.description(), draft.builtOnPlot(), justification, draft.negotiable()
+        ));
+    }
+
+    public static void updateDraftNegotiable(UUID playerId, boolean negotiable) {
+        SaleDraft draft = SALE_DRAFTS.get(playerId);
+        if (draft == null) return;
+        SALE_DRAFTS.put(playerId, new SaleDraft(
+            draft.ownerId(), draft.ownerName(), draft.title(), draft.capital(), draft.chunkCount(),
+            draft.location(), draft.price(), draft.description(), draft.builtOnPlot(), draft.justification(), negotiable
+        ));
     }
 
     public record PlotEntry(
@@ -168,6 +219,20 @@ public final class PlotzStore {
         String description,
         String justification,
         String builtOnPlot,
+        boolean negotiable
+    ) {}
+
+    public record SaleDraft(
+        UUID ownerId,
+        String ownerName,
+        String title,
+        boolean capital,
+        int chunkCount,
+        String location,
+        int price,
+        String description,
+        String builtOnPlot,
+        String justification,
         boolean negotiable
     ) {}
 }

@@ -1,7 +1,7 @@
 package de.karol.plotz.menu;
 
 import de.karol.plotz.data.PlotzStore;
-import de.karol.plotz.service.PlotzLogic;
+import de.karol.plotz.service.DraftInputManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -46,37 +46,34 @@ public class PlotzCreateSaleMenu extends ChestMenu {
     private void refresh() {
         fillBackground();
 
-        boolean capital = PlotzLogic.isCapital(viewer.blockPosition());
+        PlotzStore.SaleDraft draft = PlotzStore.getDraft(viewer.getUUID());
+
+        if (draft == null) {
+            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cNo sale draft selected"));
+            box.setItem(22, MenuUtil.named(Items.BARRIER, "§cBack"));
+            MenuUtil.putPlayerInfoHead(box, viewer, 18);
+            broadcastChanges();
+            return;
+        }
 
         box.setItem(4, MenuUtil.named(
             Items.COMPASS,
-            capital ? "§6Capital Plot" : "§7Normal Plot"
+            draft.capital() ? "§6Selected Capital Plot" : "§7Selected Plot"
         ));
 
-        box.setItem(10, MenuUtil.named(
-            Items.GOLD_INGOT,
-            "§eFixed Price - 5,000$"
-        ));
-
-        box.setItem(12, MenuUtil.named(
-            Items.GOLD_BLOCK,
-            "§6Fixed Price - 10,000$"
-        ));
-
+        box.setItem(9, MenuUtil.named(Items.MAP, "§bPlot: " + draft.chunkCount() + " Chunks"));
+        box.setItem(10, MenuUtil.named(Items.GOLD_INGOT, "§eSet Price: $" + draft.price()));
+        box.setItem(11, MenuUtil.named(Items.PAPER, "§7Set Description"));
+        box.setItem(12, MenuUtil.named(Items.BRICKS, "§7Set Built On Plot"));
+        box.setItem(13, MenuUtil.named(Items.NAME_TAG, "§7Set Price Justification"));
         box.setItem(14, MenuUtil.named(
-            Items.EMERALD,
-            "§aNegotiable - 8,000$"
+            draft.negotiable() ? Items.EMERALD : Items.GOLD_BLOCK,
+            draft.negotiable() ? "§aNegotiable" : "§6Fixed Price"
         ));
-
-        box.setItem(16, MenuUtil.named(
-            Items.EMERALD_BLOCK,
-            "§2Negotiable - 15,000$"
-        ));
-
-        box.setItem(22, MenuUtil.named(
-            Items.BARRIER,
-            "§cBack"
-        ));
+        box.setItem(15, MenuUtil.named(Items.WRITABLE_BOOK, "§bPublish Listing"));
+        box.setItem(21, MenuUtil.named(Items.COMPASS, "§7Location: " + draft.location()));
+        box.setItem(22, MenuUtil.named(Items.BARRIER, "§cClear Draft"));
+        box.setItem(23, MenuUtil.named(Items.BARRIER, "§cBack"));
 
         MenuUtil.putPlayerInfoHead(box, viewer, 18);
         broadcastChanges();
@@ -91,64 +88,80 @@ public class PlotzCreateSaleMenu extends ChestMenu {
         return true;
     }
 
-    private void createListing(ServerPlayer sp, int price, boolean negotiable) {
-        boolean capital = PlotzLogic.isCapital(sp.blockPosition());
+    private void publishListing(ServerPlayer sp) {
+        PlotzStore.SaleDraft draft = PlotzStore.getDraft(sp.getUUID());
+        if (draft == null) {
+            sp.sendSystemMessage(Component.literal("§cNo sale draft selected."));
+            PlotzMainMenu.open(sp);
+            return;
+        }
 
         PlotzStore.addListing(new PlotzStore.Listing(
             java.util.UUID.randomUUID().toString(),
             sp.getUUID(),
             sp.getGameProfile().getName(),
-            "Plot by " + sp.getGameProfile().getName(),
-            price,
-            capital,
-            1,
-            "X=" + sp.blockPosition().getX() + " Z=" + sp.blockPosition().getZ(),
-            capital ? "Plot inside the capital" : "Plot outside the capital",
-            negotiable ? "Negotiable offer" : "Fixed price offer",
-            "No detailed building value yet",
-            negotiable
+            draft.title(),
+            draft.price(),
+            draft.capital(),
+            draft.chunkCount(),
+            draft.location(),
+            draft.description(),
+            draft.justification(),
+            draft.builtOnPlot(),
+            draft.negotiable()
         ));
 
-        sp.sendSystemMessage(Component.literal(
-            negotiable
-                ? "§aCreated negotiable listing for " + price + "$."
-                : "§aCreated fixed price listing for " + price + "$."
-        ));
-
+        PlotzStore.clearDraft(sp.getUUID());
+        sp.sendSystemMessage(Component.literal("§aListing published."));
         PlotzMainMenu.open(sp);
     }
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) {
+        if (!(player instanceof ServerPlayer sp)) return;
+        if (!clickAllowed()) return;
+
+        PlotzStore.SaleDraft draft = PlotzStore.getDraft(sp.getUUID());
+
+        if (slotId == 10 && draft != null) {
+            DraftInputManager.waitForPrice(sp);
             return;
         }
 
-        if (!clickAllowed()) {
+        if (slotId == 11 && draft != null) {
+            DraftInputManager.waitForDescription(sp);
             return;
         }
 
-        if (slotId == 10) {
-            createListing(sp, 5000, false);
+        if (slotId == 12 && draft != null) {
+            DraftInputManager.waitForBuilt(sp);
             return;
         }
 
-        if (slotId == 12) {
-            createListing(sp, 10000, false);
+        if (slotId == 13 && draft != null) {
+            DraftInputManager.waitForJustification(sp);
             return;
         }
 
-        if (slotId == 14) {
-            createListing(sp, 8000, true);
+        if (slotId == 14 && draft != null) {
+            PlotzStore.updateDraftNegotiable(sp.getUUID(), !draft.negotiable());
+            refresh();
             return;
         }
 
-        if (slotId == 16) {
-            createListing(sp, 15000, true);
+        if (slotId == 15 && draft != null) {
+            publishListing(sp);
             return;
         }
 
         if (slotId == 22) {
+            PlotzStore.clearDraft(sp.getUUID());
+            sp.sendSystemMessage(Component.literal("§aSale draft cleared."));
+            PlotzMainMenu.open(sp);
+            return;
+        }
+
+        if (slotId == 23) {
             PlotzMainMenu.open(sp);
         }
     }

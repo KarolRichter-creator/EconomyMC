@@ -3,6 +3,7 @@ package de.karol.plotz;
 import com.mojang.brigadier.CommandDispatcher;
 import de.karol.plotz.menu.PlotzMainMenu;
 import de.karol.plotz.service.CapitalAreaManager;
+import de.karol.plotz.service.DraftInputManager;
 import de.karol.plotz.service.OpacBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -13,6 +14,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.ServerChatEvent;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
 
 @Mod(PlotzMod.MOD_ID)
@@ -22,6 +24,7 @@ public class PlotzMod {
     public PlotzMod(IEventBus modEventBus) {
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.addListener(this::onOpacAddonRegister);
+        NeoForge.EVENT_BUS.addListener(this::onServerChat);
         System.out.println("[Plotz] Mod gestartet.");
     }
 
@@ -92,5 +95,14 @@ public class PlotzMod {
     private void onOpacAddonRegister(OPACServerAddonRegisterEvent event) {
         OpacBridge.registerClaimsTracker(event);
         System.out.println("[Plotz] OPAC tracker registered.");
+    }
+
+    private void onServerChat(ServerChatEvent event) {
+        if (event.getPlayer() instanceof ServerPlayer player) {
+            boolean handled = DraftInputManager.handleChat(player, event.getRawText());
+            if (handled) {
+                event.setCanceled(true);
+            }
+        }
     }
 }
