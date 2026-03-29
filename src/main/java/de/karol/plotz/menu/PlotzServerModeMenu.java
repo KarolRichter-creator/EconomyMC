@@ -26,11 +26,11 @@ public class PlotzServerModeMenu extends ChestMenu {
     }
 
     public PlotzServerModeMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
-        this(containerId, inventory, viewer, new SimpleContainer(27));
+        this(containerId, inventory, viewer, new SimpleContainer(54));
     }
 
     private PlotzServerModeMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
-        super(MenuType.GENERIC_9x3, containerId, inventory, box, 3);
+        super(MenuType.GENERIC_9x6, containerId, inventory, box, 6);
         this.viewer = viewer;
         this.box = box;
         refresh();
@@ -42,12 +42,27 @@ public class PlotzServerModeMenu extends ChestMenu {
         }
 
         box.setItem(10, MenuUtil.named(Items.GOLD_BLOCK, "§6Treasury: $" + TreasuryManager.getTreasury()));
-        box.setItem(12, MenuUtil.named(Items.RED_CONCRETE, "§cTax -1%"));
-        box.setItem(13, MenuUtil.named(Items.PAPER, "§7Tax Rate: " + TreasuryManager.getTaxPercent() + "%"));
-        box.setItem(14, MenuUtil.named(Items.LIME_CONCRETE, "§aTax +1%"));
-        box.setItem(16, MenuUtil.named(Items.EMERALD, "§aCreate Server Job"));
-        box.setItem(22, MenuUtil.named(Items.BOOK, "§bOpen Jobs"));
-        MenuUtil.putPlayerInfoHead(box, viewer, 18);
+
+        box.setItem(19, MenuUtil.named(Items.RED_CONCRETE, "§cTax -1%"));
+        box.setItem(20, MenuUtil.named(Items.PAPER, "§7Tax Rate: " + TreasuryManager.getTaxPercent() + "%"));
+        box.setItem(21, MenuUtil.named(Items.LIME_CONCRETE, "§aTax +1%"));
+
+        box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, "§cOverdue -1%"));
+        box.setItem(24, MenuUtil.named(Items.PAPER, "§7Overdue Penalty: " + TreasuryManager.getOverduePenaltyPercent() + "%"));
+        box.setItem(25, MenuUtil.named(Items.LIME_CONCRETE, "§aOverdue +1%"));
+
+        box.setItem(28, MenuUtil.named(Items.RED_CONCRETE, "§cCancel -1%"));
+        box.setItem(29, MenuUtil.named(Items.PAPER, "§7Cancel Penalty: " + TreasuryManager.getCancelPenaltyPercent() + "%"));
+        box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, "§aCancel +1%"));
+
+        box.setItem(32, MenuUtil.named(Items.RED_CONCRETE, "§cMax Days -1"));
+        box.setItem(33, MenuUtil.named(Items.CLOCK, "§7Max Overdue Days: " + TreasuryManager.getMaxOverdueDays()));
+        box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, "§aMax Days +1"));
+
+        box.setItem(40, MenuUtil.named(Items.EMERALD, "§aCreate Server Job"));
+        box.setItem(42, MenuUtil.named(Items.BOOK, "§bOpen Server Jobs"));
+        box.setItem(44, MenuUtil.named(Items.MAP, "§7Server plot sales can be added later"));
+        MenuUtil.putPlayerInfoHead(box, viewer, 45);
 
         broadcastChanges();
     }
@@ -56,26 +71,29 @@ public class PlotzServerModeMenu extends ChestMenu {
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (!(player instanceof ServerPlayer sp)) return;
 
-        if (slotId == 12) {
-            TreasuryManager.setTaxPercent(TreasuryManager.getTaxPercent() - 1);
-            refresh();
-            return;
-        }
+        if (slotId == 19) TreasuryManager.setTaxPercent(TreasuryManager.getTaxPercent() - 1);
+        if (slotId == 21) TreasuryManager.setTaxPercent(TreasuryManager.getTaxPercent() + 1);
 
-        if (slotId == 14) {
-            TreasuryManager.setTaxPercent(TreasuryManager.getTaxPercent() + 1);
-            refresh();
-            return;
-        }
+        if (slotId == 23) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
+        if (slotId == 25) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
 
-        if (slotId == 16) {
+        if (slotId == 28) TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
+        if (slotId == 30) TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
+
+        if (slotId == 32) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
+        if (slotId == 34) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
+
+        if (slotId == 40) {
             JobsInputManager.startServerJob(sp);
             return;
         }
 
-        if (slotId == 22) {
-            PlotzJobsMenu.open(sp, 0);
+        if (slotId == 42) {
+            PlotzJobsMenu.open(sp, 0, false, true);
+            return;
         }
+
+        refresh();
     }
 
     @Override

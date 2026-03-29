@@ -14,7 +14,7 @@ public final class JobsInputManager {
         TITLE,
         DESCRIPTION,
         REWARD,
-        DUE
+        DUE_DAYS
     }
 
     private record Draft(boolean serverJob, Stage stage, String title, String description, int reward) {}
@@ -66,11 +66,24 @@ public final class JobsInputManager {
                     return true;
                 }
 
-                DRAFTS.put(player.getUUID(), new Draft(draft.serverJob(), Stage.DUE, draft.title(), draft.description(), reward));
-                player.sendSystemMessage(Component.literal("§eEnter the due date / deadline text in chat now."));
+                DRAFTS.put(player.getUUID(), new Draft(draft.serverJob(), Stage.DUE_DAYS, draft.title(), draft.description(), reward));
+                player.sendSystemMessage(Component.literal("§eEnter the due time in full days now."));
                 return true;
             }
-            case DUE -> {
+            case DUE_DAYS -> {
+                int dueDays;
+                try {
+                    dueDays = Integer.parseInt(message.trim());
+                } catch (NumberFormatException e) {
+                    player.sendSystemMessage(Component.literal("§cThat is not a valid number."));
+                    return true;
+                }
+
+                if (dueDays <= 0) {
+                    player.sendSystemMessage(Component.literal("§cDue days must be above 0."));
+                    return true;
+                }
+
                 DRAFTS.remove(player.getUUID());
 
                 if (draft.serverJob()) {
@@ -82,7 +95,7 @@ public final class JobsInputManager {
                 } else {
                     if (!BalanceManager.removeBalance(player.getUUID(), draft.reward())) {
                         player.sendSystemMessage(Component.literal("§cYou do not have enough money to create this job."));
-                        PlotzJobsMenu.open(player, 0);
+                        PlotzJobsMenu.open(player, 0, true, false);
                         return true;
                     }
                 }
@@ -93,7 +106,7 @@ public final class JobsInputManager {
                     draft.title(),
                     draft.description(),
                     draft.reward(),
-                    message,
+                    dueDays,
                     draft.serverJob()
                 );
 
@@ -101,7 +114,7 @@ public final class JobsInputManager {
                 if (draft.serverJob()) {
                     PlotzServerModeMenu.open(player);
                 } else {
-                    PlotzJobsMenu.open(player, 0);
+                    PlotzJobsMenu.open(player, 0, true, false);
                 }
                 return true;
             }

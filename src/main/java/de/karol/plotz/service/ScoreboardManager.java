@@ -1,15 +1,12 @@
 package de.karol.plotz.service;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public final class ScoreboardManager {
@@ -23,7 +20,6 @@ public final class ScoreboardManager {
                 .withSuppressedOutput()
                 .withPermission(4);
 
-            // Objective neu aufbauen
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives remove " + OBJECTIVE);
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives add " + OBJECTIVE + " dummy \"Balance\"");
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives setdisplay sidebar " + OBJECTIVE);
@@ -35,43 +31,20 @@ public final class ScoreboardManager {
             for (Map.Entry<UUID, Long> entry : entries) {
                 if (count >= 5) break;
 
-                String name = resolveName(server, entry.getKey());
-                String fakeName = sanitize((count + 1) + "_" + name);
+                String name = sanitize(BalanceManager.resolveDisplayName(server, entry.getKey()));
                 server.getCommands().performPrefixedCommand(
                     source,
-                    "scoreboard players set " + fakeName + " " + OBJECTIVE + " " + entry.getValue()
+                    "scoreboard players set " + name + " " + OBJECTIVE + " " + entry.getValue()
                 );
                 count++;
             }
 
-            // Sicherheitshalber für alle Online-Spieler nochmal Sidebar setzen
-            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                server.getCommands().performPrefixedCommand(
-                    player.createCommandSourceStack().withSuppressedOutput().withPermission(4),
-                    "scoreboard objectives setdisplay sidebar " + OBJECTIVE
-                );
-            }
+            server.getCommands().performPrefixedCommand(source, "scoreboard objectives setdisplay sidebar " + OBJECTIVE);
         } catch (Exception ignored) {
         }
     }
 
     private static String sanitize(String input) {
         return input.replaceAll("[^A-Za-z0-9_]", "_");
-    }
-
-    private static String resolveName(MinecraftServer server, UUID uuid) {
-        ServerPlayer online = server.getPlayerList().getPlayer(uuid);
-        if (online != null) {
-            return online.getGameProfile().getName();
-        }
-
-        if (server.getProfileCache() != null) {
-            Optional<GameProfile> cached = server.getProfileCache().get(uuid);
-            if (cached.isPresent()) {
-                return cached.get().getName();
-            }
-        }
-
-        return uuid.toString().substring(0, 8);
     }
 }

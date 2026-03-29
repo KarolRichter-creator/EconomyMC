@@ -22,7 +22,10 @@ public final class TreasuryManager {
 
         if (!Files.exists(FILE)) {
             PROPS.setProperty("treasury", "0");
-            PROPS.setProperty("taxPercent", "4");
+            PROPS.setProperty("taxPercent", "1");
+            PROPS.setProperty("overduePenaltyPercent", "1");
+            PROPS.setProperty("cancelPenaltyPercent", "1");
+            PROPS.setProperty("maxOverdueDays", "30");
             save();
             return;
         }
@@ -54,7 +57,7 @@ public final class TreasuryManager {
 
     public static void setTreasury(long amount) {
         ensureLoaded();
-        PROPS.setProperty("treasury", Long.toString(Math.max(0L, amount)));
+        PROPS.setProperty("treasury", Long.toString(amount));
         save();
     }
 
@@ -73,21 +76,69 @@ public final class TreasuryManager {
 
     public static int getTaxPercent() {
         ensureLoaded();
-        try {
-            return Integer.parseInt(PROPS.getProperty("taxPercent", "4"));
-        } catch (NumberFormatException e) {
-            return 4;
-        }
+        return parseClamped("taxPercent", 1);
     }
 
     public static void setTaxPercent(int percent) {
         ensureLoaded();
-        int clamped = Math.max(0, Math.min(100, percent));
-        PROPS.setProperty("taxPercent", Integer.toString(clamped));
+        PROPS.setProperty("taxPercent", Integer.toString(Math.max(1, Math.min(100, percent))));
+        save();
+    }
+
+    public static int getOverduePenaltyPercent() {
+        ensureLoaded();
+        return parseClamped("overduePenaltyPercent", 1);
+    }
+
+    public static void setOverduePenaltyPercent(int percent) {
+        ensureLoaded();
+        PROPS.setProperty("overduePenaltyPercent", Integer.toString(Math.max(1, Math.min(100, percent))));
+        save();
+    }
+
+    public static int getCancelPenaltyPercent() {
+        ensureLoaded();
+        return parseClamped("cancelPenaltyPercent", 1);
+    }
+
+    public static void setCancelPenaltyPercent(int percent) {
+        ensureLoaded();
+        PROPS.setProperty("cancelPenaltyPercent", Integer.toString(Math.max(1, Math.min(100, percent))));
+        save();
+    }
+
+    public static int getMaxOverdueDays() {
+        ensureLoaded();
+        try {
+            return Math.max(1, Integer.parseInt(PROPS.getProperty("maxOverdueDays", "30")));
+        } catch (NumberFormatException e) {
+            return 30;
+        }
+    }
+
+    public static void setMaxOverdueDays(int days) {
+        ensureLoaded();
+        PROPS.setProperty("maxOverdueDays", Integer.toString(Math.max(1, days)));
         save();
     }
 
     public static int calculateTax(int amount) {
         return (int) Math.floor(amount * (getTaxPercent() / 100.0));
+    }
+
+    public static int calculateCancelPenalty(int reward) {
+        return (int) Math.floor(reward * (getCancelPenaltyPercent() / 100.0));
+    }
+
+    public static int calculateOverdueReduction(int reward, long overdueDays) {
+        return (int) Math.floor(reward * ((getOverduePenaltyPercent() / 100.0) * overdueDays));
+    }
+
+    private static int parseClamped(String key, int fallback) {
+        try {
+            return Math.max(1, Math.min(100, Integer.parseInt(PROPS.getProperty(key, Integer.toString(fallback)))));
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
     }
 }

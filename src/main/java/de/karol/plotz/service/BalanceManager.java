@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.UUID;
 
 public final class BalanceManager {
+    public static final UUID SERVER_ACCOUNT_ID = UUID.fromString("00000000-0000-0000-0000-000000000999");
+
     private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("plotz-balances.properties");
     private static final Properties PROPS = new Properties();
     private static boolean loaded = false;
@@ -57,7 +59,7 @@ public final class BalanceManager {
 
     public static void setBalance(UUID playerId, long amount) {
         ensureLoaded();
-        PROPS.setProperty(playerId.toString(), Long.toString(Math.max(0L, amount)));
+        PROPS.setProperty(playerId.toString(), Long.toString(amount));
         save();
     }
 
@@ -68,20 +70,44 @@ public final class BalanceManager {
     public static boolean removeBalance(UUID playerId, long amount) {
         long current = getBalance(playerId);
         if (current < amount) return false;
-
         setBalance(playerId, current - amount);
         return true;
     }
 
+    public static void addBalanceAllowNegative(UUID playerId, long delta) {
+        setBalance(playerId, getBalance(playerId) + delta);
+    }
+
     public static Optional<UUID> resolveKnownPlayer(MinecraftServer server, String name) {
         GameProfileCache cache = server.getProfileCache();
-        if (cache == null) {
-            return Optional.empty();
-        }
+        if (cache == null) return Optional.empty();
 
         Optional<GameProfile> profile = cache.get(name);
         profile.ifPresent(p -> setBalance(p.getId(), getBalance(p.getId())));
         return profile.map(GameProfile::getId);
+    }
+
+    public static Optional<UUID> resolveKnownAccount(MinecraftServer server, String name) {
+        if (name.equalsIgnoreCase("server")) {
+            setBalance(SERVER_ACCOUNT_ID, getBalance(SERVER_ACCOUNT_ID));
+            return Optional.of(SERVER_ACCOUNT_ID);
+        }
+        return resolveKnownPlayer(server, name);
+    }
+
+    public static String resolveDisplayName(MinecraftServer server, UUID uuid) {
+        if (SERVER_ACCOUNT_ID.equals(uuid)) {
+            return "Server";
+        }
+
+        if (server.getProfileCache() != null) {
+            Optional<GameProfile> cached = server.getProfileCache().get(uuid);
+            if (cached.isPresent()) {
+                return cached.get().getName();
+            }
+        }
+
+        return uuid.toString().substring(0, 8);
     }
 
     public static Map<UUID, Long> getAllBalances() {

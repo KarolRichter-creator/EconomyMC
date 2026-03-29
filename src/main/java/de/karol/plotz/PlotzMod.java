@@ -1,10 +1,10 @@
 package de.karol.plotz;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import de.karol.plotz.menu.PlotzMainMenu;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import de.karol.plotz.menu.PlotzJobsMenu;
+import de.karol.plotz.menu.PlotzMainMenu;
 import de.karol.plotz.menu.PlotzServerModeMenu;
 import de.karol.plotz.menu.PlotzShopMenu;
 import de.karol.plotz.service.BalanceManager;
@@ -19,7 +19,6 @@ import de.karol.plotz.service.ShopInputManager;
 import de.karol.plotz.service.TreasuryManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,7 +31,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
 
-import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
 
 @Mod(PlotzMod.MOD_ID)
 public class PlotzMod {
@@ -88,7 +88,7 @@ public class PlotzMod {
                         return 0;
                     }
 
-                    PlotzJobsMenu.open(player, 0);
+                    PlotzJobsMenu.open(player, 0, true, false);
                     return 1;
                 })
         );
@@ -125,8 +125,8 @@ public class PlotzMod {
                     }
 
                     BalanceManager.addBalance(player.getUUID(), 100);
-                    DailyRewardManager.markClaimed(player.getUUID());
                     ScoreboardManager.update(player.server);
+                    DailyRewardManager.markClaimed(player.getUUID());
                     player.sendSystemMessage(Component.literal("§aYou claimed your daily $100."));
                     return 1;
                 })
@@ -135,7 +135,7 @@ public class PlotzMod {
         dispatcher.register(
             Commands.literal("pay")
                 .requires(source -> source.hasPermission(0))
-                .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                .then(Commands.argument("player", StringArgumentType.word())
                     .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                         .executes(ctx -> {
                             if (!(ctx.getSource().getEntity() instanceof ServerPlayer sender)) {
@@ -143,16 +143,17 @@ public class PlotzMod {
                                 return 0;
                             }
 
-                            Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
-                            if (profiles.isEmpty()) {
-                                ctx.getSource().sendFailure(Component.literal("Player not found."));
+                            String name = StringArgumentType.getString(ctx, "player");
+                            int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                            Optional<UUID> resolved = BalanceManager.resolveKnownPlayer(sender.server, name);
+                            if (resolved.isEmpty()) {
+                                ctx.getSource().sendFailure(Component.literal("§cOnly players who already joined this world can receive money."));
                                 return 0;
                             }
 
-                            GameProfile target = profiles.iterator().next();
-                            int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                            if (target.getId().equals(sender.getUUID())) {
+                            UUID targetId = resolved.get();
+                            if (targetId.equals(sender.getUUID())) {
                                 ctx.getSource().sendFailure(Component.literal("§cYou cannot pay yourself."));
                                 return 0;
                             }
@@ -162,11 +163,11 @@ public class PlotzMod {
                                 return 0;
                             }
 
-                            BalanceManager.addBalance(target.getId(), amount);
+                            BalanceManager.addBalance(targetId, amount);
                             ScoreboardManager.update(sender.server);
 
-                            sender.sendSystemMessage(Component.literal("§aYou paid $" + amount + " to " + target.getName() + "."));
-                            ServerPlayer onlineTarget = sender.server.getPlayerList().getPlayer(target.getId());
+                            sender.sendSystemMessage(Component.literal("§aYou paid $" + amount + " to " + name + "."));
+                            ServerPlayer onlineTarget = sender.server.getPlayerList().getPlayer(targetId);
                             if (onlineTarget != null) {
                                 onlineTarget.sendSystemMessage(Component.literal("§aYou received $" + amount + " from " + sender.getGameProfile().getName() + "."));
                             }
@@ -216,57 +217,61 @@ public class PlotzMod {
                     return 1;
                 }))
                 .then(Commands.literal("setmoney")
-                    .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                    .then(Commands.argument("account", StringArgumentType.word())
                         .then(Commands.argument("amount", IntegerArgumentType.integer(0))
                             .executes(ctx -> {
-                                Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
-                                if (profiles.isEmpty()) {
-                                    ctx.getSource().sendFailure(Component.literal("Player not found."));
+                                String account = StringArgumentType.getString(ctx, "account");
+                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                                Optional<UUID> target = BalanceManager.resolveKnownAccount(ctx.getSource().getServer(), account);
+                                if (target.isEmpty()) {
+                                    ctx.getSource().sendFailure(Component.literal("§cOnly known players or Server are allowed."));
                                     return 0;
                                 }
 
-                                GameProfile target = profiles.iterator().next();
-                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                BalanceManager.setBalance(target.getId(), amount);
+                                BalanceManager.setBalance(target.get(), amount);
                                 ScoreboardManager.update(ctx.getSource().getServer());
-                                ctx.getSource().sendSuccess(() -> Component.literal("§aSet balance of " + target.getName() + " to $" + amount), false);
+                                ctx.getSource().sendSuccess(() -> Component.literal("§aSet balance of " + account + " to $" + amount), false);
                                 return 1;
                             }))))
                 .then(Commands.literal("addmoney")
-                    .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                    .then(Commands.argument("account", StringArgumentType.word())
                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                             .executes(ctx -> {
-                                Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
-                                if (profiles.isEmpty()) {
-                                    ctx.getSource().sendFailure(Component.literal("Player not found."));
+                                String account = StringArgumentType.getString(ctx, "account");
+                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                                Optional<UUID> target = BalanceManager.resolveKnownAccount(ctx.getSource().getServer(), account);
+                                if (target.isEmpty()) {
+                                    ctx.getSource().sendFailure(Component.literal("§cOnly known players or Server are allowed."));
                                     return 0;
                                 }
 
-                                GameProfile target = profiles.iterator().next();
-                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                BalanceManager.addBalance(target.getId(), amount);
+                                BalanceManager.addBalance(target.get(), amount);
                                 ScoreboardManager.update(ctx.getSource().getServer());
-                                ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to " + target.getName()), false);
+                                ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to " + account), false);
                                 return 1;
                             }))))
                 .then(Commands.literal("removemoney")
-                    .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                    .then(Commands.argument("account", StringArgumentType.word())
                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                             .executes(ctx -> {
-                                Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(ctx, "player");
-                                if (profiles.isEmpty()) {
-                                    ctx.getSource().sendFailure(Component.literal("Player not found."));
+                                String account = StringArgumentType.getString(ctx, "account");
+                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                                Optional<UUID> target = BalanceManager.resolveKnownAccount(ctx.getSource().getServer(), account);
+                                if (target.isEmpty()) {
+                                    ctx.getSource().sendFailure(Component.literal("§cOnly known players or Server are allowed."));
                                     return 0;
                                 }
 
-                                GameProfile target = profiles.iterator().next();
-                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                if (!BalanceManager.removeBalance(target.getId(), amount)) {
-                                    ctx.getSource().sendFailure(Component.literal("§cPlayer does not have enough money."));
+                                if (!BalanceManager.removeBalance(target.get(), amount)) {
+                                    ctx.getSource().sendFailure(Component.literal("§cAccount does not have enough money."));
                                     return 0;
                                 }
+
                                 ScoreboardManager.update(ctx.getSource().getServer());
-                                ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from " + target.getName()), false);
+                                ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from " + account), false);
                                 return 1;
                             }))))
         );
@@ -298,6 +303,7 @@ public class PlotzMod {
     private void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             BalanceManager.setBalance(player.getUUID(), BalanceManager.getBalance(player.getUUID()));
+            JobManager.processExpiredJobs();
             ScoreboardManager.update(player.server);
         }
     }
@@ -309,7 +315,8 @@ public class PlotzMod {
     }
 
     private void onServerStarted(ServerStartedEvent event) {
-        ScoreboardManager.update(event.getServer());
         TreasuryManager.getTreasury();
+        JobManager.processExpiredJobs();
+        ScoreboardManager.update(event.getServer());
     }
 }
