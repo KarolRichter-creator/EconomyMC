@@ -2,6 +2,7 @@ package de.karol.plotz.menu;
 
 import de.karol.plotz.data.PlotzStore;
 import de.karol.plotz.service.PlotzLogic;
+import de.karol.plotz.service.TreasuryManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -141,7 +142,11 @@ public class PlotzListingDetailMenu extends ChestMenu {
             return;
         }
 
-        PlotzLogic.paySeller(sp, listing.sellerName(), listing.price());
+        int tax = TreasuryManager.calculateTax(listing.price());
+        int sellerPayout = Math.max(0, listing.price() - tax);
+
+        TreasuryManager.addTreasury(tax);
+        PlotzLogic.paySeller(sp, listing.sellerName(), sellerPayout);
 
         PlotzStore.addOwnedPlot(new PlotzStore.PlotEntry(
             sp.getUUID(),
@@ -154,7 +159,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
         ));
 
         PlotzStore.removeListing(listing.listingId());
-        sp.sendSystemMessage(Component.literal("§aYou bought the plot: " + listing.title()));
+        sp.sendSystemMessage(Component.literal("§aYou bought the plot: " + listing.title() + " §7(Tax: $" + tax + ")"));
         PlotzMyPlotsMenu.open(sp);
     }
 

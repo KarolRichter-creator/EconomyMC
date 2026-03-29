@@ -4,14 +4,19 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import de.karol.plotz.menu.PlotzMainMenu;
+import de.karol.plotz.menu.PlotzJobsMenu;
+import de.karol.plotz.menu.PlotzServerModeMenu;
 import de.karol.plotz.menu.PlotzShopMenu;
 import de.karol.plotz.service.BalanceManager;
 import de.karol.plotz.service.CapitalAreaManager;
 import de.karol.plotz.service.DailyRewardManager;
 import de.karol.plotz.service.DraftInputManager;
+import de.karol.plotz.service.JobManager;
+import de.karol.plotz.service.JobsInputManager;
 import de.karol.plotz.service.OpacBridge;
 import de.karol.plotz.service.ScoreboardManager;
 import de.karol.plotz.service.ShopInputManager;
+import de.karol.plotz.service.TreasuryManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
@@ -50,10 +55,8 @@ public class PlotzMod {
             Commands.literal("plotz")
                 .requires(source -> source.hasPermission(0))
                 .executes(ctx -> {
-                    CommandSourceStack source = ctx.getSource();
-
-                    if (!(source.getEntity() instanceof ServerPlayer player)) {
-                        source.sendFailure(Component.literal("Nur Spieler können /plotz benutzen."));
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /plotz."));
                         return 0;
                     }
 
@@ -72,6 +75,34 @@ public class PlotzMod {
                     }
 
                     PlotzShopMenu.open(player);
+                    return 1;
+                })
+        );
+
+        dispatcher.register(
+            Commands.literal("jobs")
+                .requires(source -> source.hasPermission(0))
+                .executes(ctx -> {
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /jobs."));
+                        return 0;
+                    }
+
+                    PlotzJobsMenu.open(player, 0);
+                    return 1;
+                })
+        );
+
+        dispatcher.register(
+            Commands.literal("plotzservermode")
+                .requires(source -> source.hasPermission(2))
+                .executes(ctx -> {
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /plotzservermode."));
+                        return 0;
+                    }
+
+                    PlotzServerModeMenu.open(player);
                     return 1;
                 })
         );
@@ -148,32 +179,30 @@ public class PlotzMod {
             Commands.literal("plotzadmin")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("pos1").executes(ctx -> {
-                    CommandSourceStack source = ctx.getSource();
-                    if (!(source.getEntity() instanceof ServerPlayer player)) {
-                        source.sendFailure(Component.literal("Nur Spieler können diesen Befehl benutzen."));
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
                         return 0;
                     }
 
                     BlockPos pos = player.blockPosition();
                     CapitalAreaManager.setPos1(pos);
-                    source.sendSuccess(() -> Component.literal("§aCapital pos1 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos1 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
                     return 1;
                 }))
                 .then(Commands.literal("pos2").executes(ctx -> {
-                    CommandSourceStack source = ctx.getSource();
-                    if (!(source.getEntity() instanceof ServerPlayer player)) {
-                        source.sendFailure(Component.literal("Nur Spieler können diesen Befehl benutzen."));
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
                         return 0;
                     }
 
                     BlockPos pos = player.blockPosition();
                     CapitalAreaManager.setPos2(pos);
-                    source.sendSuccess(() -> Component.literal("§aCapital pos2 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos2 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
                     return 1;
                 }))
                 .then(Commands.literal("setcapital").executes(ctx -> {
                     if (!CapitalAreaManager.canCreateArea()) {
-                        ctx.getSource().sendFailure(Component.literal("§cSetze zuerst /plotzadmin pos1 und /plotzadmin pos2."));
+                        ctx.getSource().sendFailure(Component.literal("§cSet /plotzadmin pos1 and /plotzadmin pos2 first."));
                         return 0;
                     }
 
@@ -250,14 +279,17 @@ public class PlotzMod {
 
     private void onServerChat(ServerChatEvent event) {
         if (event.getPlayer() instanceof ServerPlayer player) {
-            boolean handledShop = ShopInputManager.handleChat(player, event.getRawText());
-            if (handledShop) {
+            if (ShopInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
                 return;
             }
 
-            boolean handledDraft = DraftInputManager.handleChat(player, event.getRawText());
-            if (handledDraft) {
+            if (DraftInputManager.handleChat(player, event.getRawText())) {
+                event.setCanceled(true);
+                return;
+            }
+
+            if (JobsInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
             }
         }
@@ -278,5 +310,6 @@ public class PlotzMod {
 
     private void onServerStarted(ServerStartedEvent event) {
         ScoreboardManager.update(event.getServer());
+        TreasuryManager.getTreasury();
     }
 }

@@ -3,6 +3,7 @@ package de.karol.plotz.menu;
 import de.karol.plotz.data.PlotzStore;
 import de.karol.plotz.service.BalanceManager;
 import de.karol.plotz.service.ScoreboardManager;
+import de.karol.plotz.service.TreasuryManager;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -150,7 +151,11 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
             return;
         }
 
-        BalanceManager.addBalance(listing.sellerId(), listing.price());
+        int tax = TreasuryManager.calculateTax(listing.price());
+        int sellerPayout = Math.max(0, listing.price() - tax);
+
+        TreasuryManager.addTreasury(tax);
+        BalanceManager.addBalance(listing.sellerId(), sellerPayout);
         ScoreboardManager.update(sp.server);
 
         for (ItemStack stack : listing.items()) {
@@ -160,7 +165,7 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
         }
 
         PlotzStore.removeShopListing(listingId);
-        sp.sendSystemMessage(Component.literal("§aItem(s) bought for $" + listing.price()));
+        sp.sendSystemMessage(Component.literal("§aItem(s) bought for $" + listing.price() + " §7(Tax: $" + tax + ")"));
         PlotzShopMenu.open(sp, returnPage);
     }
 
