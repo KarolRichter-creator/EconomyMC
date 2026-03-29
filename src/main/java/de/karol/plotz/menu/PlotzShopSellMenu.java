@@ -134,7 +134,8 @@ public class PlotzShopSellMenu extends ChestMenu {
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (!(player instanceof ServerPlayer sp)) return;
 
-        if (slotId >= 45) {
+        // Nur die untere Steuerleiste des Shop-Menüs blockieren
+        if (slotId >= 45 && slotId <= 53) {
             if (slotId == 49) {
                 saveDraftFromContainer();
                 PlotzStore.ShopDraft draft = PlotzStore.getShopDraft(sp.getUUID());

@@ -23,8 +23,9 @@ public final class ScoreboardManager {
                 .withSuppressedOutput()
                 .withPermission(4);
 
+            // Objective neu aufbauen
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives remove " + OBJECTIVE);
-            server.getCommands().performPrefixedCommand(source, "scoreboard objectives add " + OBJECTIVE + " dummy Balance");
+            server.getCommands().performPrefixedCommand(source, "scoreboard objectives add " + OBJECTIVE + " dummy \"Balance\"");
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives setdisplay sidebar " + OBJECTIVE);
 
             List<Map.Entry<UUID, Long>> entries = new ArrayList<>(BalanceManager.getAllBalances().entrySet());
@@ -35,12 +36,20 @@ public final class ScoreboardManager {
                 if (count >= 5) break;
 
                 String name = resolveName(server, entry.getKey());
-                String fakeName = (count + 1) + "." + sanitize(name);
+                String fakeName = sanitize((count + 1) + "_" + name);
                 server.getCommands().performPrefixedCommand(
                     source,
                     "scoreboard players set " + fakeName + " " + OBJECTIVE + " " + entry.getValue()
                 );
                 count++;
+            }
+
+            // Sicherheitshalber für alle Online-Spieler nochmal Sidebar setzen
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                server.getCommands().performPrefixedCommand(
+                    player.createCommandSourceStack().withSuppressedOutput().withPermission(4),
+                    "scoreboard objectives setdisplay sidebar " + OBJECTIVE
+                );
             }
         } catch (Exception ignored) {
         }
