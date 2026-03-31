@@ -111,16 +111,11 @@ public final class JobManager {
     public static JobEntry getJob(String id) {
         ensureLoaded();
         String base = "job." + id + ".";
-        if (!PROPS.containsKey(base + "title")) {
-            return null;
-        }
-
-        UUID creatorId = parseUuid(PROPS.getProperty(base + "creatorId", ""));
-        UUID workerId = parseUuid(PROPS.getProperty(base + "workerId", ""));
+        if (!PROPS.containsKey(base + "title")) return null;
 
         return new JobEntry(
             id,
-            creatorId,
+            parseUuid(PROPS.getProperty(base + "creatorId", "")),
             PROPS.getProperty(base + "creatorName", "Unknown"),
             PROPS.getProperty(base + "title", "Untitled"),
             PROPS.getProperty(base + "description", ""),
@@ -130,7 +125,7 @@ public final class JobManager {
             parseLong(PROPS.getProperty(base + "dueAt", "0"), 0L),
             Boolean.parseBoolean(PROPS.getProperty(base + "serverJob", "false")),
             parseStatus(PROPS.getProperty(base + "status", "OPEN")),
-            workerId,
+            parseUuid(PROPS.getProperty(base + "workerId", "")),
             PROPS.getProperty(base + "workerName", ""),
             parseLong(PROPS.getProperty(base + "acceptedAt", "0"), 0L),
             parseLong(PROPS.getProperty(base + "completedAt", "0"), 0L)
@@ -158,9 +153,7 @@ public final class JobManager {
 
     public static boolean acceptJob(String id, UUID workerId, String workerName) {
         JobEntry job = getJob(id);
-        if (job == null || job.status() != JobStatus.OPEN) {
-            return false;
-        }
+        if (job == null || job.status() != JobStatus.OPEN) return false;
 
         String base = "job." + id + ".";
         PROPS.setProperty(base + "status", JobStatus.IN_PROGRESS.name());
@@ -173,9 +166,7 @@ public final class JobManager {
 
     public static boolean markCompleted(String id, UUID workerId) {
         JobEntry job = getJob(id);
-        if (job == null || job.status() != JobStatus.IN_PROGRESS || job.workerId() == null || !job.workerId().equals(workerId)) {
-            return false;
-        }
+        if (job == null || job.status() != JobStatus.IN_PROGRESS || job.workerId() == null || !job.workerId().equals(workerId)) return false;
 
         String base = "job." + id + ".";
         PROPS.setProperty(base + "status", JobStatus.COMPLETED.name());
@@ -186,9 +177,7 @@ public final class JobManager {
 
     public static boolean confirmJob(String id) {
         JobEntry job = getJob(id);
-        if (job == null || job.status() != JobStatus.COMPLETED) {
-            return false;
-        }
+        if (job == null || job.status() != JobStatus.COMPLETED) return false;
 
         int finalReward = calculateCurrentReward(job);
         if (job.workerId() != null && finalReward != 0) {
@@ -206,9 +195,7 @@ public final class JobManager {
 
     public static boolean cancelByWorker(String id) {
         JobEntry job = getJob(id);
-        if (job == null || job.status() != JobStatus.IN_PROGRESS || job.workerId() == null) {
-            return false;
-        }
+        if (job == null || job.status() != JobStatus.IN_PROGRESS || job.workerId() == null) return false;
 
         int penalty = TreasuryManager.calculateCancelPenalty(job.reward());
         BalanceManager.addBalanceAllowNegative(job.workerId(), -penalty);
@@ -219,9 +206,7 @@ public final class JobManager {
 
     public static boolean withdrawByCreator(String id) {
         JobEntry job = getJob(id);
-        if (job == null || job.status() != JobStatus.OPEN) {
-            return false;
-        }
+        if (job == null || job.status() != JobStatus.OPEN) return false;
 
         refundCreator(job, job.reward());
         setStatus(id, JobStatus.CANCELLED);
@@ -236,11 +221,8 @@ public final class JobManager {
 
     public static long getOverdueDays(JobEntry job) {
         long now = System.currentTimeMillis();
-        if (now <= job.dueAt()) {
-            return 0L;
-        }
-        long diff = now - job.dueAt();
-        return diff / (24L * 60L * 60L * 1000L);
+        if (now <= job.dueAt()) return 0L;
+        return (now - job.dueAt()) / (24L * 60L * 60L * 1000L);
     }
 
     public static void processExpiredJobs() {
@@ -286,9 +268,7 @@ public final class JobManager {
             if (key.startsWith("job.") && key.endsWith(".title")) {
                 String id = key.substring(4, key.length() - 6);
                 JobEntry entry = getJob(id);
-                if (entry != null) {
-                    result.add(entry);
-                }
+                if (entry != null) result.add(entry);
             }
         }
         return result;

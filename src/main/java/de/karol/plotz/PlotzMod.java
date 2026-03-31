@@ -3,12 +3,17 @@ package de.karol.plotz;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import de.karol.plotz.menu.PlotzAdminModeMenu;
+import de.karol.plotz.menu.PlotzChecksMenu;
 import de.karol.plotz.menu.PlotzJobsMenu;
 import de.karol.plotz.menu.PlotzMainMenu;
 import de.karol.plotz.menu.PlotzServerModeMenu;
 import de.karol.plotz.menu.PlotzShopMenu;
+import de.karol.plotz.service.AdminSettingsManager;
 import de.karol.plotz.service.BalanceManager;
 import de.karol.plotz.service.CapitalAreaManager;
+import de.karol.plotz.service.CheckManager;
+import de.karol.plotz.service.ChecksInputManager;
 import de.karol.plotz.service.DailyRewardManager;
 import de.karol.plotz.service.DraftInputManager;
 import de.karol.plotz.service.JobManager;
@@ -60,7 +65,6 @@ public class PlotzMod {
                         ctx.getSource().sendFailure(Component.literal("Only players can use /plotz."));
                         return 0;
                     }
-
                     PlotzMainMenu.open(player);
                     return 1;
                 })
@@ -70,11 +74,14 @@ public class PlotzMod {
             Commands.literal("shop")
                 .requires(source -> source.hasPermission(0))
                 .executes(ctx -> {
+                    if (!AdminSettingsManager.shopEnabled()) {
+                        ctx.getSource().sendFailure(Component.literal("§cShop is disabled by admin."));
+                        return 0;
+                    }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
                         ctx.getSource().sendFailure(Component.literal("Only players can use /shop."));
                         return 0;
                     }
-
                     PlotzShopMenu.open(player);
                     return 1;
                 })
@@ -84,26 +91,87 @@ public class PlotzMod {
             Commands.literal("jobs")
                 .requires(source -> source.hasPermission(0))
                 .executes(ctx -> {
+                    if (!AdminSettingsManager.jobsEnabled()) {
+                        ctx.getSource().sendFailure(Component.literal("§cJobs are disabled by admin."));
+                        return 0;
+                    }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
                         ctx.getSource().sendFailure(Component.literal("Only players can use /jobs."));
                         return 0;
                     }
-
                     PlotzJobsMenu.open(player, 0, true, false);
                     return 1;
                 })
         );
 
         dispatcher.register(
+            Commands.literal("checks")
+                .requires(source -> source.hasPermission(0))
+                .executes(ctx -> {
+                    if (!AdminSettingsManager.checksEnabled()) {
+                        ctx.getSource().sendFailure(Component.literal("§cChecks are disabled by admin."));
+                        return 0;
+                    }
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /checks."));
+                        return 0;
+                    }
+                    PlotzChecksMenu.open(player, 0);
+                    return 1;
+                })
+        );
+
+        dispatcher.register(
+            Commands.literal("checkredeem")
+                .requires(source -> source.hasPermission(0))
+                .then(Commands.argument("id", StringArgumentType.word())
+                    .then(Commands.argument("code", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                ctx.getSource().sendFailure(Component.literal("Only players can use /checkredeem."));
+                                return 0;
+                            }
+
+                            String id = StringArgumentType.getString(ctx, "id");
+                            String code = StringArgumentType.getString(ctx, "code");
+                            boolean ok = CheckManager.redeem(id, code, player.getUUID(), player.getGameProfile().getName());
+                            if (!ok) {
+                                ctx.getSource().sendFailure(Component.literal("§cInvalid code or check already redeemed."));
+                                return 0;
+                            }
+
+                            ScoreboardManager.update(player.server);
+                            player.sendSystemMessage(Component.literal("§aCheck redeemed successfully."));
+                            return 1;
+                        })))
+        );
+
+        dispatcher.register(
             Commands.literal("plotzservermode")
                 .requires(source -> source.hasPermission(2))
                 .executes(ctx -> {
+                    if (!AdminSettingsManager.serverModeEnabled()) {
+                        ctx.getSource().sendFailure(Component.literal("§cServer mode is disabled by admin."));
+                        return 0;
+                    }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
                         ctx.getSource().sendFailure(Component.literal("Only players can use /plotzservermode."));
                         return 0;
                     }
-
                     PlotzServerModeMenu.open(player);
+                    return 1;
+                })
+        );
+
+        dispatcher.register(
+            Commands.literal("adminmode")
+                .requires(source -> source.hasPermission(2))
+                .executes(ctx -> {
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /adminmode."));
+                        return 0;
+                    }
+                    PlotzAdminModeMenu.open(player);
                     return 1;
                 })
         );
@@ -188,7 +256,6 @@ public class PlotzMod {
                         ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
                         return 0;
                     }
-
                     BlockPos pos = player.blockPosition();
                     CapitalAreaManager.setPos1(pos);
                     ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos1 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
@@ -199,7 +266,6 @@ public class PlotzMod {
                         ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
                         return 0;
                     }
-
                     BlockPos pos = player.blockPosition();
                     CapitalAreaManager.setPos2(pos);
                     ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos2 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
@@ -210,7 +276,6 @@ public class PlotzMod {
                         ctx.getSource().sendFailure(Component.literal("§cSet /plotzadmin pos1 and /plotzadmin pos2 first."));
                         return 0;
                     }
-
                     CapitalAreaManager.applyArea();
                     ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area saved."), false);
                     return 1;
@@ -332,6 +397,11 @@ public class PlotzMod {
             }
 
             if (JobsInputManager.handleChat(player, event.getRawText())) {
+                event.setCanceled(true);
+                return;
+            }
+
+            if (ChecksInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
             }
         }

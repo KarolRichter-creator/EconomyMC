@@ -86,34 +86,34 @@ public final class TreasuryManager {
 
     public static int getTaxPercent() {
         ensureLoaded();
-        return parseClamped("taxPercent", 1);
+        return parseClamped("taxPercent", AdminSettingsManager.minTaxPercent());
     }
 
     public static void setTaxPercent(int percent) {
         ensureLoaded();
-        PROPS.setProperty("taxPercent", Integer.toString(Math.max(1, Math.min(100, percent))));
+        PROPS.setProperty("taxPercent", Integer.toString(Math.max(AdminSettingsManager.minTaxPercent(), Math.min(100, percent))));
         save();
     }
 
     public static int getOverduePenaltyPercent() {
         ensureLoaded();
-        return parseClamped("overduePenaltyPercent", 1);
+        return parseClamped("overduePenaltyPercent", AdminSettingsManager.minOverduePercent());
     }
 
     public static void setOverduePenaltyPercent(int percent) {
         ensureLoaded();
-        PROPS.setProperty("overduePenaltyPercent", Integer.toString(Math.max(1, Math.min(100, percent))));
+        PROPS.setProperty("overduePenaltyPercent", Integer.toString(Math.max(AdminSettingsManager.minOverduePercent(), Math.min(100, percent))));
         save();
     }
 
     public static int getCancelPenaltyPercent() {
         ensureLoaded();
-        return parseClamped("cancelPenaltyPercent", 1);
+        return parseClamped("cancelPenaltyPercent", AdminSettingsManager.minCancelPercent());
     }
 
     public static void setCancelPenaltyPercent(int percent) {
         ensureLoaded();
-        PROPS.setProperty("cancelPenaltyPercent", Integer.toString(Math.max(1, Math.min(100, percent))));
+        PROPS.setProperty("cancelPenaltyPercent", Integer.toString(Math.max(AdminSettingsManager.minCancelPercent(), Math.min(100, percent))));
         save();
     }
 
@@ -150,7 +150,7 @@ public final class TreasuryManager {
 
     private static int parseClamped(String key, int fallback) {
         try {
-            return Math.max(1, Math.min(100, Integer.parseInt(PROPS.getProperty(key, Integer.toString(fallback)))));
+            return Math.max(fallback, Math.min(100, Integer.parseInt(PROPS.getProperty(key, Integer.toString(fallback)))));
         } catch (NumberFormatException e) {
             return fallback;
         }
