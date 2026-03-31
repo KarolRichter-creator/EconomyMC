@@ -1,6 +1,7 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.service.CheckManager;
+import de.karl_der_iii.economymc.service.ChecksInputManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -68,7 +69,14 @@ public class PlotzCheckRedeemMenu extends ChestMenu {
         }
 
         if (slotId == 13) {
-            sp.sendSystemMessage(Component.literal("§eUse /checkredeem " + checkId + " <code> to redeem this check."));
+            CheckManager.CheckEntry entry = CheckManager.getCheck(checkId);
+            if (entry == null || entry.redeemed()) {
+                sp.sendSystemMessage(Component.literal("§cThis check can no longer be redeemed."));
+                PlotzChecksMenu.open(sp, returnPage);
+                return;
+            }
+
+            ChecksInputManager.startRedeem(sp, checkId);
         }
     }
 

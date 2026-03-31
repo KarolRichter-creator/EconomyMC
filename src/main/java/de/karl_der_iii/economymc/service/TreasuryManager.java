@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 public final class TreasuryManager {
-    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("plotz-treasury.properties");
+    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("economymc-treasury.properties");
     private static final Properties PROPS = new Properties();
     private static boolean loaded = false;
 
@@ -27,7 +27,7 @@ public final class TreasuryManager {
             PROPS.setProperty("cancelPenaltyPercent", "1");
             PROPS.setProperty("maxOverdueDays", "30");
             save();
-            BalanceManager.setBalance(BalanceManager.SERVER_ACCOUNT_ID, 0);
+            BalanceManager.setBalance(BalanceManager.TREASURY_ACCOUNT_ID, 0);
             return;
         }
 
@@ -37,14 +37,14 @@ public final class TreasuryManager {
         }
 
         long treasury = readLong("treasury", 0L);
-        BalanceManager.setBalance(BalanceManager.SERVER_ACCOUNT_ID, treasury);
+        BalanceManager.setBalance(BalanceManager.TREASURY_ACCOUNT_ID, treasury);
     }
 
     private static void save() {
         try {
             Files.createDirectories(FILE.getParent());
             try (OutputStream out = Files.newOutputStream(FILE)) {
-                PROPS.store(out, "Plotz treasury config");
+                PROPS.store(out, "EconomyMC treasury config");
             }
         } catch (IOException ignored) {
         }
@@ -53,10 +53,10 @@ public final class TreasuryManager {
     public static long getTreasury() {
         ensureLoaded();
         long treasury = readLong("treasury", 0L);
-        long serverBalance = BalanceManager.getBalance(BalanceManager.SERVER_ACCOUNT_ID);
+        long accountBalance = BalanceManager.getBalance(BalanceManager.TREASURY_ACCOUNT_ID);
 
-        if (serverBalance != treasury) {
-            treasury = serverBalance;
+        if (accountBalance != treasury) {
+            treasury = accountBalance;
             PROPS.setProperty("treasury", Long.toString(treasury));
             save();
         }
@@ -68,7 +68,7 @@ public final class TreasuryManager {
         ensureLoaded();
         PROPS.setProperty("treasury", Long.toString(amount));
         save();
-        BalanceManager.setBalance(BalanceManager.SERVER_ACCOUNT_ID, amount);
+        BalanceManager.setBalance(BalanceManager.TREASURY_ACCOUNT_ID, amount);
     }
 
     public static void addTreasury(long amount) {

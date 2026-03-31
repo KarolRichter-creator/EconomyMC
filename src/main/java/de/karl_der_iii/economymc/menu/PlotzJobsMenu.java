@@ -14,12 +14,16 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PlotzJobsMenu extends ChestMenu {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM HH:mm");
     private final ServerPlayer viewer;
     private final SimpleContainer box;
     private final int page;
@@ -32,7 +36,7 @@ public class PlotzJobsMenu extends ChestMenu {
 
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzJobsMenu(containerId, inventory, player, page, allowCreate, serverOnly),
-            Component.literal(serverOnly ? "Server Jobs" : "Jobs")
+            Component.literal(serverOnly ? "EC Server Jobs" : "EC Jobs")
         ));
     }
 
@@ -50,9 +54,13 @@ public class PlotzJobsMenu extends ChestMenu {
         refresh();
     }
 
+    private String formatTime(long millis) {
+        return FORMATTER.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()));
+    }
+
     private String statusText(JobManager.JobEntry job) {
         return switch (job.status()) {
-            case OPEN -> "§aOpen";
+            case OPEN -> JobManager.canAcceptNow(job) ? "§aOpen" : "§eOpens " + formatTime(job.availableAt());
             case IN_PROGRESS -> "§6In Progress: " + job.workerName();
             case COMPLETED -> "§bCompleted";
             case CONFIRMED -> "§aConfirmed";

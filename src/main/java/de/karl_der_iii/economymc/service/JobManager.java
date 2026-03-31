@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +35,7 @@ public final class JobManager {
         int dueDays,
         long createdAt,
         long dueAt,
+        long availableAt,
         boolean serverJob,
         JobStatus status,
         UUID workerId,
@@ -41,7 +44,7 @@ public final class JobManager {
         long completedAt
     ) {}
 
-    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("plotz-jobs.properties");
+    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("economymc-jobs.properties");
     private static final Properties PROPS = new Properties();
     private static boolean loaded = false;
 
@@ -67,7 +70,7 @@ public final class JobManager {
         try {
             Files.createDirectories(FILE.getParent());
             try (OutputStream out = Files.newOutputStream(FILE)) {
-                PROPS.store(out, "Plotz jobs");
+                PROPS.store(out, "EconomyMC jobs");
             }
         } catch (IOException ignored) {
         }
@@ -81,12 +84,23 @@ public final class JobManager {
         return Integer.toString(next);
     }
 
+    private static long computeAvailableAt() {
+        ZonedDateTime next = ZonedDateTime.now(ZoneId.systemDefault())
+            .plusDays(1)
+            .withHour(AdminSettingsManager.jobAcceptHour())
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
+        return next.toInstant().toEpochMilli();
+    }
+
     public static JobEntry createJob(UUID creatorId, String creatorName, String title, String description, int reward, int dueDays, boolean serverJob) {
         ensureLoaded();
 
         String id = nextId();
         long now = System.currentTimeMillis();
         long dueAt = now + dueDays * 24L * 60L * 60L * 1000L;
+        long availableAt = computeAvailableAt();
 
         String base = "job." + id + ".";
         PROPS.setProperty(base + "creatorId", creatorId == null ? "" : creatorId.toString());
@@ -97,6 +111,7 @@ public final class JobManager {
         PROPS.setProperty(base + "dueDays", Integer.toString(dueDays));
         PROPS.setProperty(base + "createdAt", Long.toString(now));
         PROPS.setProperty(base + "dueAt", Long.toString(dueAt));
+        PROPS.setProperty(base + "availableAt", Long.toString(availableAt));
         PROPS.setProperty(base + "serverJob", Boolean.toString(serverJob));
         PROPS.setProperty(base + "status", JobStatus.OPEN.name());
         PROPS.setProperty(base + "workerId", "");
@@ -113,6 +128,8 @@ public final class JobManager {
         String base = "job." + id + ".";
         if (!PROPS.containsKey(base + "title")) return null;
 
+        long createdAt = parseLong(PROPS.getProperty(base + "createdAt", "0"), 0L);
+
         return new JobEntry(
             id,
             parseUuid(PROPS.getProperty(base + "creatorId", "")),
@@ -121,8 +138,9 @@ public final class JobManager {
             PROPS.getProperty(base + "description", ""),
             parseInt(PROPS.getProperty(base + "reward", "0"), 0),
             parseInt(PROPS.getProperty(base + "dueDays", "1"), 1),
-            parseLong(PROPS.getProperty(base + "createdAt", "0"), 0L),
+            createdAt,
             parseLong(PROPS.getProperty(base + "dueAt", "0"), 0L),
+            parseLong(PROPS.getProperty(base + "availableAt", Long.toString(createdAt)), createdAt),
             Boolean.parseBoolean(PROPS.getProperty(base + "serverJob", "false")),
             parseStatus(PROPS.getProperty(base + "status", "OPEN")),
             parseUuid(PROPS.getProperty(base + "workerId", "")),
@@ -130,6 +148,10 @@ public final class JobManager {
             parseLong(PROPS.getProperty(base + "acceptedAt", "0"), 0L),
             parseLong(PROPS.getProperty(base + "completedAt", "0"), 0L)
         );
+    }
+
+    public static boolean canAcceptNow(JobEntry job) {
+        return System.currentTimeMillis() >= job.availableAt();
     }
 
     public static List<JobEntry> getVisibleJobs() {
@@ -153,7 +175,7 @@ public final class JobManager {
 
     public static boolean acceptJob(String id, UUID workerId, String workerName) {
         JobEntry job = getJob(id);
-        if (job == null || job.status() != JobStatus.OPEN) return false;
+        if (job == null || job.status() != JobStatus.OPEN || !canAcceptNow(job)) return false;
 
         String base = "job." + id + ".";
         PROPS.setProperty(base + "status", JobStatus.IN_PROGRESS.name());

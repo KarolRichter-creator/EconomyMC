@@ -12,7 +12,6 @@ import de.karl_der_iii.economymc.menu.PlotzShopMenu;
 import de.karl_der_iii.economymc.service.AdminSettingsManager;
 import de.karl_der_iii.economymc.service.BalanceManager;
 import de.karl_der_iii.economymc.service.CapitalAreaManager;
-import de.karl_der_iii.economymc.service.CheckManager;
 import de.karl_der_iii.economymc.service.ChecksInputManager;
 import de.karl_der_iii.economymc.service.DailyRewardManager;
 import de.karl_der_iii.economymc.service.DraftInputManager;
@@ -51,137 +50,88 @@ public class PlotzMod {
         NeoForge.EVENT_BUS.addListener(this::onPlayerLogin);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLogout);
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
-        System.out.println("[Plotz] Mod gestartet.");
+        System.out.println("[EconomyMC] Mod gestartet.");
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
         dispatcher.register(
-            Commands.literal("plotz")
+            Commands.literal("ec")
                 .requires(source -> source.hasPermission(0))
                 .executes(ctx -> {
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /plotz."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec."));
                         return 0;
                     }
                     PlotzMainMenu.open(player);
                     return 1;
                 })
-        );
 
-        dispatcher.register(
-            Commands.literal("shop")
-                .requires(source -> source.hasPermission(0))
-                .executes(ctx -> {
+                .then(Commands.literal("shop").executes(ctx -> {
                     if (!AdminSettingsManager.shopEnabled()) {
                         ctx.getSource().sendFailure(Component.literal("§cShop is disabled by admin."));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /shop."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec shop."));
                         return 0;
                     }
                     PlotzShopMenu.open(player);
                     return 1;
-                })
-        );
+                }))
 
-        dispatcher.register(
-            Commands.literal("jobs")
-                .requires(source -> source.hasPermission(0))
-                .executes(ctx -> {
+                .then(Commands.literal("jobs").executes(ctx -> {
                     if (!AdminSettingsManager.jobsEnabled()) {
                         ctx.getSource().sendFailure(Component.literal("§cJobs are disabled by admin."));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /jobs."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec jobs."));
                         return 0;
                     }
                     PlotzJobsMenu.open(player, 0, true, false);
                     return 1;
-                })
-        );
+                }))
 
-        dispatcher.register(
-            Commands.literal("checks")
-                .requires(source -> source.hasPermission(0))
-                .executes(ctx -> {
+                .then(Commands.literal("checks").executes(ctx -> {
                     if (!AdminSettingsManager.checksEnabled()) {
                         ctx.getSource().sendFailure(Component.literal("§cChecks are disabled by admin."));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /checks."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec checks."));
                         return 0;
                     }
                     PlotzChecksMenu.open(player, 0);
                     return 1;
-                })
-        );
+                }))
 
-        dispatcher.register(
-            Commands.literal("checkredeem")
-                .requires(source -> source.hasPermission(0))
-                .then(Commands.argument("id", StringArgumentType.word())
-                    .then(Commands.argument("code", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                                ctx.getSource().sendFailure(Component.literal("Only players can use /checkredeem."));
-                                return 0;
-                            }
-
-                            String id = StringArgumentType.getString(ctx, "id");
-                            String code = StringArgumentType.getString(ctx, "code");
-                            boolean ok = CheckManager.redeem(id, code, player.getUUID(), player.getGameProfile().getName());
-                            if (!ok) {
-                                ctx.getSource().sendFailure(Component.literal("§cInvalid code or check already redeemed."));
-                                return 0;
-                            }
-
-                            ScoreboardManager.update(player.server);
-                            player.sendSystemMessage(Component.literal("§aCheck redeemed successfully."));
-                            return 1;
-                        })))
-        );
-
-        dispatcher.register(
-            Commands.literal("plotzservermode")
-                .requires(source -> source.hasPermission(2))
-                .executes(ctx -> {
+                .then(Commands.literal("servermode").requires(source -> source.hasPermission(2)).executes(ctx -> {
                     if (!AdminSettingsManager.serverModeEnabled()) {
                         ctx.getSource().sendFailure(Component.literal("§cServer mode is disabled by admin."));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /plotzservermode."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec servermode."));
                         return 0;
                     }
                     PlotzServerModeMenu.open(player);
                     return 1;
-                })
-        );
+                }))
 
-        dispatcher.register(
-            Commands.literal("adminmode")
-                .requires(source -> source.hasPermission(2))
-                .executes(ctx -> {
+                .then(Commands.literal("adminmode").requires(source -> source.hasPermission(2)).executes(ctx -> {
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /adminmode."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec adminmode."));
                         return 0;
                     }
                     PlotzAdminModeMenu.open(player);
                     return 1;
-                })
-        );
+                }))
 
-        dispatcher.register(
-            Commands.literal("daily")
-                .requires(source -> source.hasPermission(0))
-                .executes(ctx -> {
+                .then(Commands.literal("daily").executes(ctx -> {
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /daily."));
+                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec daily."));
                         return 0;
                     }
 
@@ -189,7 +139,7 @@ public class PlotzMod {
                         long remaining = DailyRewardManager.getRemainingMs(player.getUUID()) / 1000L;
                         long hours = remaining / 3600L;
                         long minutes = (remaining % 3600L) / 60L;
-                        player.sendSystemMessage(Component.literal("§cDaily already claimed. Come back in " + hours + "h " + minutes + "m."));
+                        player.sendSystemMessage(Component.literal("§cDaily already claimed for today. Come back in " + hours + "h " + minutes + "m."));
                         return 0;
                     }
 
@@ -198,190 +148,185 @@ public class PlotzMod {
                     DailyRewardManager.markClaimed(player.getUUID());
                     player.sendSystemMessage(Component.literal("§aYou claimed your daily $100."));
                     return 1;
-                })
-        );
-
-        dispatcher.register(
-            Commands.literal("pay")
-                .requires(source -> source.hasPermission(0))
-                .then(Commands.argument("player", StringArgumentType.word())
-                    .suggests((ctx, builder) ->
-                        SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
-                    )
-                    .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                        .executes(ctx -> {
-                            if (!(ctx.getSource().getEntity() instanceof ServerPlayer sender)) {
-                                ctx.getSource().sendFailure(Component.literal("Only players can use /pay."));
-                                return 0;
-                            }
-
-                            String name = StringArgumentType.getString(ctx, "player");
-                            int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                            Optional<UUID> resolved = BalanceManager.resolveKnownPlayer(sender.server, name);
-                            if (resolved.isEmpty()) {
-                                ctx.getSource().sendFailure(Component.literal("§cOnly players who already joined this world can receive money."));
-                                return 0;
-                            }
-
-                            UUID targetId = resolved.get();
-                            if (targetId.equals(sender.getUUID())) {
-                                ctx.getSource().sendFailure(Component.literal("§cYou cannot pay yourself."));
-                                return 0;
-                            }
-
-                            if (!BalanceManager.removeBalance(sender.getUUID(), amount)) {
-                                ctx.getSource().sendFailure(Component.literal("§cYou do not have enough money."));
-                                return 0;
-                            }
-
-                            BalanceManager.addBalance(targetId, amount);
-                            ScoreboardManager.update(sender.server);
-
-                            sender.sendSystemMessage(Component.literal("§aYou paid $" + amount + " to " + name + "."));
-                            ServerPlayer onlineTarget = sender.server.getPlayerList().getPlayer(targetId);
-                            if (onlineTarget != null) {
-                                onlineTarget.sendSystemMessage(Component.literal("§aYou received $" + amount + " from " + sender.getGameProfile().getName() + "."));
-                            }
-
-                            return 1;
-                        })))
-        );
-
-        dispatcher.register(
-            Commands.literal("plotzadmin")
-                .requires(source -> source.hasPermission(2))
-                .then(Commands.literal("pos1").executes(ctx -> {
-                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
-                        return 0;
-                    }
-                    BlockPos pos = player.blockPosition();
-                    CapitalAreaManager.setPos1(pos);
-                    ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos1 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
-                    return 1;
                 }))
-                .then(Commands.literal("pos2").executes(ctx -> {
-                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
-                        return 0;
-                    }
-                    BlockPos pos = player.blockPosition();
-                    CapitalAreaManager.setPos2(pos);
-                    ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos2 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
-                    return 1;
-                }))
-                .then(Commands.literal("setcapital").executes(ctx -> {
-                    if (!CapitalAreaManager.canCreateArea()) {
-                        ctx.getSource().sendFailure(Component.literal("§cSet /plotzadmin pos1 and /plotzadmin pos2 first."));
-                        return 0;
-                    }
-                    CapitalAreaManager.applyArea();
-                    ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area saved."), false);
-                    return 1;
-                }))
-                .then(Commands.literal("clearcapital").executes(ctx -> {
-                    CapitalAreaManager.clearArea();
-                    ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area cleared."), false);
-                    return 1;
-                }))
-                .then(Commands.literal("setmoney")
-                    .then(Commands.argument("account", StringArgumentType.word())
-                        .suggests((ctx, builder) ->
-                            SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
-                        )
-                        .then(Commands.argument("amount", IntegerArgumentType.integer(0))
-                            .executes(ctx -> {
-                                String account = StringArgumentType.getString(ctx, "account");
-                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
 
-                                if (account.equalsIgnoreCase("server")) {
-                                    TreasuryManager.setTreasury(amount);
-                                    ScoreboardManager.update(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("§aSet Treasury to $" + amount), false);
-                                    return 1;
-                                }
-
-                                Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
-                                if (target.isEmpty()) {
-                                    ctx.getSource().sendFailure(Component.literal("§cOnly known players or Server are allowed."));
-                                    return 0;
-                                }
-
-                                BalanceManager.setBalance(target.get(), amount);
-                                ScoreboardManager.update(ctx.getSource().getServer());
-                                ctx.getSource().sendSuccess(() -> Component.literal("§aSet balance of " + account + " to $" + amount), false);
-                                return 1;
-                            }))))
-                .then(Commands.literal("addmoney")
-                    .then(Commands.argument("account", StringArgumentType.word())
+                .then(Commands.literal("pay")
+                    .then(Commands.argument("player", StringArgumentType.word())
                         .suggests((ctx, builder) ->
                             SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
                         )
                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                             .executes(ctx -> {
-                                String account = StringArgumentType.getString(ctx, "account");
-                                int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                                if (account.equalsIgnoreCase("server")) {
-                                    TreasuryManager.addTreasury(amount);
-                                    ScoreboardManager.update(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to Treasury"), false);
-                                    return 1;
-                                }
-
-                                Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
-                                if (target.isEmpty()) {
-                                    ctx.getSource().sendFailure(Component.literal("§cOnly known players or Server are allowed."));
+                                if (!(ctx.getSource().getEntity() instanceof ServerPlayer sender)) {
+                                    ctx.getSource().sendFailure(Component.literal("Only players can use /ec pay."));
                                     return 0;
                                 }
 
-                                BalanceManager.addBalance(target.get(), amount);
-                                ScoreboardManager.update(ctx.getSource().getServer());
-                                ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to " + account), false);
-                                return 1;
-                            }))))
-                .then(Commands.literal("removemoney")
-                    .then(Commands.argument("account", StringArgumentType.word())
-                        .suggests((ctx, builder) ->
-                            SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
-                        )
-                        .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                            .executes(ctx -> {
-                                String account = StringArgumentType.getString(ctx, "account");
+                                String name = StringArgumentType.getString(ctx, "player");
                                 int amount = IntegerArgumentType.getInteger(ctx, "amount");
 
-                                if (account.equalsIgnoreCase("server")) {
-                                    if (!TreasuryManager.removeTreasury(amount)) {
-                                        ctx.getSource().sendFailure(Component.literal("§cTreasury does not have enough money."));
+                                Optional<UUID> resolved = BalanceManager.resolveKnownPlayer(sender.server, name);
+                                if (resolved.isEmpty()) {
+                                    ctx.getSource().sendFailure(Component.literal("§cOnly players who already joined this world can receive money."));
+                                    return 0;
+                                }
+
+                                UUID targetId = resolved.get();
+                                if (targetId.equals(sender.getUUID())) {
+                                    ctx.getSource().sendFailure(Component.literal("§cYou cannot pay yourself."));
+                                    return 0;
+                                }
+
+                                if (!BalanceManager.removeBalance(sender.getUUID(), amount)) {
+                                    ctx.getSource().sendFailure(Component.literal("§cYou do not have enough money."));
+                                    return 0;
+                                }
+
+                                BalanceManager.addBalance(targetId, amount);
+                                ScoreboardManager.update(sender.server);
+
+                                sender.sendSystemMessage(Component.literal("§aYou paid $" + amount + " to " + name + "."));
+                                ServerPlayer onlineTarget = sender.server.getPlayerList().getPlayer(targetId);
+                                if (onlineTarget != null) {
+                                    onlineTarget.sendSystemMessage(Component.literal("§aYou received $" + amount + " from " + sender.getGameProfile().getName() + "."));
+                                }
+
+                                return 1;
+                            }))))
+
+                .then(Commands.literal("admin").requires(source -> source.hasPermission(2))
+                    .then(Commands.literal("pos1").executes(ctx -> {
+                        if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                            ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
+                            return 0;
+                        }
+                        BlockPos pos = player.blockPosition();
+                        CapitalAreaManager.setPos1(pos);
+                        ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos1 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
+                        return 1;
+                    }))
+                    .then(Commands.literal("pos2").executes(ctx -> {
+                        if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                            ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
+                            return 0;
+                        }
+                        BlockPos pos = player.blockPosition();
+                        CapitalAreaManager.setPos2(pos);
+                        ctx.getSource().sendSuccess(() -> Component.literal("§aCapital pos2 set to: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()), false);
+                        return 1;
+                    }))
+                    .then(Commands.literal("setcapital").executes(ctx -> {
+                        if (!CapitalAreaManager.canCreateArea()) {
+                            ctx.getSource().sendFailure(Component.literal("§cSet /ec admin pos1 and /ec admin pos2 first."));
+                            return 0;
+                        }
+                        CapitalAreaManager.applyArea();
+                        ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area saved."), false);
+                        return 1;
+                    }))
+                    .then(Commands.literal("clearcapital").executes(ctx -> {
+                        CapitalAreaManager.clearArea();
+                        ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area cleared."), false);
+                        return 1;
+                    }))
+                    .then(Commands.literal("setmoney")
+                        .then(Commands.argument("account", StringArgumentType.word())
+                            .suggests((ctx, builder) ->
+                                SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
+                            )
+                            .then(Commands.argument("amount", IntegerArgumentType.integer(0))
+                                .executes(ctx -> {
+                                    String account = StringArgumentType.getString(ctx, "account");
+                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                                    if (account.equalsIgnoreCase("treasury") || account.equalsIgnoreCase("server")) {
+                                        TreasuryManager.setTreasury(amount);
+                                        ScoreboardManager.update(ctx.getSource().getServer());
+                                        ctx.getSource().sendSuccess(() -> Component.literal("§aSet Treasury to $" + amount), false);
+                                        return 1;
+                                    }
+
+                                    Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
+                                    if (target.isEmpty()) {
+                                        ctx.getSource().sendFailure(Component.literal("§cOnly known players or Treasury are allowed."));
                                         return 0;
                                     }
+
+                                    BalanceManager.setBalance(target.get(), amount);
                                     ScoreboardManager.update(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from Treasury"), false);
+                                    ctx.getSource().sendSuccess(() -> Component.literal("§aSet balance of " + account + " to $" + amount), false);
                                     return 1;
-                                }
+                                }))))
+                    .then(Commands.literal("addmoney")
+                        .then(Commands.argument("account", StringArgumentType.word())
+                            .suggests((ctx, builder) ->
+                                SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
+                            )
+                            .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                .executes(ctx -> {
+                                    String account = StringArgumentType.getString(ctx, "account");
+                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
 
-                                Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
-                                if (target.isEmpty()) {
-                                    ctx.getSource().sendFailure(Component.literal("§cOnly known players or Server are allowed."));
-                                    return 0;
-                                }
+                                    if (account.equalsIgnoreCase("treasury") || account.equalsIgnoreCase("server")) {
+                                        TreasuryManager.addTreasury(amount);
+                                        ScoreboardManager.update(ctx.getSource().getServer());
+                                        ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to Treasury"), false);
+                                        return 1;
+                                    }
 
-                                if (!BalanceManager.removeBalance(target.get(), amount)) {
-                                    ctx.getSource().sendFailure(Component.literal("§cAccount does not have enough money."));
-                                    return 0;
-                                }
+                                    Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
+                                    if (target.isEmpty()) {
+                                        ctx.getSource().sendFailure(Component.literal("§cOnly known players or Treasury are allowed."));
+                                        return 0;
+                                    }
 
-                                ScoreboardManager.update(ctx.getSource().getServer());
-                                ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from " + account), false);
-                                return 1;
-                            }))))
+                                    BalanceManager.addBalance(target.get(), amount);
+                                    ScoreboardManager.update(ctx.getSource().getServer());
+                                    ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to " + account), false);
+                                    return 1;
+                                }))))
+                    .then(Commands.literal("removemoney")
+                        .then(Commands.argument("account", StringArgumentType.word())
+                            .suggests((ctx, builder) ->
+                                SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
+                            )
+                            .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                .executes(ctx -> {
+                                    String account = StringArgumentType.getString(ctx, "account");
+                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+                                    if (account.equalsIgnoreCase("treasury") || account.equalsIgnoreCase("server")) {
+                                        if (!TreasuryManager.removeTreasury(amount)) {
+                                            ctx.getSource().sendFailure(Component.literal("§cTreasury does not have enough money."));
+                                            return 0;
+                                        }
+                                        ScoreboardManager.update(ctx.getSource().getServer());
+                                        ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from Treasury"), false);
+                                        return 1;
+                                    }
+
+                                    Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
+                                    if (target.isEmpty()) {
+                                        ctx.getSource().sendFailure(Component.literal("§cOnly known players or Treasury are allowed."));
+                                        return 0;
+                                    }
+
+                                    if (!BalanceManager.removeBalance(target.get(), amount)) {
+                                        ctx.getSource().sendFailure(Component.literal("§cAccount does not have enough money."));
+                                        return 0;
+                                    }
+
+                                    ScoreboardManager.update(ctx.getSource().getServer());
+                                    ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from " + account), false);
+                                    return 1;
+                                }))))
+                )
         );
     }
 
     private void onOpacAddonRegister(OPACServerAddonRegisterEvent event) {
         OpacBridge.registerClaimsTracker(event);
-        System.out.println("[Plotz] OPAC tracker registered.");
+        System.out.println("[EconomyMC] OPAC tracker registered.");
     }
 
     private void onServerChat(ServerChatEvent event) {

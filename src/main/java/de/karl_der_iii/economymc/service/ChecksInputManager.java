@@ -10,19 +10,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class ChecksInputManager {
     private enum Stage {
-        AMOUNT,
-        CODE
+        CREATE_AMOUNT,
+        CREATE_CODE,
+        REDEEM_CODE
     }
 
-    private record Draft(Stage stage, int amount) {}
+    private record Draft(Stage stage, int amount, String checkId) {}
 
     private static final Map<UUID, Draft> DRAFTS = new ConcurrentHashMap<>();
 
     private ChecksInputManager() {}
 
-    public static void start(ServerPlayer player) {
-        DRAFTS.put(player.getUUID(), new Draft(Stage.AMOUNT, 0));
+    public static void startCreate(ServerPlayer player) {
+        DRAFTS.put(player.getUUID(), new Draft(Stage.CREATE_AMOUNT, 0, ""));
         player.sendSystemMessage(Component.literal("§eEnter the check amount in chat now."));
+        player.closeContainer();
+    }
+
+    public static void startRedeem(ServerPlayer player, String checkId) {
+        DRAFTS.put(player.getUUID(), new Draft(Stage.REDEEM_CODE, 0, checkId));
+        player.sendSystemMessage(Component.literal("§eEnter the check code in chat now."));
         player.closeContainer();
     }
 
@@ -31,7 +38,7 @@ public final class ChecksInputManager {
         if (draft == null) return false;
 
         switch (draft.stage()) {
-            case AMOUNT -> {
+            case CREATE_AMOUNT -> {
                 int amount;
                 try {
                     amount = Integer.parseInt(message.trim());
@@ -52,11 +59,11 @@ public final class ChecksInputManager {
                     return true;
                 }
 
-                DRAFTS.put(player.getUUID(), new Draft(Stage.CODE, amount));
+                DRAFTS.put(player.getUUID(), new Draft(Stage.CREATE_CODE, amount, ""));
                 player.sendSystemMessage(Component.literal("§eEnter the check code in chat now."));
                 return true;
             }
-            case CODE -> {
+            case CREATE_CODE -> {
                 DRAFTS.remove(player.getUUID());
                 CheckManager.createCheck(
                     player.getUUID(),
@@ -65,6 +72,22 @@ public final class ChecksInputManager {
                     message.trim()
                 );
                 player.sendSystemMessage(Component.literal("§aCheck created."));
+                PlotzChecksMenu.open(player, 0);
+                return true;
+            }
+            case REDEEM_CODE -> {
+                DRAFTS.remove(player.getUUID());
+                boolean ok = CheckManager.redeem(
+                    draft.checkId(),
+                    message.trim(),
+                    player.getUUID(),
+                    player.getGameProfile().getName()
+                );
+                if (!ok) {
+                    player.sendSystemMessage(Component.literal("§cInvalid code or check already redeemed."));
+                } else {
+                    player.sendSystemMessage(Component.literal("§aCheck redeemed successfully."));
+                }
                 PlotzChecksMenu.open(player, 0);
                 return true;
             }

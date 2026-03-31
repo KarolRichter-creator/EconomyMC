@@ -81,7 +81,7 @@ public class PlotzChecksMenu extends ChestMenu {
         }
 
         if (slotId == 53) {
-            ChecksInputManager.start(sp);
+            ChecksInputManager.startCreate(sp);
             return;
         }
 

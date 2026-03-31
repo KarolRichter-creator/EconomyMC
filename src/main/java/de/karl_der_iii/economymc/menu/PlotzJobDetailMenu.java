@@ -1,6 +1,5 @@
 package de.karl_der_iii.economymc.menu;
 
-import de.karl_der_iii.economymc.service.BalanceManager;
 import de.karl_der_iii.economymc.service.JobManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.network.chat.Component;
@@ -15,7 +14,12 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 public class PlotzJobDetailMenu extends ChestMenu {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM HH:mm");
     private final ServerPlayer viewer;
     private final SimpleContainer box;
     private final String jobId;
@@ -28,7 +32,7 @@ public class PlotzJobDetailMenu extends ChestMenu {
 
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzJobDetailMenu(containerId, inventory, player, jobId, returnPage, allowCreate, serverOnly),
-            Component.literal("Job Details")
+            Component.literal("EC Job Details")
         ));
     }
 
@@ -47,9 +51,13 @@ public class PlotzJobDetailMenu extends ChestMenu {
         refresh();
     }
 
+    private String formatTime(long millis) {
+        return FORMATTER.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()));
+    }
+
     private String statusLine(JobManager.JobEntry job) {
         return switch (job.status()) {
-            case OPEN -> "§aOpen";
+            case OPEN -> JobManager.canAcceptNow(job) ? "§aOpen" : "§eOpens " + formatTime(job.availableAt());
             case IN_PROGRESS -> "§6In Progress by " + job.workerName();
             case COMPLETED -> "§bCompleted by " + job.workerName();
             case CONFIRMED -> "§aConfirmed";
@@ -86,10 +94,21 @@ public class PlotzJobDetailMenu extends ChestMenu {
         boolean admin = viewer.hasPermissions(2);
 
         if (job.status() == JobManager.JobStatus.OPEN) {
-            if (creator || admin) {
+            if (job.serverJob() && admin) {
+                if (JobManager.canAcceptNow(job)) {
+                    box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aAccept Server Job"));
+                } else {
+                    box.setItem(23, MenuUtil.named(Items.CLOCK, "§eAvailable at " + formatTime(job.availableAt())));
+                }
+                box.setItem(24, MenuUtil.named(Items.RED_CONCRETE, "§cWithdraw Job"));
+            } else if (creator) {
                 box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, "§cWithdraw Job"));
             } else {
-                box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aAccept Job"));
+                if (JobManager.canAcceptNow(job)) {
+                    box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aAccept Job"));
+                } else {
+                    box.setItem(23, MenuUtil.named(Items.CLOCK, "§eAvailable at " + formatTime(job.availableAt())));
+                }
             }
         } else if (job.status() == JobManager.JobStatus.IN_PROGRESS) {
             if (worker) {
@@ -132,13 +151,32 @@ public class PlotzJobDetailMenu extends ChestMenu {
 
         if (slotId == 23) {
             if (job.status() == JobManager.JobStatus.OPEN) {
-                if (creator || admin) {
+                if (job.serverJob() && admin) {
+                    if (!JobManager.canAcceptNow(job)) {
+                        sp.sendSystemMessage(Component.literal("§cThis job cannot be accepted yet."));
+                        return;
+                    }
+                    if (!JobManager.acceptJob(jobId, sp.getUUID(), sp.getGameProfile().getName())) {
+                        sp.sendSystemMessage(Component.literal("§cThis job is no longer open."));
+                        return;
+                    }
+                    sp.sendSystemMessage(Component.literal("§aYou accepted the server job."));
+                    PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
+                    return;
+                }
+
+                if (creator) {
                     if (!JobManager.withdrawByCreator(jobId)) {
                         sp.sendSystemMessage(Component.literal("§cCould not withdraw job."));
                         return;
                     }
                     sp.sendSystemMessage(Component.literal("§aJob withdrawn."));
                     PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
+                    return;
+                }
+
+                if (!JobManager.canAcceptNow(job)) {
+                    sp.sendSystemMessage(Component.literal("§cThis job cannot be accepted yet."));
                     return;
                 }
 
@@ -174,18 +212,31 @@ public class PlotzJobDetailMenu extends ChestMenu {
                 }
                 sp.sendSystemMessage(Component.literal("§aJob confirmed."));
                 PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
+                return;
             }
         }
 
-        if (slotId == 24 && job.status() == JobManager.JobStatus.IN_PROGRESS && worker) {
-            if (!JobManager.cancelByWorker(jobId)) {
-                sp.sendSystemMessage(Component.literal("§cCould not cancel job."));
+        if (slotId == 24) {
+            if (job.status() == JobManager.JobStatus.OPEN && job.serverJob() && admin) {
+                if (!JobManager.withdrawByCreator(jobId)) {
+                    sp.sendSystemMessage(Component.literal("§cCould not withdraw job."));
+                    return;
+                }
+                sp.sendSystemMessage(Component.literal("§aServer job withdrawn."));
+                PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                 return;
             }
 
-            int penalty = TreasuryManager.calculateCancelPenalty(job.reward());
-            sp.sendSystemMessage(Component.literal("§cJob cancelled. Penalty: $" + penalty));
-            PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
+            if (job.status() == JobManager.JobStatus.IN_PROGRESS && worker) {
+                if (!JobManager.cancelByWorker(jobId)) {
+                    sp.sendSystemMessage(Component.literal("§cCould not cancel job."));
+                    return;
+                }
+
+                int penalty = TreasuryManager.calculateCancelPenalty(job.reward());
+                sp.sendSystemMessage(Component.literal("§cJob cancelled. Penalty: $" + penalty));
+                PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
+            }
         }
     }
 

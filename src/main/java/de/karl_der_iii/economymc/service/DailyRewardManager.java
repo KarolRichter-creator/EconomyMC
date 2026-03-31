@@ -7,11 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Properties;
 import java.util.UUID;
 
 public final class DailyRewardManager {
-    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("plotz-daily.properties");
+    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("economymc-daily.properties");
     private static final Properties PROPS = new Properties();
     private static boolean loaded = false;
 
@@ -33,7 +35,7 @@ public final class DailyRewardManager {
         try {
             Files.createDirectories(FILE.getParent());
             try (OutputStream out = Files.newOutputStream(FILE)) {
-                PROPS.store(out, "Plotz daily rewards");
+                PROPS.store(out, "EconomyMC daily rewards");
             }
         } catch (IOException ignored) {
         }
@@ -41,33 +43,37 @@ public final class DailyRewardManager {
 
     public static boolean canClaim(UUID playerId) {
         ensureLoaded();
-        long now = System.currentTimeMillis();
-        long last = getLastClaim(playerId);
-        return now - last >= 24L * 60L * 60L * 1000L;
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        LocalDate last = getLastClaimDate(playerId);
+        return last == null || !last.equals(today);
     }
 
     public static long getRemainingMs(UUID playerId) {
         ensureLoaded();
-        long now = System.currentTimeMillis();
-        long last = getLastClaim(playerId);
-        long needed = 24L * 60L * 60L * 1000L;
-        long passed = now - last;
-        return Math.max(0L, needed - passed);
+        if (canClaim(playerId)) {
+            return 0L;
+        }
+
+        LocalDate tomorrow = LocalDate.now(ZoneId.systemDefault()).plusDays(1);
+        long next = tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return Math.max(0L, next - System.currentTimeMillis());
     }
 
     public static void markClaimed(UUID playerId) {
         ensureLoaded();
-        PROPS.setProperty(playerId.toString(), Long.toString(System.currentTimeMillis()));
+        PROPS.setProperty(playerId.toString(), LocalDate.now(ZoneId.systemDefault()).toString());
         save();
     }
 
-    private static long getLastClaim(UUID playerId) {
+    private static LocalDate getLastClaimDate(UUID playerId) {
         ensureLoaded();
-        String value = PROPS.getProperty(playerId.toString(), "0");
+        String value = PROPS.getProperty(playerId.toString(), "");
+        if (value.isBlank()) return null;
+
         try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException e) {
-            return 0L;
+            return LocalDate.parse(value);
+        } catch (Exception e) {
+            return null;
         }
     }
 }

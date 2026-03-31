@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class ScoreboardManager {
-    private static final String OBJECTIVE = "plotz_balance";
+    private static final String OBJECTIVE = "economymc_balance";
 
     private ScoreboardManager() {}
 
@@ -25,7 +25,7 @@ public final class ScoreboardManager {
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives setdisplay sidebar " + OBJECTIVE);
 
             List<Map.Entry<UUID, Long>> entries = new ArrayList<>(BalanceManager.getAllBalances().entrySet());
-            entries.removeIf(e -> BalanceManager.SERVER_ACCOUNT_ID.equals(e.getKey()));
+            entries.removeIf(e -> BalanceManager.TREASURY_ACCOUNT_ID.equals(e.getKey()));
             entries.sort(Map.Entry.<UUID, Long>comparingByValue(Comparator.reverseOrder()));
 
             int count = 0;

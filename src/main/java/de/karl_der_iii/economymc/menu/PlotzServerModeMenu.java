@@ -1,5 +1,6 @@
 package de.karl_der_iii.economymc.menu;
 
+import de.karl_der_iii.economymc.service.AdminSettingsManager;
 import de.karl_der_iii.economymc.service.JobsInputManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.network.chat.Component;
@@ -21,7 +22,7 @@ public class PlotzServerModeMenu extends ChestMenu {
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzServerModeMenu(containerId, inventory, player),
-            Component.literal("Plotz Server Mode")
+            Component.literal("EC Server Mode")
         ));
     }
 
@@ -63,9 +64,13 @@ public class PlotzServerModeMenu extends ChestMenu {
         box.setItem(33, MenuUtil.named(Items.CLOCK, "§7Max Overdue Days: " + TreasuryManager.getMaxOverdueDays()));
         box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, "§aDays +1"));
 
+        box.setItem(37, MenuUtil.named(Items.RED_CONCRETE, "§cStart Hour -1"));
+        box.setItem(38, MenuUtil.named(Items.CLOCK, "§7Job Open Hour: " + AdminSettingsManager.jobAcceptHour() + ":00"));
+        box.setItem(39, MenuUtil.named(Items.LIME_CONCRETE, "§aStart Hour +1"));
+
         box.setItem(40, MenuUtil.named(Items.EMERALD, "§aCreate Server Job"));
         box.setItem(42, MenuUtil.named(Items.BOOK, "§bOpen Server Jobs"));
-        box.setItem(44, MenuUtil.named(Items.MAP, "§7Server Shop / Plot Sales follow next"));
+        box.setItem(44, MenuUtil.named(Items.MAP, "§7Treasury, jobs and taxes"));
 
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
@@ -86,6 +91,9 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         if (slotId == 32) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
         if (slotId == 34) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
+
+        if (slotId == 37) AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() - 1);
+        if (slotId == 39) AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + 1);
 
         if (slotId == 40) {
             JobsInputManager.startServerJob(sp);

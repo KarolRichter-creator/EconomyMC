@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 public final class AdminSettingsManager {
-    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("plotz-admin.properties");
+    private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("economymc-admin.properties");
     private static final Properties PROPS = new Properties();
     private static boolean loaded = false;
 
@@ -29,6 +29,7 @@ public final class AdminSettingsManager {
             PROPS.setProperty("minTaxPercent", "1");
             PROPS.setProperty("minOverduePercent", "1");
             PROPS.setProperty("minCancelPercent", "1");
+            PROPS.setProperty("jobAcceptHour", "2");
             save();
             return;
         }
@@ -43,7 +44,7 @@ public final class AdminSettingsManager {
         try {
             Files.createDirectories(FILE.getParent());
             try (OutputStream out = Files.newOutputStream(FILE)) {
-                PROPS.store(out, "Plotz admin settings");
+                PROPS.store(out, "EconomyMC admin settings");
             }
         } catch (IOException ignored) {
         }
@@ -134,6 +135,21 @@ public final class AdminSettingsManager {
     public static void setMinCancelPercent(int value) {
         ensureLoaded();
         PROPS.setProperty("minCancelPercent", Integer.toString(Math.max(0, value)));
+        save();
+    }
+
+    public static int jobAcceptHour() {
+        ensureLoaded();
+        try {
+            return Math.max(0, Math.min(23, Integer.parseInt(PROPS.getProperty("jobAcceptHour", "2"))));
+        } catch (NumberFormatException e) {
+            return 2;
+        }
+    }
+
+    public static void setJobAcceptHour(int hour) {
+        ensureLoaded();
+        PROPS.setProperty("jobAcceptHour", Integer.toString(Math.max(0, Math.min(23, hour))));
         save();
     }
 
