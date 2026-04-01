@@ -47,7 +47,7 @@ public class PlotzServerModeMenu extends ChestMenu {
     private void refresh() {
         fillBackground();
 
-        box.setItem(4, MenuUtil.named(Items.GOLD_BLOCK, "§6Treasury: $" + TreasuryManager.getTreasury()));
+        box.setItem(4, MenuUtil.named(Items.GOLD_BLOCK, "§6" + LanguageManager.tr("bank.target.server") + ": $" + TreasuryManager.getTreasury()));
 
         box.setItem(10, MenuUtil.named(Items.RED_CONCRETE, "§cTax -1%"));
         box.setItem(11, MenuUtil.named(
@@ -62,25 +62,9 @@ public class PlotzServerModeMenu extends ChestMenu {
                 (AdminSettingsManager.autoTaxEnabled() ? "ON" : "OFF")
         ));
 
-        box.setItem(14, MenuUtil.named(Items.RED_CONCRETE, "§cOverdue -1%"));
-        box.setItem(15, MenuUtil.named(Items.PAPER, "§7Overdue Penalty: " + TreasuryManager.getOverduePenaltyPercent() + "%"));
-        box.setItem(16, MenuUtil.named(Items.LIME_CONCRETE, "§aOverdue +1%"));
-
-        box.setItem(28, MenuUtil.named(Items.RED_CONCRETE, "§cCancel -1%"));
-        box.setItem(29, MenuUtil.named(Items.PAPER, "§7Cancel Penalty: " + TreasuryManager.getCancelPenaltyPercent() + "%"));
-        box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, "§aCancel +1%"));
-
-        box.setItem(32, MenuUtil.named(Items.RED_CONCRETE, "§cDays -1"));
-        box.setItem(33, MenuUtil.named(Items.CLOCK, "§7Max Overdue Days: " + TreasuryManager.getMaxOverdueDays()));
-        box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, "§aDays +1"));
-
-        box.setItem(37, MenuUtil.named(Items.RED_CONCRETE, "§cStart Hour -1"));
-        box.setItem(38, MenuUtil.named(Items.CLOCK, "§7Job Open Hour: " + AdminSettingsManager.jobAcceptHour() + ":00"));
-        box.setItem(39, MenuUtil.named(Items.LIME_CONCRETE, "§aStart Hour +1"));
-
         box.setItem(40, MenuUtil.named(Items.EMERALD, "§aCreate Server Job"));
         box.setItem(42, MenuUtil.named(Items.BOOK, "§bOpen Server Jobs"));
-        box.setItem(44, MenuUtil.named(Items.MAP, "§7Treasury, jobs and taxes"));
+        box.setItem(44, MenuUtil.named(Items.MAP, "§7" + LanguageManager.tr("history.treasury")));
         box.setItem(53, MenuUtil.named(Items.CLOCK, LanguageManager.tr("history.treasury")));
 
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
@@ -100,18 +84,6 @@ public class PlotzServerModeMenu extends ChestMenu {
         if (slotId == 13) {
             AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
         }
-
-        if (slotId == 14) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
-        if (slotId == 16) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
-
-        if (slotId == 28) TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
-        if (slotId == 30) TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
-
-        if (slotId == 32) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
-        if (slotId == 34) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
-
-        if (slotId == 37) AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() - 1);
-        if (slotId == 39) AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + 1);
 
         if (slotId == 40) {
             JobsInputManager.startServerJob(sp);

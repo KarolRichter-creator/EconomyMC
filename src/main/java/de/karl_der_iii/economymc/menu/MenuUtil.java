@@ -21,7 +21,7 @@ public final class MenuUtil {
     public static ItemStack playerInfoHead(ServerPlayer player) {
         long money = BalanceManager.getBalance(player.getUUID());
         return named(
-            Items.PLAYER_HEAD,
+            Items.EMERALD,
             "§e" + player.getGameProfile().getName()
                 + " §7| "
                 + LanguageManager.tr("money.label")

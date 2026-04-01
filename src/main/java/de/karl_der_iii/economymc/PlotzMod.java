@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.karl_der_iii.economymc.menu.PlotzAdminModeMenu;
+import de.karl_der_iii.economymc.menu.PlotzBankMenu;
 import de.karl_der_iii.economymc.menu.PlotzChecksMenu;
 import de.karl_der_iii.economymc.menu.PlotzHistoryMenu;
 import de.karl_der_iii.economymc.menu.PlotzJobsMenu;
@@ -115,7 +116,11 @@ public class PlotzMod {
 
                 .then(Commands.literal("bank")
                     .executes(ctx -> {
-                        sendHelp(ctx.getSource());
+                        if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                            ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                            return 0;
+                        }
+                        PlotzBankMenu.open(player);
                         return 1;
                     })
 
