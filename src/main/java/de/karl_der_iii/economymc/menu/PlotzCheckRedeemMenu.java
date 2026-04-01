@@ -48,14 +48,14 @@ public class PlotzCheckRedeemMenu extends ChestMenu {
 
         CheckManager.CheckEntry entry = CheckManager.getCheck(checkId);
         if (entry == null) {
-            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cCheck not found"));
+            box.setItem(13, MenuUtil.named(Items.BARRIER, LanguageManager.tr("checks.not_found")));
             return;
         }
 
-        box.setItem(11, MenuUtil.named(Items.PAPER, "§eCreator: " + entry.creatorName()));
-        box.setItem(12, MenuUtil.named(Items.GOLD_INGOT, "§6Amount: $" + entry.amount()));
-        box.setItem(13, MenuUtil.named(entry.redeemed() ? Items.GRAY_DYE : Items.LIME_DYE, entry.redeemed() ? "§7Already redeemed" : "§aRedeem"));
-        box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(11, MenuUtil.named(Items.PAPER, LanguageManager.tr("checks.creator") + entry.creatorName()));
+        box.setItem(12, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("checks.amount") + entry.amount()));
+        box.setItem(13, MenuUtil.named(entry.redeemed() ? Items.GRAY_DYE : Items.LIME_DYE, entry.redeemed() ? LanguageManager.tr("checks.redeemed") : LanguageManager.tr("checks.redeem")));
+        box.setItem(21, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         MenuUtil.putPlayerInfoHead(box, viewer, 18);
         broadcastChanges();
     }
@@ -72,7 +72,7 @@ public class PlotzCheckRedeemMenu extends ChestMenu {
         if (slotId == 13) {
             CheckManager.CheckEntry entry = CheckManager.getCheck(checkId);
             if (entry == null || entry.redeemed()) {
-                sp.sendSystemMessage(Component.literal("§cThis check can no longer be redeemed."));
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("checks.no_longer")));
                 PlotzChecksMenu.open(sp, returnPage);
                 return;
             }

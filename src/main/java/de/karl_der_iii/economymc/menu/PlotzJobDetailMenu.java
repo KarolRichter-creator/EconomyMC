@@ -58,12 +58,14 @@ public class PlotzJobDetailMenu extends ChestMenu {
 
     private String statusLine(JobManager.JobEntry job) {
         return switch (job.status()) {
-            case OPEN -> JobManager.canAcceptNow(job) ? "§aOpen" : "§eOpens " + formatTime(job.availableAt());
-            case IN_PROGRESS -> "§6In Progress by " + job.workerName();
-            case COMPLETED -> "§bCompleted by " + job.workerName();
-            case CONFIRMED -> "§aConfirmed";
-            case CANCELLED -> "§cCancelled";
-            case FAILED -> "§4Failed";
+            case OPEN -> JobManager.canAcceptNow(job)
+                ? LanguageManager.tr("jobs.status.open")
+                : LanguageManager.tr("jobs.status.opens_at") + formatTime(job.availableAt());
+            case IN_PROGRESS -> LanguageManager.tr("jobs.in_progress_by") + job.workerName();
+            case COMPLETED -> LanguageManager.tr("jobs.status.completed") + " " + job.workerName();
+            case CONFIRMED -> LanguageManager.tr("jobs.status.confirmed");
+            case CANCELLED -> LanguageManager.tr("jobs.status.cancelled");
+            case FAILED -> LanguageManager.tr("jobs.status.failed");
         };
     }
 
@@ -74,21 +76,21 @@ public class PlotzJobDetailMenu extends ChestMenu {
 
         JobManager.JobEntry job = JobManager.getJob(jobId);
         if (job == null) {
-            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cJob no longer available"));
-            box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
+            box.setItem(13, MenuUtil.named(Items.BARRIER, LanguageManager.tr("jobs.unavailable")));
+            box.setItem(21, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
             MenuUtil.putPlayerInfoHead(box, viewer, 18);
             broadcastChanges();
             return;
         }
 
         box.setItem(10, MenuUtil.named(job.serverJob() ? Items.GOLD_BLOCK : Items.PAPER, "§e" + job.title()));
-        box.setItem(11, MenuUtil.named(Items.GOLD_INGOT, "§6Reward: $" + job.reward()));
-        box.setItem(12, MenuUtil.named(Items.NAME_TAG, "§7Created by: " + job.creatorName()));
-        box.setItem(13, MenuUtil.named(Items.BOOK, "§7Description: " + job.description()));
-        box.setItem(14, MenuUtil.named(Items.CLOCK, "§7Due in: " + job.dueDays() + " day(s)"));
-        box.setItem(15, MenuUtil.named(Items.COMPASS, "§7Status: " + statusLine(job)));
-        box.setItem(16, MenuUtil.named(Items.GOLD_NUGGET, "§7Current payout: $" + JobManager.calculateCurrentReward(job)));
-        box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(11, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("jobs.reward") + job.reward()));
+        box.setItem(12, MenuUtil.named(Items.NAME_TAG, LanguageManager.tr("jobs.created_by") + job.creatorName()));
+        box.setItem(13, MenuUtil.named(Items.BOOK, LanguageManager.tr("jobs.description") + job.description()));
+        box.setItem(14, MenuUtil.named(Items.CLOCK, LanguageManager.tr("jobs.due_in") + job.dueDays() + LanguageManager.tr("jobs.day_suffix")));
+        box.setItem(15, MenuUtil.named(Items.COMPASS, LanguageManager.tr("common.status") + ": " + statusLine(job)));
+        box.setItem(16, MenuUtil.named(Items.GOLD_NUGGET, LanguageManager.tr("jobs.current_payout") + JobManager.calculateCurrentReward(job)));
+        box.setItem(21, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         boolean creator = job.creatorId() != null && job.creatorId().equals(viewer.getUUID());
         boolean worker = job.workerId() != null && job.workerId().equals(viewer.getUUID());
@@ -97,32 +99,32 @@ public class PlotzJobDetailMenu extends ChestMenu {
         if (job.status() == JobManager.JobStatus.OPEN) {
             if (job.serverJob() && serverModeManage) {
                 if (JobManager.canAcceptNow(job)) {
-                    box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aAccept Server Job"));
+                    box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("jobs.accept_server")));
                 } else {
-                    box.setItem(23, MenuUtil.named(Items.CLOCK, "§eAvailable at " + formatTime(job.availableAt())));
+                    box.setItem(23, MenuUtil.named(Items.CLOCK, LanguageManager.tr("jobs.available_at") + formatTime(job.availableAt())));
                 }
-                box.setItem(24, MenuUtil.named(Items.RED_CONCRETE, "§cWithdraw Job"));
+                box.setItem(24, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("jobs.withdraw")));
             } else if (creator) {
-                box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, "§cWithdraw Job"));
+                box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("jobs.withdraw")));
             } else {
                 if (JobManager.canAcceptNow(job)) {
-                    box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aAccept Job"));
+                    box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("jobs.accept")));
                 } else {
-                    box.setItem(23, MenuUtil.named(Items.CLOCK, "§eAvailable at " + formatTime(job.availableAt())));
+                    box.setItem(23, MenuUtil.named(Items.CLOCK, LanguageManager.tr("jobs.available_at") + formatTime(job.availableAt())));
                 }
             }
         } else if (job.status() == JobManager.JobStatus.IN_PROGRESS) {
             if (worker) {
-                box.setItem(23, MenuUtil.named(Items.WRITABLE_BOOK, "§bMark as Completed"));
-                box.setItem(24, MenuUtil.named(Items.RED_CONCRETE, "§cCancel Job"));
+                box.setItem(23, MenuUtil.named(Items.WRITABLE_BOOK, LanguageManager.tr("jobs.mark_completed")));
+                box.setItem(24, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("jobs.cancel_job")));
             } else {
-                box.setItem(23, MenuUtil.named(Items.NAME_TAG, "§7In Progress by " + job.workerName()));
+                box.setItem(23, MenuUtil.named(Items.NAME_TAG, LanguageManager.tr("jobs.in_progress_by") + job.workerName()));
             }
         } else if (job.status() == JobManager.JobStatus.COMPLETED) {
             if (creator || serverModeManage) {
-                box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aConfirm Job"));
+                box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("jobs.confirm_job")));
             } else {
-                box.setItem(23, MenuUtil.named(Items.NAME_TAG, "§7Waiting for confirmation"));
+                box.setItem(23, MenuUtil.named(Items.NAME_TAG, LanguageManager.tr("jobs.waiting_confirmation")));
             }
         }
 
@@ -141,7 +143,7 @@ public class PlotzJobDetailMenu extends ChestMenu {
 
         JobManager.JobEntry job = JobManager.getJob(jobId);
         if (job == null) {
-            sp.sendSystemMessage(Component.literal("§cJob no longer available."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.unavailable")));
             PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
             return;
         }
@@ -154,64 +156,64 @@ public class PlotzJobDetailMenu extends ChestMenu {
             if (job.status() == JobManager.JobStatus.OPEN) {
                 if (job.serverJob() && serverModeManage) {
                     if (!JobManager.canAcceptNow(job)) {
-                        sp.sendSystemMessage(Component.literal("§cThis job cannot be accepted yet."));
+                        sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.accept_yet")));
                         return;
                     }
                     if (!JobManager.acceptJob(jobId, sp.getUUID(), sp.getGameProfile().getName())) {
-                        sp.sendSystemMessage(Component.literal("§cThis job is no longer open."));
+                        sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.not_open")));
                         return;
                     }
-                    sp.sendSystemMessage(Component.literal("§aYou accepted the server job."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.accepted_server")));
                     PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                     return;
                 }
 
                 if (creator) {
                     if (!JobManager.withdrawByCreator(jobId)) {
-                        sp.sendSystemMessage(Component.literal("§cCould not withdraw job."));
+                        sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.withdraw")));
                         return;
                     }
-                    sp.sendSystemMessage(Component.literal("§aJob withdrawn."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.withdrawn")));
                     PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                     return;
                 }
 
                 if (!JobManager.canAcceptNow(job)) {
-                    sp.sendSystemMessage(Component.literal("§cThis job cannot be accepted yet."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.accept_yet")));
                     return;
                 }
 
                 if (job.creatorId() != null && job.creatorId().equals(sp.getUUID())) {
-                    sp.sendSystemMessage(Component.literal("§cYou cannot accept your own job."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.own_job")));
                     return;
                 }
 
                 if (!JobManager.acceptJob(jobId, sp.getUUID(), sp.getGameProfile().getName())) {
-                    sp.sendSystemMessage(Component.literal("§cThis job is no longer open."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.not_open")));
                     return;
                 }
 
-                sp.sendSystemMessage(Component.literal("§aYou accepted the job."));
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.accepted")));
                 PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                 return;
             }
 
             if (job.status() == JobManager.JobStatus.IN_PROGRESS && worker) {
                 if (!JobManager.markCompleted(jobId, sp.getUUID())) {
-                    sp.sendSystemMessage(Component.literal("§cCould not mark job as completed."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.complete")));
                     return;
                 }
-                sp.sendSystemMessage(Component.literal("§aJob marked as completed."));
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.completed")));
                 PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                 return;
             }
 
             if (job.status() == JobManager.JobStatus.COMPLETED && (creator || serverModeManage)) {
                 if (!JobManager.confirmJob(jobId)) {
-                    sp.sendSystemMessage(Component.literal("§cCould not confirm job."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.confirm")));
                     return;
                 }
-                sp.sendSystemMessage(Component.literal("§aJob confirmed."));
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.confirmed")));
                 PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                 return;
             }
@@ -220,22 +222,22 @@ public class PlotzJobDetailMenu extends ChestMenu {
         if (slotId == 24) {
             if (job.status() == JobManager.JobStatus.OPEN && job.serverJob() && serverModeManage) {
                 if (!JobManager.withdrawByCreator(jobId)) {
-                    sp.sendSystemMessage(Component.literal("§cCould not withdraw job."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.withdraw")));
                     return;
                 }
-                sp.sendSystemMessage(Component.literal("§aServer job withdrawn."));
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.withdrawn_server")));
                 PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
                 return;
             }
 
             if (job.status() == JobManager.JobStatus.IN_PROGRESS && worker) {
                 if (!JobManager.cancelByWorker(jobId)) {
-                    sp.sendSystemMessage(Component.literal("§cCould not cancel job."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.error.cancel")));
                     return;
                 }
 
                 int penalty = TreasuryManager.calculateCancelPenalty(job.reward());
-                sp.sendSystemMessage(Component.literal("§cJob cancelled. Penalty: $" + penalty));
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.msg.cancelled_penalty") + penalty));
                 PlotzJobsMenu.open(sp, returnPage, allowCreate, serverOnly);
             }
         }

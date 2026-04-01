@@ -45,11 +45,11 @@ public class PlotzAdminModeMenu extends ChestMenu {
             box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
-        box.setItem(10, toggleItem(AdminSettingsManager.jobsEnabled(), LanguageManager.tr("help.jobs")));
-        box.setItem(11, toggleItem(AdminSettingsManager.checksEnabled(), LanguageManager.tr("help.checks")));
-        box.setItem(12, toggleItem(AdminSettingsManager.shopEnabled(), LanguageManager.tr("help.shop")));
-        box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), LanguageManager.tr("help.plots")));
-        box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), LanguageManager.tr("help.servermode")));
+        box.setItem(10, toggleItem(AdminSettingsManager.jobsEnabled(), "Jobs"));
+        box.setItem(11, toggleItem(AdminSettingsManager.checksEnabled(), "Checks"));
+        box.setItem(12, toggleItem(AdminSettingsManager.shopEnabled(), "Shop"));
+        box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), "Plot Market"));
+        box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), "Server Mode"));
 
         box.setItem(16, MenuUtil.named(Items.PAPER, "§7Min Tax: " + AdminSettingsManager.minTaxPercent() + "%"));
         box.setItem(17, MenuUtil.named(Items.PAPER, "§7Min Overdue: " + AdminSettingsManager.minOverduePercent() + "%"));
@@ -64,7 +64,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer)) return;
+        if (!(player instanceof ServerPlayer sp)) return;
 
         if (slotId == 10) AdminSettingsManager.setJobsEnabled(!AdminSettingsManager.jobsEnabled());
         if (slotId == 11) AdminSettingsManager.setChecksEnabled(!AdminSettingsManager.checksEnabled());

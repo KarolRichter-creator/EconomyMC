@@ -60,15 +60,18 @@ public class PlotzChecksMenu extends ChestMenu {
             CheckManager.CheckEntry entry = checks.get(i);
             box.setItem(slot, MenuUtil.named(
                 entry.redeemed() ? Items.GRAY_DYE : Items.PAPER,
-                (entry.redeemed() ? "§7" : "§e") + "Check $" + entry.amount() + " by " + entry.creatorName()
+                (entry.redeemed() ? "§7" : "§e") + "Check $" + entry.amount() + " - " + entry.creatorName()
             ));
             checkIds.put(slot, entry.id());
             slot++;
         }
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cClose"));
-        box.setItem(53, MenuUtil.named(Items.EMERALD, "§aCreate Check"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.close")));
+        box.setItem(50, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.previous")));
+        box.setItem(51, MenuUtil.named(Items.PAPER, LanguageManager.tr("common.page") + (page + 1)));
+        box.setItem(52, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.next")));
+        box.setItem(53, MenuUtil.named(Items.EMERALD, LanguageManager.tr("checks.create")));
         broadcastChanges();
     }
 
@@ -78,6 +81,16 @@ public class PlotzChecksMenu extends ChestMenu {
 
         if (slotId == 49) {
             sp.closeContainer();
+            return;
+        }
+
+        if (slotId == 50) {
+            if (page > 0) open(sp, page - 1);
+            return;
+        }
+
+        if (slotId == 52) {
+            open(sp, page + 1);
             return;
         }
 

@@ -61,12 +61,14 @@ public class PlotzJobsMenu extends ChestMenu {
 
     private String statusText(JobManager.JobEntry job) {
         return switch (job.status()) {
-            case OPEN -> JobManager.canAcceptNow(job) ? "§aOpen" : "§eOpens " + formatTime(job.availableAt());
-            case IN_PROGRESS -> "§6In Progress: " + job.workerName();
-            case COMPLETED -> "§bCompleted";
-            case CONFIRMED -> "§aConfirmed";
-            case CANCELLED -> "§cCancelled";
-            case FAILED -> "§4Failed";
+            case OPEN -> JobManager.canAcceptNow(job)
+                ? LanguageManager.tr("jobs.status.open")
+                : LanguageManager.tr("jobs.status.opens_at") + formatTime(job.availableAt());
+            case IN_PROGRESS -> LanguageManager.tr("jobs.status.in_progress") + job.workerName();
+            case COMPLETED -> LanguageManager.tr("jobs.status.completed");
+            case CONFIRMED -> LanguageManager.tr("jobs.status.confirmed");
+            case CANCELLED -> LanguageManager.tr("jobs.status.cancelled");
+            case FAILED -> LanguageManager.tr("jobs.status.failed");
         };
     }
 
@@ -97,15 +99,15 @@ public class PlotzJobsMenu extends ChestMenu {
         }
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cClose"));
-        box.setItem(50, MenuUtil.named(Items.ARROW, "§7Previous Page"));
-        box.setItem(51, MenuUtil.named(Items.PAPER, "§7Page " + (page + 1)));
-        box.setItem(52, MenuUtil.named(Items.ARROW, "§7Next Page"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.close")));
+        box.setItem(50, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.previous")));
+        box.setItem(51, MenuUtil.named(Items.PAPER, LanguageManager.tr("common.page") + (page + 1)));
+        box.setItem(52, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.next")));
 
         if (allowCreate) {
-            box.setItem(53, MenuUtil.named(Items.EMERALD, "§aAdd Job"));
+            box.setItem(53, MenuUtil.named(Items.EMERALD, LanguageManager.tr("jobs.add")));
         } else {
-            box.setItem(53, MenuUtil.named(Items.BOOK, "§7Create jobs in the correct menu"));
+            box.setItem(53, MenuUtil.named(Items.BOOK, LanguageManager.tr("jobs.create_hint")));
         }
 
         broadcastChanges();
