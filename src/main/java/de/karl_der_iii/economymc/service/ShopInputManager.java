@@ -18,7 +18,7 @@ public final class ShopInputManager {
     public static void waitForPrice(ServerPlayer player) {
         WAITING_FOR_PRICE.put(player.getUUID(), true);
         TRANSITIONING.put(player.getUUID(), true);
-        player.sendSystemMessage(Component.literal("§eEnter the shop price in chat now."));
+        player.sendSystemMessage(Component.literal(LanguageManager.tr("shop.input.enter_price")));
         player.closeContainer();
     }
 
@@ -36,20 +36,20 @@ public final class ShopInputManager {
 
         PlotzStore.ShopDraft draft = PlotzStore.getShopDraft(player.getUUID());
         if (draft == null || draft.items().isEmpty()) {
-            player.sendSystemMessage(Component.literal("§cNo shop draft selected."));
+            player.sendSystemMessage(Component.literal(LanguageManager.tr("shop.input.no_draft")));
             return true;
         }
 
         try {
             int price = Integer.parseInt(message.trim());
             if (price <= 0) {
-                player.sendSystemMessage(Component.literal("§cPrice must be above 0."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("shop.input.price_positive")));
             } else {
                 PlotzStore.updateShopDraftPrice(player.getUUID(), price);
-                player.sendSystemMessage(Component.literal("§aShop price set to $" + price));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("shop.input.price_set") + price));
             }
         } catch (NumberFormatException e) {
-            player.sendSystemMessage(Component.literal("§cThat is not a valid number."));
+            player.sendSystemMessage(Component.literal(LanguageManager.tr("shop.input.invalid_number")));
         }
 
         PlotzShopSellMenu.open(player);

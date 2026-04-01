@@ -67,7 +67,7 @@ public class PlotzHistoryMenu extends ChestMenu {
         }
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cClose"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.close")));
         box.setItem(52, MenuUtil.named(Items.PAPER, treasuryView ? LanguageManager.tr("history.treasury") : LanguageManager.tr("history.mine")));
         broadcastChanges();
     }

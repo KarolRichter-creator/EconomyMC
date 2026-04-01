@@ -25,13 +25,13 @@ public final class JobsInputManager {
 
     public static void startPlayerJob(ServerPlayer player) {
         DRAFTS.put(player.getUUID(), new Draft(false, Stage.TITLE, "", "", 0));
-        player.sendSystemMessage(Component.literal("§eEnter the job title in chat now."));
+        player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.title")));
         player.closeContainer();
     }
 
     public static void startServerJob(ServerPlayer player) {
         DRAFTS.put(player.getUUID(), new Draft(true, Stage.TITLE, "", "", 0));
-        player.sendSystemMessage(Component.literal("§eEnter the server job title in chat now."));
+        player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.server_title")));
         player.closeContainer();
     }
 
@@ -44,12 +44,12 @@ public final class JobsInputManager {
         switch (draft.stage()) {
             case TITLE -> {
                 DRAFTS.put(player.getUUID(), new Draft(draft.serverJob(), Stage.DESCRIPTION, message, "", 0));
-                player.sendSystemMessage(Component.literal("§eEnter the job description in chat now."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.description")));
                 return true;
             }
             case DESCRIPTION -> {
                 DRAFTS.put(player.getUUID(), new Draft(draft.serverJob(), Stage.REWARD, draft.title(), message, 0));
-                player.sendSystemMessage(Component.literal("§eEnter the reward amount in chat now."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.reward")));
                 return true;
             }
             case REWARD -> {
@@ -57,17 +57,17 @@ public final class JobsInputManager {
                 try {
                     reward = Integer.parseInt(message.trim());
                 } catch (NumberFormatException e) {
-                    player.sendSystemMessage(Component.literal("§cThat is not a valid number."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.invalid_number")));
                     return true;
                 }
 
                 if (reward <= 0) {
-                    player.sendSystemMessage(Component.literal("§cReward must be above 0."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.reward_positive")));
                     return true;
                 }
 
                 DRAFTS.put(player.getUUID(), new Draft(draft.serverJob(), Stage.DUE_DAYS, draft.title(), draft.description(), reward));
-                player.sendSystemMessage(Component.literal("§eEnter the due time in full days now."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.due_days")));
                 return true;
             }
             case DUE_DAYS -> {
@@ -75,12 +75,12 @@ public final class JobsInputManager {
                 try {
                     dueDays = Integer.parseInt(message.trim());
                 } catch (NumberFormatException e) {
-                    player.sendSystemMessage(Component.literal("§cThat is not a valid number."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.invalid_number")));
                     return true;
                 }
 
                 if (dueDays <= 0) {
-                    player.sendSystemMessage(Component.literal("§cDue days must be above 0."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.days_positive")));
                     return true;
                 }
 
@@ -88,13 +88,13 @@ public final class JobsInputManager {
 
                 if (draft.serverJob()) {
                     if (!TreasuryManager.removeTreasury(draft.reward())) {
-                        player.sendSystemMessage(Component.literal("§cThe treasury does not have enough money for this server job."));
+                        player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.treasury_missing")));
                         PlotzServerModeMenu.open(player);
                         return true;
                     }
                 } else {
                     if (!BalanceManager.removeBalance(player.getUUID(), draft.reward())) {
-                        player.sendSystemMessage(Component.literal("§cYou do not have enough money to create this job."));
+                        player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.player_missing_money")));
                         PlotzJobsMenu.open(player, 0, true, false);
                         return true;
                     }
@@ -102,7 +102,7 @@ public final class JobsInputManager {
 
                 JobManager.createJob(
                     draft.serverJob() ? null : player.getUUID(),
-                    draft.serverJob() ? "Server" : player.getGameProfile().getName(),
+                    draft.serverJob() ? LanguageManager.tr("common.treasury") : player.getGameProfile().getName(),
                     draft.title(),
                     draft.description(),
                     draft.reward(),
@@ -110,7 +110,7 @@ public final class JobsInputManager {
                     draft.serverJob()
                 );
 
-                player.sendSystemMessage(Component.literal("§aJob created."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("jobs.input.created")));
                 if (draft.serverJob()) {
                     PlotzServerModeMenu.open(player);
                 } else {

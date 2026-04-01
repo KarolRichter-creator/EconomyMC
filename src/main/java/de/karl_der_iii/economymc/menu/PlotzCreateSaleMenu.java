@@ -2,6 +2,7 @@ package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.DraftInputManager;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -22,7 +23,7 @@ public class PlotzCreateSaleMenu extends ChestMenu {
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzCreateSaleMenu(containerId, inventory, player),
-            Component.literal("Create Sale Listing")
+            Component.literal(LanguageManager.tr("sale.menu.title"))
         ));
     }
 
@@ -49,8 +50,8 @@ public class PlotzCreateSaleMenu extends ChestMenu {
         PlotzStore.SaleDraft draft = PlotzStore.getDraft(viewer.getUUID());
 
         if (draft == null) {
-            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cNo sale draft selected"));
-            box.setItem(22, MenuUtil.named(Items.BARRIER, "§cBack"));
+            box.setItem(13, MenuUtil.named(Items.BARRIER, LanguageManager.tr("sale.no_draft")));
+            box.setItem(22, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
             MenuUtil.putPlayerInfoHead(box, viewer, 18);
             broadcastChanges();
             return;
@@ -58,22 +59,22 @@ public class PlotzCreateSaleMenu extends ChestMenu {
 
         box.setItem(4, MenuUtil.named(
             Items.COMPASS,
-            draft.capital() ? "§6Selected Capital Plot" : "§7Selected Plot"
+            draft.capital() ? LanguageManager.tr("sale.selected_capital") : LanguageManager.tr("sale.selected_plot")
         ));
 
-        box.setItem(9, MenuUtil.named(Items.MAP, "§bPlot: " + draft.chunkCount() + " Chunks"));
-        box.setItem(10, MenuUtil.named(Items.GOLD_INGOT, "§eSet Price: $" + draft.price()));
-        box.setItem(11, MenuUtil.named(Items.PAPER, "§7Set Description"));
-        box.setItem(12, MenuUtil.named(Items.BRICKS, "§7Set Built On Plot"));
-        box.setItem(13, MenuUtil.named(Items.NAME_TAG, "§7Set Price Justification"));
+        box.setItem(9, MenuUtil.named(Items.MAP, LanguageManager.tr("sale.plot") + draft.chunkCount() + LanguageManager.tr("sale.chunks")));
+        box.setItem(10, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("sale.set_price") + draft.price()));
+        box.setItem(11, MenuUtil.named(Items.PAPER, LanguageManager.tr("sale.set_description")));
+        box.setItem(12, MenuUtil.named(Items.BRICKS, LanguageManager.tr("sale.set_built")));
+        box.setItem(13, MenuUtil.named(Items.NAME_TAG, LanguageManager.tr("sale.set_justification")));
         box.setItem(14, MenuUtil.named(
             draft.negotiable() ? Items.EMERALD : Items.GOLD_BLOCK,
-            draft.negotiable() ? "§aNegotiable" : "§6Fixed Price"
+            draft.negotiable() ? LanguageManager.tr("sale.negotiable") : LanguageManager.tr("sale.fixed")
         ));
-        box.setItem(15, MenuUtil.named(Items.WRITABLE_BOOK, "§bPublish Listing"));
-        box.setItem(21, MenuUtil.named(Items.COMPASS, "§7Location: " + draft.location()));
-        box.setItem(22, MenuUtil.named(Items.BARRIER, "§cClear Draft"));
-        box.setItem(23, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(15, MenuUtil.named(Items.WRITABLE_BOOK, LanguageManager.tr("sale.publish")));
+        box.setItem(21, MenuUtil.named(Items.COMPASS, LanguageManager.tr("sale.location") + draft.location()));
+        box.setItem(22, MenuUtil.named(Items.BARRIER, LanguageManager.tr("sale.clear_draft")));
+        box.setItem(23, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         MenuUtil.putPlayerInfoHead(box, viewer, 18);
         broadcastChanges();
@@ -91,13 +92,13 @@ public class PlotzCreateSaleMenu extends ChestMenu {
     private void publishListing(ServerPlayer sp) {
         PlotzStore.SaleDraft draft = PlotzStore.getDraft(sp.getUUID());
         if (draft == null) {
-            sp.sendSystemMessage(Component.literal("§cNo sale draft selected."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("sale.no_draft")));
             PlotzMainMenu.open(sp);
             return;
         }
 
         if (PlotzStore.hasListingForLocation(draft.location())) {
-            sp.sendSystemMessage(Component.literal("§cThis plot is already listed in the market."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("sale.already_listed")));
             return;
         }
 
@@ -117,7 +118,7 @@ public class PlotzCreateSaleMenu extends ChestMenu {
         ));
 
         PlotzStore.clearDraft(sp.getUUID());
-        sp.sendSystemMessage(Component.literal("§aListing published."));
+        sp.sendSystemMessage(Component.literal(LanguageManager.tr("sale.published")));
         PlotzMainMenu.open(sp);
     }
 
@@ -161,7 +162,7 @@ public class PlotzCreateSaleMenu extends ChestMenu {
 
         if (slotId == 22) {
             PlotzStore.clearDraft(sp.getUUID());
-            sp.sendSystemMessage(Component.literal("§aSale draft cleared."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("sale.cleared")));
             PlotzMainMenu.open(sp);
             return;
         }

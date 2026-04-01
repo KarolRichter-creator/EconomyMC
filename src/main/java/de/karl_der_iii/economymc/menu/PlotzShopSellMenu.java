@@ -1,6 +1,7 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.ShopInputManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +27,7 @@ public class PlotzShopSellMenu extends ChestMenu {
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzShopSellMenu(containerId, inventory, player),
-            Component.literal("Sell Item")
+            Component.literal(LanguageManager.tr("shop.sell.title"))
         ));
     }
 
@@ -63,13 +64,13 @@ public class PlotzShopSellMenu extends ChestMenu {
 
         PlotzStore.ShopDraft draft = PlotzStore.getShopDraft(viewer.getUUID());
         if (draft != null) {
-            box.setItem(49, MenuUtil.named(Items.GOLD_INGOT, "§eSet Price: $" + draft.price()));
+            box.setItem(49, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("shop.sell.set_price") + ": $" + draft.price()));
         } else {
-            box.setItem(49, MenuUtil.named(Items.GOLD_INGOT, "§eSet Price"));
+            box.setItem(49, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("shop.sell.set_price")));
         }
 
-        box.setItem(50, MenuUtil.named(Items.WRITABLE_BOOK, "§aPublish"));
-        box.setItem(53, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(50, MenuUtil.named(Items.WRITABLE_BOOK, LanguageManager.tr("shop.sell.publish")));
+        box.setItem(53, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
     }
@@ -111,7 +112,7 @@ public class PlotzShopSellMenu extends ChestMenu {
     private void publish() {
         PlotzStore.ShopDraft draft = PlotzStore.getShopDraft(viewer.getUUID());
         if (draft == null || draft.items().isEmpty()) {
-            viewer.sendSystemMessage(Component.literal("§cPut items in first."));
+            viewer.sendSystemMessage(Component.literal(LanguageManager.tr("shop.sell.put_items_first")));
             return;
         }
 
@@ -126,7 +127,7 @@ public class PlotzShopSellMenu extends ChestMenu {
         clearSellArea();
         PlotzStore.clearShopDraft(viewer.getUUID());
         published = true;
-        viewer.sendSystemMessage(Component.literal("§aShop listing published."));
+        viewer.sendSystemMessage(Component.literal(LanguageManager.tr("shop.sell.published")));
         PlotzShopMenu.open(viewer);
     }
 
@@ -139,7 +140,7 @@ public class PlotzShopSellMenu extends ChestMenu {
                 saveDraftFromContainer();
                 PlotzStore.ShopDraft draft = PlotzStore.getShopDraft(sp.getUUID());
                 if (draft == null || draft.items().isEmpty()) {
-                    sp.sendSystemMessage(Component.literal("§cPut items in first."));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("shop.sell.put_items_first")));
                     return;
                 }
 
