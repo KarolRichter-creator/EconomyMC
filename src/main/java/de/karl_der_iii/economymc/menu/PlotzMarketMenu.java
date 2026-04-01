@@ -1,6 +1,7 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -25,7 +26,7 @@ public class PlotzMarketMenu extends ChestMenu {
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzMarketMenu(containerId, inventory, player),
-            Component.literal("Plotz Market")
+            Component.literal(LanguageManager.tr("market.menu.title"))
         ));
     }
 
@@ -44,7 +45,7 @@ public class PlotzMarketMenu extends ChestMenu {
         listingIdsBySlot.clear();
 
         for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
+            box.setItem(i, ItemStack.EMPTY);
         }
 
         List<PlotzStore.Listing> listings = PlotzStore.getListings();
@@ -58,18 +59,17 @@ public class PlotzMarketMenu extends ChestMenu {
                 break;
             }
 
+            String color = listing.capital() ? "§6" : "§e";
             box.setItem(slot, MenuUtil.named(
                 listing.capital() ? Items.ENCHANTED_BOOK : Items.BOOK,
-                (listing.capital() ? "§6" : "§e")
-                    + listing.title()
-                    + " §7| " + listing.price() + "$ | " + listing.chunkCount() + " Chunks"
+                LanguageManager.format("market.entry", color + listing.title(), listing.price(), listing.chunkCount())
             ));
             listingIdsBySlot.put(slot, listing.listingId());
             slot++;
         }
 
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cBack"));
-        MenuUtil.putPlayerInfoHead(box, viewer, 45);
+        box.setItem(45, MenuUtil.playerInfoHead(viewer));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("market.back")));
         broadcastChanges();
     }
 

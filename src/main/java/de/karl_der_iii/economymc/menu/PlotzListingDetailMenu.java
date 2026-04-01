@@ -1,8 +1,8 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.PlotzLogic;
-import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -20,12 +20,11 @@ public class PlotzListingDetailMenu extends ChestMenu {
     private final SimpleContainer box;
     private final String listingId;
     private final boolean backToMySales;
-    private long lastClickMs = 0L;
 
     public static void open(ServerPlayer player, String listingId, boolean backToMySales) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzListingDetailMenu(containerId, inventory, player, listingId, backToMySales),
-            Component.literal("Plot Details")
+            Component.literal(LanguageManager.tr("listing.menu.title"))
         ));
     }
 
@@ -42,58 +41,31 @@ public class PlotzListingDetailMenu extends ChestMenu {
         refresh();
     }
 
-    private boolean clickAllowed() {
-        long now = System.currentTimeMillis();
-        if (now - lastClickMs < 250L) {
-            return false;
-        }
-        lastClickMs = now;
-        return true;
-    }
-
-    private void fillBackground() {
-        for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
-        }
-    }
-
     private void refresh() {
-        fillBackground();
+        for (int i = 0; i < box.getContainerSize(); i++) {
+            box.setItem(i, ItemStack.EMPTY);
+        }
 
         PlotzStore.Listing listing = PlotzStore.getListingById(listingId);
         if (listing == null) {
-            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cListing no longer exists"));
-            box.setItem(22, MenuUtil.named(Items.BARRIER, "§cBack"));
-            MenuUtil.putPlayerInfoHead(box, viewer, 18);
+            box.setItem(13, MenuUtil.named(Items.BARRIER, LanguageManager.tr("listing.missing")));
+            box.setItem(22, MenuUtil.named(Items.BARRIER, LanguageManager.tr("market.back")));
             broadcastChanges();
             return;
         }
-
-        int base = listing.price();
-        int tax = TreasuryManager.calculateTax(base);
-        int total = TreasuryManager.calculateTotalWithTax(base);
 
         box.setItem(10, MenuUtil.named(
             listing.capital() ? Items.ENCHANTED_BOOK : Items.BOOK,
             (listing.capital() ? "§6" : "§e") + listing.title()
         ));
-        box.setItem(11, MenuUtil.named(Items.GOLD_INGOT, "§6Base Price: $" + base));
-        box.setItem(12, MenuUtil.named(Items.REDSTONE, "§cTax: $" + tax));
-        box.setItem(13, MenuUtil.named(Items.EMERALD, "§aTotal: $" + total));
-        box.setItem(14, MenuUtil.named(Items.MAP, "§bChunks: " + listing.chunkCount()));
-        box.setItem(15, MenuUtil.named(Items.COMPASS, "§bLocation: " + listing.location()));
-        box.setItem(16, MenuUtil.named(
-            listing.negotiable() ? Items.EMERALD_BLOCK : Items.GOLD_BLOCK,
-            listing.negotiable() ? "§aNegotiable" : "§6Fixed Price"
-        ));
-
-        box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
-
-        if (listing.sellerId().equals(viewer.getUUID())) {
-            box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, "§cWithdraw Listing"));
-        } else {
-            box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aBuy Plot"));
-        }
+        box.setItem(12, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.format("listing.price", listing.price())));
+        box.setItem(13, MenuUtil.named(Items.PAPER, LanguageManager.format("listing.description", listing.description())));
+        box.setItem(14, MenuUtil.named(Items.COMPASS, LanguageManager.format("listing.location", listing.location())));
+        box.setItem(15, MenuUtil.named(Items.BRICKS, LanguageManager.format("listing.building", listing.builtOnPlot())));
+        box.setItem(16, MenuUtil.named(Items.NAME_TAG, LanguageManager.format("listing.reason", listing.justification())));
+        box.setItem(21, MenuUtil.named(Items.MAP, LanguageManager.format("listing.chunks", listing.chunkCount())));
+        box.setItem(22, MenuUtil.named(Items.BARRIER, LanguageManager.tr("market.back")));
+        box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("listing.buy")));
 
         MenuUtil.putPlayerInfoHead(box, viewer, 18);
         broadcastChanges();
@@ -105,11 +77,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
             return;
         }
 
-        if (!clickAllowed()) {
-            return;
-        }
-
-        if (slotId == 21) {
+        if (slotId == 22) {
             if (backToMySales) {
                 PlotzMySalesMenu.open(sp);
             } else {
@@ -124,7 +92,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
 
         PlotzStore.Listing listing = PlotzStore.getListingById(listingId);
         if (listing == null) {
-            sp.sendSystemMessage(Component.literal("§cListing no longer exists."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("listing.not.exists")));
             if (backToMySales) {
                 PlotzMySalesMenu.open(sp);
             } else {
@@ -134,23 +102,16 @@ public class PlotzListingDetailMenu extends ChestMenu {
         }
 
         if (listing.sellerId().equals(sp.getUUID())) {
-            PlotzStore.removeListing(listing.listingId());
-            sp.sendSystemMessage(Component.literal("§aListing withdrawn."));
-            PlotzMySalesMenu.open(sp);
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("listing.buy.own")));
             return;
         }
 
-        int total = TreasuryManager.calculateTotalWithTax(listing.price());
-        int tax = TreasuryManager.calculateTax(listing.price());
-
-        boolean charged = PlotzLogic.tryCharge(sp, total);
-        if (!charged) {
-            sp.sendSystemMessage(Component.literal("§cYou do not have enough money."));
+        if (!PlotzLogic.tryCharge(sp, listing.price())) {
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("listing.not.enough")));
             return;
         }
 
-        TreasuryManager.addTreasury(tax);
-        PlotzLogic.paySeller(sp, listing.sellerName(), listing.price());
+    PlotzLogic.paySeller(sp, listing.sellerName(), listing.price());
 
         PlotzStore.addOwnedPlot(new PlotzStore.PlotEntry(
             sp.getUUID(),
@@ -163,7 +124,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
         ));
 
         PlotzStore.removeListing(listing.listingId());
-        sp.sendSystemMessage(Component.literal("§aYou bought the plot: " + listing.title() + " §7(Tax: $" + tax + ")"));
+        sp.sendSystemMessage(Component.literal(LanguageManager.format("listing.buy.success", listing.title())));
         PlotzMyPlotsMenu.open(sp);
     }
 
