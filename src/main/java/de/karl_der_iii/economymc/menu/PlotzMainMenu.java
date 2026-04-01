@@ -2,6 +2,7 @@ package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.LanguageManager;
+import de.karl_der_iii.economymc.service.OpacBridge;
 import de.karl_der_iii.economymc.service.PlotzLogic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class PlotzMainMenu extends ChestMenu {
     private final ServerPlayer viewer;
     private final SimpleContainer box;
+    private long lastClickMs = 0L;
 
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
@@ -39,47 +41,56 @@ public class PlotzMainMenu extends ChestMenu {
         refresh();
     }
 
-    private void refresh() {
+    private void fillBackground() {
         for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, ItemStack.EMPTY);
+            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
+    }
+
+    private void refresh() {
+        fillBackground();
 
         UUID id = viewer.getUUID();
         boolean capitalHere = PlotzLogic.isCapital(viewer.blockPosition());
 
-        box.setItem(11, MenuUtil.named(
+        box.setItem(4, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
+        ));
+
+        box.setItem(10, MenuUtil.named(
             Items.BOOK,
-            LanguageManager.format("plots.buy.normal", PlotzStore.getNormalCredits(id), PlotzLogic.NORMAL_CHUNK_PRICE)
+            LanguageManager.tr("plots.buy.normal") + " §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
+        ));
+
+        box.setItem(12, MenuUtil.named(
+            Items.ENCHANTED_BOOK,
+            LanguageManager.tr("plots.buy.capital") + " §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
         ));
 
         box.setItem(13, MenuUtil.named(
-            Items.ENCHANTED_BOOK,
-            LanguageManager.format("plots.buy.capital", PlotzStore.getCapitalCredits(id), PlotzLogic.CAPITAL_CHUNK_PRICE)
+            Items.NAME_TAG,
+            OpacBridge.getPartyStatusText(viewer)
         ));
 
-        box.setItem(15, MenuUtil.named(
+        box.setItem(14, MenuUtil.named(
             Items.EMERALD,
             LanguageManager.tr("plots.create.sale")
         ));
 
-        box.setItem(19, MenuUtil.named(
-            Items.COMPASS,
-            capitalHere ? LanguageManager.tr("plots.current.capital") : LanguageManager.tr("plots.current.normal")
+        box.setItem(16, MenuUtil.named(
+            Items.CHEST,
+            LanguageManager.tr("plots.market") + " §7(" + PlotzStore.getListings().size() + ")"
         ));
 
-        box.setItem(20, MenuUtil.named(
+        box.setItem(19, MenuUtil.named(
             Items.MAP,
-            LanguageManager.format("plots.owned", PlotzStore.getOwnedPlots(id).size())
+            LanguageManager.tr("plots.mine") + " §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
         ));
 
         box.setItem(22, MenuUtil.named(
             Items.WRITABLE_BOOK,
-            LanguageManager.format("plots.sales", PlotzStore.getListingsBySeller(id).size())
-        ));
-
-        box.setItem(24, MenuUtil.named(
-            Items.CHEST,
-            LanguageManager.format("plots.market", PlotzStore.getListings().size())
+            LanguageManager.tr("plots.sales") + " §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
         ));
 
         box.setItem(25, MenuUtil.named(
@@ -91,51 +102,63 @@ public class PlotzMainMenu extends ChestMenu {
         broadcastChanges();
     }
 
+    private boolean clickAllowed() {
+        long now = System.currentTimeMillis();
+        if (now - lastClickMs < 250L) {
+            return false;
+        }
+        lastClickMs = now;
+        return true;
+    }
+
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) {
-            return;
-        }
+        if (!(player instanceof ServerPlayer sp)) return;
+        if (!clickAllowed()) return;
 
-        if (slotId == 11) {
-            if (PlotzLogic.tryCharge(sp, PlotzLogic.NORMAL_CHUNK_PRICE)) {
-                PlotzStore.addNormalCredit(sp.getUUID(), 1);
-                sp.sendSystemMessage(Component.literal("§a1 " + LanguageManager.tr("credits.normal") + " gekauft."));
-                refresh();
-            } else {
-                sp.sendSystemMessage(Component.literal(LanguageManager.tr("listing.not.enough")));
+        if (slotId == 10) {
+            boolean charged = PlotzLogic.canBuyNormalCredit(sp);
+            if (!charged) {
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.normal.fail")));
+                return;
             }
+
+            PlotzStore.addNormalCredit(sp.getUUID(), 1);
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.normal.ok")));
+            refresh();
             return;
         }
 
-        if (slotId == 13) {
-            if (PlotzLogic.tryCharge(sp, PlotzLogic.CAPITAL_CHUNK_PRICE)) {
-                PlotzStore.addCapitalCredit(sp.getUUID(), 1);
-                sp.sendSystemMessage(Component.literal("§a1 " + LanguageManager.tr("credits.capital") + " gekauft."));
-                refresh();
-            } else {
-                sp.sendSystemMessage(Component.literal(LanguageManager.tr("listing.not.enough")));
+        if (slotId == 12) {
+            boolean charged = PlotzLogic.canBuyCapitalCredit(sp);
+            if (!charged) {
+                sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.capital.fail")));
+                return;
             }
+
+            PlotzStore.addCapitalCredit(sp.getUUID(), 1);
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.capital.ok")));
+            refresh();
             return;
         }
 
-        if (slotId == 15) {
+        if (slotId == 14) {
             PlotzCreateSaleMenu.open(sp);
             return;
         }
 
-        if (slotId == 20) {
+        if (slotId == 16) {
+            PlotzMarketMenu.open(sp);
+            return;
+        }
+
+        if (slotId == 19) {
             PlotzMyPlotsMenu.open(sp);
             return;
         }
 
         if (slotId == 22) {
             PlotzMySalesMenu.open(sp);
-            return;
-        }
-
-        if (slotId == 24) {
-            PlotzMarketMenu.open(sp);
             return;
         }
 

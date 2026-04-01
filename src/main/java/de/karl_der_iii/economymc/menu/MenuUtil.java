@@ -1,13 +1,20 @@
 package de.karl_der_iii.economymc.menu;
 
-import de.karl_der_iii.economymc.service.BalanceManager;
+import de.karl_der_iii.economymc.data.PlotzStore;
+import de.karl_der_iii.economymc.service.EconomyBridge;
 import de.karl_der_iii.economymc.service.LanguageManager;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.ResolvableProfile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class MenuUtil {
     private MenuUtil() {}
@@ -18,18 +25,41 @@ public final class MenuUtil {
         return stack;
     }
 
-    public static ItemStack playerInfoHead(ServerPlayer player) {
-        long money = BalanceManager.getBalance(player.getUUID());
-        return named(
-            Items.EMERALD,
-            "§e" + player.getGameProfile().getName()
-                + " §7| "
-                + LanguageManager.tr("money.label")
-                + ": $" + money
-        );
+    public static ItemStack namedWithLore(Item item, String text, List<String> loreLines) {
+        ItemStack stack = new ItemStack(item);
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(text));
+
+        if (loreLines != null && !loreLines.isEmpty()) {
+            List<Component> lore = new ArrayList<>();
+            for (String line : loreLines) {
+                lore.add(Component.literal(line));
+            }
+            stack.set(DataComponents.LORE, new ItemLore(lore));
+        }
+
+        return stack;
     }
 
-    public static void putPlayerInfoHead(net.minecraft.world.Container container, ServerPlayer player, int slot) {
-        container.setItem(slot, playerInfoHead(player));
+    public static ItemStack playerInfoHead(ServerPlayer player) {
+        long balance = EconomyBridge.getBalance(player);
+        int normalCredits = PlotzStore.getNormalCredits(player.getUUID());
+        int capitalCredits = PlotzStore.getCapitalCredits(player.getUUID());
+
+        ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal("§e" + player.getGameProfile().getName()));
+        stack.set(
+            DataComponents.LORE,
+            new ItemLore(List.of(
+                Component.literal(LanguageManager.format("menu.player.balance", balance)),
+                Component.literal(LanguageManager.format("menu.player.normal", normalCredits)),
+                Component.literal(LanguageManager.format("menu.player.capital", capitalCredits))
+            ))
+        );
+        stack.set(DataComponents.PROFILE, new ResolvableProfile(player.getGameProfile()));
+        return stack;
+    }
+
+    public static void putPlayerInfoHead(SimpleContainer box, ServerPlayer player, int slot) {
+        box.setItem(slot, playerInfoHead(player));
     }
 }

@@ -7,223 +7,211 @@ public final class LanguageManager {
     private static final Map<String, Map<String, String>> LANG = new HashMap<>();
 
     static {
-        register("de_de",
-            "help.header", "§6EconomyMC Befehle",
-            "help.plots", "§e/ec plots §7- öffnet das Grundstücksmenü",
-            "help.shop", "§e/ec shop §7- öffnet das Shop-Menü",
-            "help.jobs", "§e/ec jobs §7- öffnet das Jobs-Menü",
-            "help.checks", "§e/ec checks §7- öffnet das Checks-Menü",
-            "help.history", "§e/ec history §7- öffnet den Zahlungsverlauf",
-            "help.bank", "§e/ec bank §7- öffnet das Bank- und Kreditsystem",
-            "help.daily", "§e/ec daily §7- holt die tägliche Belohnung",
-            "help.pay", "§e/ec pay <Spieler/Treasury> <Betrag> §7- sendet Geld",
-            "help.servermode", "§e/ec servermode §7- öffnet den Servermodus",
-            "help.adminmode", "§e/ec adminmode §7- öffnet den Adminmodus",
-            "help.admin", "§e/ec admin ... §7- Hauptstadt und Kontoverwaltung",
-            "help.language", "§7Sprachen: Deutsch, Englisch, Polnisch, Französisch, Spanisch, Portugiesisch, Russisch, Türkisch, Chinesisch, Japanisch",
+        Map<String, String> en = new HashMap<>();
+        en.put("help.header", "§6EconomyMC Commands");
+        en.put("help.plots", "§e/ec plots §7- opens the plots menu");
+        en.put("help.shop", "§e/ec shop §7- opens the shop menu");
+        en.put("help.jobs", "§e/ec jobs §7- opens the jobs menu");
+        en.put("help.checks", "§e/ec checks §7- opens the checks menu");
+        en.put("help.history", "§e/ec history §7- opens the payment history");
+        en.put("help.daily", "§e/ec daily §7- claims the daily reward");
+        en.put("help.pay", "§e/ec pay <player/treasury> <amount> §7- sends money");
+        en.put("help.servermode", "§e/ec servermode §7- opens server mode");
+        en.put("help.adminmode", "§e/ec adminmode §7- opens admin mode");
+        en.put("help.admin", "§e/ec admin ... §7- capital and account management");
+        en.put("help.language", "§7Languages: German, English, Polish, French, Spanish, Portuguese, Russian, Turkish, Chinese, Japanese");
 
-            "cmd.only_players", "Nur Spieler können diesen Befehl benutzen.",
-            "msg.shop_disabled", "§cShop ist vom Admin deaktiviert.",
-            "msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.",
-            "msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.",
-            "msg.servermode_disabled", "§cServer-Modus ist vom Admin deaktiviert.",
+        en.put("cmd.only_players", "Only players can use this command.");
+        en.put("msg.shop_disabled", "§cShop is disabled by admin.");
+        en.put("msg.jobs_disabled", "§cJobs are disabled by admin.");
+        en.put("msg.checks_disabled", "§cChecks are disabled by admin.");
+        en.put("msg.servermode_disabled", "§cServer mode is disabled by admin.");
 
-            "admin.language", "§7Sprache: Deutsch",
-            "admin.language.toggle", "§bSprache wechseln",
+        en.put("admin.language", "§7Language: English");
+        en.put("admin.language.toggle", "§bSwitch language");
 
-            "money.label", "Geld",
-            "credits.normal", "Normale Credits",
-            "credits.capital", "Hauptstadt-Credits",
+        en.put("plots.menu.title", "EconomyMC Plots");
+        en.put("plots.position.capital", "§6Current Position: Capital Zone");
+        en.put("plots.position.normal", "§7Current Position: Normal Zone");
+        en.put("plots.buy.normal", "§eBuy Normal Claim Credits");
+        en.put("plots.buy.capital", "§6Buy Capital Claim Credits");
+        en.put("plots.create.sale", "§aCreate Sale Listing");
+        en.put("plots.market", "§3Market Listings");
+        en.put("plots.mine", "§bMy Plots");
+        en.put("plots.sales", "§dMy Sales");
+        en.put("plots.history", "§aOpen History");
+        en.put("plots.buy.normal.fail", "§cYou do not have enough money for a normal claim credit.");
+        en.put("plots.buy.normal.ok", "§aBought 1 normal claim credit.");
+        en.put("plots.buy.capital.fail", "§cYou do not have enough money for a capital claim credit.");
+        en.put("plots.buy.capital.ok", "§aBought 1 capital claim credit.");
 
-            "plots.menu.title", "EconomyMC Grundstücke",
-            "plots.current.capital", "§6Aktuelle Position: Hauptstadt",
-            "plots.current.normal", "§7Aktuelle Position: Normal",
-            "plots.buy.normal", "§eNormale Claim-Chunks kaufen §7(%d | %d$)",
-            "plots.buy.capital", "§6Hauptstadt-Claim-Chunks kaufen §7(%d | %d$)",
-            "plots.create.sale", "§aNeuen Verkauf anlegen",
-            "plots.market", "§3Marktangebote §7(%d)",
-            "plots.owned", "§bMein Besitz §7(%d)",
-            "plots.sales", "§dMeine Verkäufe §7(%d)",
-            "plots.history", "§aVerlauf öffnen",
+        en.put("menu.player.balance", "§6Balance: $%d");
+        en.put("menu.player.normal", "§7Normal Credits: %d");
+        en.put("menu.player.capital", "§7Capital Credits: %d");
 
-            "market.menu.title", "EconomyMC Markt",
-            "market.back", "§cZurück",
-            "market.entry", "%s §7| %d$ | %d Chunks",
+        en.put("jobs.menu.title", "EconomyMC Jobs");
+        en.put("jobs.server.title", "EconomyMC Server Jobs");
+        en.put("job.detail.title", "EconomyMC Job Details");
 
-            "listing.menu.title", "EconomyMC Grundstücksdetails",
-            "listing.missing", "§cAngebot nicht mehr vorhanden",
-            "listing.price", "§6Preis: %d$",
-            "listing.description", "§7Beschreibung: %s",
-            "listing.location", "§bLage: %s",
-            "listing.building", "§7Bebauung: %s",
-            "listing.reason", "§7Preisbegründung: %s",
-            "listing.chunks", "§bChunks: %d",
-            "listing.buy", "§aKaufen",
-            "listing.buy.own", "§cDu kannst dein eigenes Grundstück nicht kaufen.",
-            "listing.buy.success", "§aDu hast das Grundstück gekauft: %s",
-            "listing.not.exists", "§cAngebot existiert nicht mehr.",
-            "listing.not.enough", "§cNicht genug Geld.",
+        en.put("checks.menu.title", "EconomyMC Checks");
+        en.put("check.redeem.title", "EconomyMC Redeem Check");
 
-            "history.title", "EconomyMC Verlauf",
-            "history.empty", "§7Noch keine Einträge vorhanden.",
-            "history.mine", "§bMein Verlauf",
-            "history.treasury", "§6Treasury-Verlauf",
-            "history.open", "§aVerlauf öffnen",
+        en.put("server.mode.title", "EconomyMC Server Mode");
+        en.put("admin.mode.title", "EconomyMC Admin Mode");
 
-            "history.pay.sent", "§aPay an %s: $%d",
-            "history.pay.received", "§aPay von %s: $%d",
-            "history.daily", "§eDaily Belohnung: $%d",
-            "history.check.create", "§dCheck erstellt: $%d",
-            "history.check.redeem", "§dCheck eingelöst: $%d",
-            "history.job.reward", "§bJob ausgezahlt: $%d",
-            "history.job.refund", "§6Job-Rückzahlung: $%d",
-            "history.treasury.tax", "§6Steuer erhalten: $%d",
-            "history.admin.set", "§cAdmin setzte Guthaben: $%d",
-            "history.loan.request", "§9Kreditanfrage erstellt: $%d",
-            "history.loan.funded", "§9Kredit vergeben: $%d",
-            "history.loan.received", "§9Kredit erhalten: $%d",
-            "history.loan.repaid", "§9Kredit zurückgezahlt: $%d",
-            "history.loan.interest", "§9Zinsen bezahlt: $%d",
+        en.put("history.title", "EconomyMC History");
+        en.put("history.empty", "§7No entries yet.");
+        en.put("history.mine", "§bMy History");
+        en.put("history.treasury", "§6Treasury History");
+        en.put("history.open", "§aOpen History");
+        en.put("history.pay.sent", "§aPay to %s: $%d");
+        en.put("history.pay.received", "§aPay from %s: $%d");
+        en.put("history.daily", "§eDaily reward: $%d");
+        en.put("history.check.create", "§dCreated check: $%d");
+        en.put("history.check.redeem", "§dRedeemed check: $%d");
+        en.put("history.job.reward", "§bJob payout: $%d");
+        en.put("history.job.refund", "§6Job refund: $%d");
+        en.put("history.treasury.tax", "§6Tax received: $%d");
+        en.put("history.admin.set", "§cAdmin set balance: $%d");
+        LANG.put("en_us", en);
 
-            "bank.title", "EconomyMC Bank",
-            "bank.request.created", "§aKreditanfrage erstellt.",
-            "bank.offer.created", "§aKreditangebot erstellt.",
-            "bank.accepted", "§aKredit angenommen.",
-            "bank.repaid", "§aKredit zurückgezahlt.",
-            "bank.not_enough_money", "§cNicht genug Geld.",
-            "bank.not_found", "§cEintrag nicht gefunden.",
-            "bank.invalid_target", "§cUngültiges Kredit-Ziel.",
-            "bank.target.all", "Alle Spieler",
-            "bank.target.server", "Server",
-            "bank.target.player", "Spieler",
-            "bank.command.list", "§e/ec bank list §7- zeigt offene Kredite",
-            "bank.command.request", "§e/ec bank request <server|all|player> [name] <amount> <days> §7- erstellt eine Anfrage",
-            "bank.command.offer", "§e/ec bank offer <loanId> <interestPercent> §7- erstellt ein Angebot",
-            "bank.command.accept", "§e/ec bank accept <loanId> §7- nimmt ein Angebot an",
-            "bank.command.repay", "§e/ec bank repay <loanId> §7- zahlt einen Kredit zurück"
-        );
+        Map<String, String> de = new HashMap<>(en);
+        de.put("help.header", "§6EconomyMC Befehle");
+        de.put("help.plots", "§e/ec plots §7- öffnet das Grundstücksmenü");
+        de.put("help.shop", "§e/ec shop §7- öffnet das Shop-Menü");
+        de.put("help.jobs", "§e/ec jobs §7- öffnet das Jobs-Menü");
+        de.put("help.checks", "§e/ec checks §7- öffnet das Checks-Menü");
+        de.put("help.history", "§e/ec history §7- öffnet den Zahlungsverlauf");
+        de.put("help.daily", "§e/ec daily §7- holt die tägliche Belohnung");
+        de.put("help.pay", "§e/ec pay <Spieler/Treasury> <Betrag> §7- sendet Geld");
+        de.put("help.servermode", "§e/ec servermode §7- öffnet den Servermodus");
+        de.put("help.adminmode", "§e/ec adminmode §7- öffnet den Adminmodus");
+        de.put("help.admin", "§e/ec admin ... §7- Hauptstadt und Kontoverwaltung");
+        de.put("help.language", "§7Sprachen: Deutsch, Englisch, Polnisch, Französisch, Spanisch, Portugiesisch, Russisch, Türkisch, Chinesisch, Japanisch");
 
-        register("en_us",
-            "help.header", "§6EconomyMC Commands",
-            "help.plots", "§e/ec plots §7- opens the plots menu",
-            "help.shop", "§e/ec shop §7- opens the shop menu",
-            "help.jobs", "§e/ec jobs §7- opens the jobs menu",
-            "help.checks", "§e/ec checks §7- opens the checks menu",
-            "help.history", "§e/ec history §7- opens the payment history",
-            "help.bank", "§e/ec bank §7- opens the banking and loan system",
-            "help.daily", "§e/ec daily §7- claims the daily reward",
-            "help.pay", "§e/ec pay <player/treasury> <amount> §7- sends money",
-            "help.servermode", "§e/ec servermode §7- opens server mode",
-            "help.adminmode", "§e/ec adminmode §7- opens admin mode",
-            "help.admin", "§e/ec admin ... §7- capital and account management",
-            "help.language", "§7Languages: German, English, Polish, French, Spanish, Portuguese, Russian, Turkish, Chinese, Japanese",
+        de.put("cmd.only_players", "Nur Spieler können diesen Befehl benutzen.");
+        de.put("msg.shop_disabled", "§cShop ist vom Admin deaktiviert.");
+        de.put("msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.");
+        de.put("msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.");
+        de.put("msg.servermode_disabled", "§cServer-Modus ist vom Admin deaktiviert.");
 
-            "cmd.only_players", "Only players can use this command.",
-            "msg.shop_disabled", "§cShop is disabled by admin.",
-            "msg.jobs_disabled", "§cJobs are disabled by admin.",
-            "msg.checks_disabled", "§cChecks are disabled by admin.",
-            "msg.servermode_disabled", "§cServer mode is disabled by admin.",
+        de.put("admin.language", "§7Sprache: Deutsch");
+        de.put("admin.language.toggle", "§bSprache wechseln");
 
-            "admin.language", "§7Language: English",
-            "admin.language.toggle", "§bSwitch language",
+        de.put("plots.menu.title", "EconomyMC Grundstücke");
+        de.put("plots.position.capital", "§6Aktuelle Position: Hauptstadt-Zone");
+        de.put("plots.position.normal", "§7Aktuelle Position: Normale Zone");
+        de.put("plots.buy.normal", "§eNormale Claim-Credits kaufen");
+        de.put("plots.buy.capital", "§6Hauptstadt-Claim-Credits kaufen");
+        de.put("plots.create.sale", "§aVerkaufsangebot erstellen");
+        de.put("plots.market", "§3Marktangebote");
+        de.put("plots.mine", "§bMeine Grundstücke");
+        de.put("plots.sales", "§dMeine Verkäufe");
+        de.put("plots.history", "§aVerlauf öffnen");
+        de.put("plots.buy.normal.fail", "§cDu hast nicht genug Geld für einen normalen Claim-Credit.");
+        de.put("plots.buy.normal.ok", "§a1 normaler Claim-Credit gekauft.");
+        de.put("plots.buy.capital.fail", "§cDu hast nicht genug Geld für einen Hauptstadt-Claim-Credit.");
+        de.put("plots.buy.capital.ok", "§a1 Hauptstadt-Claim-Credit gekauft.");
 
-            "money.label", "Money",
-            "credits.normal", "Normal Credits",
-            "credits.capital", "Capital Credits",
+        de.put("menu.player.balance", "§6Kontostand: $%d");
+        de.put("menu.player.normal", "§7Normale Credits: %d");
+        de.put("menu.player.capital", "§7Hauptstadt-Credits: %d");
 
-            "plots.menu.title", "EconomyMC Plots",
-            "plots.current.capital", "§6Current Position: Capital",
-            "plots.current.normal", "§7Current Position: Normal",
-            "plots.buy.normal", "§eBuy normal claim chunks §7(%d | %d$)",
-            "plots.buy.capital", "§6Buy capital claim chunks §7(%d | %d$)",
-            "plots.create.sale", "§aCreate new sale",
-            "plots.market", "§3Market listings §7(%d)",
-            "plots.owned", "§bMy property §7(%d)",
-            "plots.sales", "§dMy sales §7(%d)",
-            "plots.history", "§aOpen history",
+        de.put("jobs.menu.title", "EconomyMC Jobs");
+        de.put("jobs.server.title", "EconomyMC Server-Jobs");
+        de.put("job.detail.title", "EconomyMC Jobdetails");
 
-            "market.menu.title", "EconomyMC Market",
-            "market.back", "§cBack",
-            "market.entry", "%s §7| %d$ | %d chunks",
+        de.put("checks.menu.title", "EconomyMC Checks");
+        de.put("check.redeem.title", "EconomyMC Check einlösen");
 
-            "listing.menu.title", "EconomyMC Plot Details",
-            "listing.missing", "§cListing no longer available",
-            "listing.price", "§6Price: %d$",
-            "listing.description", "§7Description: %s",
-            "listing.location", "§bLocation: %s",
-            "listing.building", "§7Building: %s",
-            "listing.reason", "§7Price reason: %s",
-            "listing.chunks", "§bChunks: %d",
-            "listing.buy", "§aBuy",
-            "listing.buy.own", "§cYou cannot buy your own listing.",
-            "listing.buy.success", "§aYou bought the plot: %s",
-            "listing.not.exists", "§cListing no longer exists.",
-            "listing.not.enough", "§cNot enough money.",
+        de.put("server.mode.title", "EconomyMC Servermodus");
+        de.put("admin.mode.title", "EconomyMC Adminmodus");
 
-            "history.title", "EconomyMC History",
-            "history.empty", "§7No entries yet.",
-            "history.mine", "§bMy History",
-            "history.treasury", "§6Treasury History",
-            "history.open", "§aOpen History",
+        de.put("history.title", "EconomyMC Verlauf");
+        de.put("history.empty", "§7Noch keine Einträge vorhanden.");
+        de.put("history.mine", "§bMein Verlauf");
+        de.put("history.treasury", "§6Treasury-Verlauf");
+        de.put("history.open", "§aVerlauf öffnen");
+        de.put("history.pay.sent", "§aÜberweisung an %s: $%d");
+        de.put("history.pay.received", "§aÜberweisung von %s: $%d");
+        de.put("history.daily", "§eTägliche Belohnung: $%d");
+        de.put("history.check.create", "§dCheck erstellt: $%d");
+        de.put("history.check.redeem", "§dCheck eingelöst: $%d");
+        de.put("history.job.reward", "§bJob-Auszahlung: $%d");
+        de.put("history.job.refund", "§6Job-Rückzahlung: $%d");
+        de.put("history.treasury.tax", "§6Steuer erhalten: $%d");
+        de.put("history.admin.set", "§cAdmin setzte Guthaben: $%d");
+        LANG.put("de_de", de);
 
-            "history.pay.sent", "§aPay to %s: $%d",
-            "history.pay.received", "§aPay from %s: $%d",
-            "history.daily", "§eDaily reward: $%d",
-            "history.check.create", "§dCreated check: $%d",
-            "history.check.redeem", "§dRedeemed check: $%d",
-            "history.job.reward", "§bJob payout: $%d",
-            "history.job.refund", "§6Job refund: $%d",
-            "history.treasury.tax", "§6Tax received: $%d",
-            "history.admin.set", "§cAdmin set balance: $%d",
-            "history.loan.request", "§9Loan request created: $%d",
-            "history.loan.funded", "§9Loan funded: $%d",
-            "history.loan.received", "§9Loan received: $%d",
-            "history.loan.repaid", "§9Loan repaid: $%d",
-            "history.loan.interest", "§9Interest paid: $%d",
+        Map<String, String> pl = new HashMap<>(en);
+        pl.put("admin.language", "§7Język: Polski");
+        pl.put("plots.menu.title", "EconomyMC Działki");
+        pl.put("plots.position.capital", "§6Aktualna pozycja: Strefa stolicy");
+        pl.put("plots.position.normal", "§7Aktualna pozycja: Zwykła strefa");
+        pl.put("plots.buy.normal", "§eKup zwykłe kredyty działki");
+        pl.put("plots.buy.capital", "§6Kup kredyty działki stolicy");
+        pl.put("plots.create.sale", "§aUtwórz ofertę sprzedaży");
+        pl.put("plots.market", "§3Oferty rynku");
+        pl.put("plots.mine", "§bMoje działki");
+        pl.put("plots.sales", "§dMoje sprzedaże");
+        pl.put("plots.history", "§aOtwórz historię");
+        LANG.put("pl_pl", pl);
 
-            "bank.title", "EconomyMC Bank",
-            "bank.request.created", "§aLoan request created.",
-            "bank.offer.created", "§aLoan offer created.",
-            "bank.accepted", "§aLoan accepted.",
-            "bank.repaid", "§aLoan repaid.",
-            "bank.not_enough_money", "§cNot enough money.",
-            "bank.not_found", "§cEntry not found.",
-            "bank.invalid_target", "§cInvalid loan target.",
-            "bank.target.all", "All players",
-            "bank.target.server", "Server",
-            "bank.target.player", "Player",
-            "bank.command.list", "§e/ec bank list §7- shows open loans",
-            "bank.command.request", "§e/ec bank request <server|all|player> [name] <amount> <days> §7- creates a request",
-            "bank.command.offer", "§e/ec bank offer <loanId> <interestPercent> §7- creates an offer",
-            "bank.command.accept", "§e/ec bank accept <loanId> §7- accepts an offer",
-            "bank.command.repay", "§e/ec bank repay <loanId> §7- repays a loan"
-        );
+        Map<String, String> fr = new HashMap<>(en);
+        fr.put("admin.language", "§7Langue : Français");
+        fr.put("plots.menu.title", "EconomyMC Parcelles");
+        fr.put("plots.position.capital", "§6Position actuelle : Zone capitale");
+        fr.put("plots.position.normal", "§7Position actuelle : Zone normale");
+        fr.put("plots.buy.normal", "§eAcheter des crédits de claim normaux");
+        fr.put("plots.buy.capital", "§6Acheter des crédits de claim capitale");
+        fr.put("plots.create.sale", "§aCréer une offre de vente");
+        fr.put("plots.market", "§3Offres du marché");
+        fr.put("plots.mine", "§bMes parcelles");
+        fr.put("plots.sales", "§dMes ventes");
+        fr.put("plots.history", "§aOuvrir l'historique");
+        LANG.put("fr_fr", fr);
 
-        copyLanguage("pl_pl", "en_us", "§7Język: Polski");
-        copyLanguage("fr_fr", "en_us", "§7Langue : Français");
-        copyLanguage("es_es", "en_us", "§7Idioma: Español");
-        copyLanguage("pt_br", "en_us", "§7Idioma: Português");
-        copyLanguage("ru_ru", "en_us", "§7Язык: Русский");
-        copyLanguage("tr_tr", "en_us", "§7Dil: Türkçe");
-        copyLanguage("zh_cn", "en_us", "§7语言：中文");
-        copyLanguage("ja_jp", "en_us", "§7言語: 日本語");
+        Map<String, String> es = new HashMap<>(en);
+        es.put("admin.language", "§7Idioma: Español");
+        es.put("plots.menu.title", "EconomyMC Parcelas");
+        es.put("plots.position.capital", "§6Posición actual: Zona capital");
+        es.put("plots.position.normal", "§7Posición actual: Zona normal");
+        es.put("plots.buy.normal", "§eComprar créditos de claim normales");
+        es.put("plots.buy.capital", "§6Comprar créditos de claim de capital");
+        es.put("plots.create.sale", "§aCrear oferta de venta");
+        es.put("plots.market", "§3Ofertas del mercado");
+        es.put("plots.mine", "§bMis parcelas");
+        es.put("plots.sales", "§dMis ventas");
+        es.put("plots.history", "§aAbrir historial");
+        LANG.put("es_es", es);
+
+        Map<String, String> pt = new HashMap<>(en);
+        pt.put("admin.language", "§7Idioma: Português");
+        pt.put("plots.menu.title", "EconomyMC Terrenos");
+        LANG.put("pt_br", pt);
+
+        Map<String, String> ru = new HashMap<>(en);
+        ru.put("admin.language", "§7Язык: Русский");
+        ru.put("plots.menu.title", "EconomyMC Участки");
+        LANG.put("ru_ru", ru);
+
+        Map<String, String> tr = new HashMap<>(en);
+        tr.put("admin.language", "§7Dil: Türkçe");
+        tr.put("plots.menu.title", "EconomyMC Arsalar");
+        LANG.put("tr_tr", tr);
+
+        Map<String, String> zh = new HashMap<>(en);
+        zh.put("admin.language", "§7语言: 中文");
+        zh.put("plots.menu.title", "EconomyMC 地块");
+        LANG.put("zh_cn", zh);
+
+        Map<String, String> ja = new HashMap<>(en);
+        ja.put("admin.language", "§7言語: 日本語");
+        ja.put("plots.menu.title", "EconomyMC 区画");
+        LANG.put("ja_jp", ja);
     }
 
     private LanguageManager() {}
-
-    private static void register(String language, String... kv) {
-        Map<String, String> map = new HashMap<>();
-        for (int i = 0; i < kv.length; i += 2) {
-            map.put(kv[i], kv[i + 1]);
-        }
-        LANG.put(language, map);
-    }
-
-    private static void copyLanguage(String language, String from, String languageLabel) {
-        Map<String, String> base = new HashMap<>(LANG.get(from));
-        base.put("admin.language", languageLabel);
-        LANG.put(language, base);
-    }
 
     public static String tr(String key) {
         return tr(AdminSettingsManager.language(), key);
@@ -231,7 +219,7 @@ public final class LanguageManager {
 
     public static String tr(String lang, String key) {
         Map<String, String> source = LANG.getOrDefault(lang, LANG.get("en_us"));
-        return source.getOrDefault(key, key);
+        return source.getOrDefault(key, LANG.get("en_us").getOrDefault(key, key));
     }
 
     public static String format(String key, Object... args) {
