@@ -20,7 +20,7 @@ public final class LanguageManager {
         de.put("help.adminmode", "§e/ec adminmode §7- öffnet den Adminmodus");
         de.put("help.admin", "§e/ec admin ... §7- Hauptstadt und Kontoverwaltung");
         de.put("help.language", "§7Sprachen: Deutsch, Englisch, Polnisch, Französisch, Spanisch");
-        de.put("cmd.only_players", "Only players can use this command.");
+        de.put("cmd.only_players", "Nur Spieler können diesen Befehl benutzen.");
         de.put("msg.shop_disabled", "§cShop ist vom Admin deaktiviert.");
         de.put("msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.");
         de.put("msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.");

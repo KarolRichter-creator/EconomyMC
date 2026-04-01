@@ -14,12 +14,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 public final class TransactionHistoryManager {
-    public record Entry(
-        String id,
-        long timestamp,
-        UUID ownerId,
-        String text
-    ) {}
+    public record Entry(String id, long timestamp, UUID ownerId, String text) {}
 
     private static final Path FILE = FMLPaths.CONFIGDIR.get().resolve("economymc-history.properties");
     private static final Properties PROPS = new Properties();
@@ -86,7 +81,7 @@ public final class TransactionHistoryManager {
             String ownerRaw = PROPS.getProperty("entry." + id + ".owner", "");
             if (!ownerId.toString().equals(ownerRaw)) continue;
 
-            long time = parseLong(PROPS.getProperty("entry." + id + ".time", "0"), 0L);
+            long time = Long.parseLong(PROPS.getProperty("entry." + id + ".time", "0"));
             String text = PROPS.getProperty("entry." + id + ".text", "");
             result.add(new Entry(id, time, ownerId, text));
         }
@@ -96,13 +91,5 @@ public final class TransactionHistoryManager {
             return new ArrayList<>(result.subList(0, limit));
         }
         return result;
-    }
-
-    private static long parseLong(String raw, long fallback) {
-        try {
-            return Long.parseLong(raw);
-        } catch (NumberFormatException e) {
-            return fallback;
-        }
     }
 }

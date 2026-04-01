@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.karl_der_iii.economymc.menu.PlotzAdminModeMenu;
 import de.karl_der_iii.economymc.menu.PlotzChecksMenu;
+import de.karl_der_iii.economymc.menu.PlotzHistoryMenu;
 import de.karl_der_iii.economymc.menu.PlotzJobsMenu;
 import de.karl_der_iii.economymc.menu.PlotzMainMenu;
 import de.karl_der_iii.economymc.menu.PlotzServerModeMenu;
@@ -17,9 +18,11 @@ import de.karl_der_iii.economymc.service.DailyRewardManager;
 import de.karl_der_iii.economymc.service.DraftInputManager;
 import de.karl_der_iii.economymc.service.JobManager;
 import de.karl_der_iii.economymc.service.JobsInputManager;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.OpacBridge;
 import de.karl_der_iii.economymc.service.ScoreboardManager;
 import de.karl_der_iii.economymc.service.ShopInputManager;
+import de.karl_der_iii.economymc.service.TransactionHistoryManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -53,6 +56,21 @@ public class PlotzMod {
         System.out.println("[EconomyMC] Mod gestartet.");
     }
 
+    private void sendHelp(CommandSourceStack source) {
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.header")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.plots")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.shop")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.jobs")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.checks")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.history")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.daily")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.pay")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.servermode")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.adminmode")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.admin")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.language")), false);
+    }
+
     private void registerCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
@@ -60,21 +78,40 @@ public class PlotzMod {
             Commands.literal("ec")
                 .requires(source -> source.hasPermission(0))
                 .executes(ctx -> {
+                    sendHelp(ctx.getSource());
+                    return 1;
+                })
+
+                .then(Commands.literal("help").executes(ctx -> {
+                    sendHelp(ctx.getSource());
+                    return 1;
+                }))
+
+                .then(Commands.literal("plots").executes(ctx -> {
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
                     PlotzMainMenu.open(player);
                     return 1;
-                })
+                }))
+
+                .then(Commands.literal("history").executes(ctx -> {
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                        return 0;
+                    }
+                    PlotzHistoryMenu.open(player, false);
+                    return 1;
+                }))
 
                 .then(Commands.literal("shop").executes(ctx -> {
                     if (!AdminSettingsManager.shopEnabled()) {
-                        ctx.getSource().sendFailure(Component.literal("§cShop is disabled by admin."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("msg.shop_disabled")));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec shop."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
                     PlotzShopMenu.open(player);
@@ -83,11 +120,11 @@ public class PlotzMod {
 
                 .then(Commands.literal("jobs").executes(ctx -> {
                     if (!AdminSettingsManager.jobsEnabled()) {
-                        ctx.getSource().sendFailure(Component.literal("§cJobs are disabled by admin."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("msg.jobs_disabled")));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec jobs."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
                     PlotzJobsMenu.open(player, 0, true, false);
@@ -96,11 +133,11 @@ public class PlotzMod {
 
                 .then(Commands.literal("checks").executes(ctx -> {
                     if (!AdminSettingsManager.checksEnabled()) {
-                        ctx.getSource().sendFailure(Component.literal("§cChecks are disabled by admin."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("msg.checks_disabled")));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec checks."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
                     PlotzChecksMenu.open(player, 0);
@@ -109,11 +146,11 @@ public class PlotzMod {
 
                 .then(Commands.literal("servermode").requires(source -> source.hasPermission(2)).executes(ctx -> {
                     if (!AdminSettingsManager.serverModeEnabled()) {
-                        ctx.getSource().sendFailure(Component.literal("§cServer mode is disabled by admin."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("msg.servermode_disabled")));
                         return 0;
                     }
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec servermode."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
                     PlotzServerModeMenu.open(player);
@@ -122,7 +159,7 @@ public class PlotzMod {
 
                 .then(Commands.literal("adminmode").requires(source -> source.hasPermission(2)).executes(ctx -> {
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec adminmode."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
                     PlotzAdminModeMenu.open(player);
@@ -131,7 +168,7 @@ public class PlotzMod {
 
                 .then(Commands.literal("daily").executes(ctx -> {
                     if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                        ctx.getSource().sendFailure(Component.literal("Only players can use /ec daily."));
+                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                         return 0;
                     }
 
@@ -144,6 +181,7 @@ public class PlotzMod {
                     }
 
                     BalanceManager.addBalance(player.getUUID(), 100);
+                    TransactionHistoryManager.add(player.getUUID(), LanguageManager.format("history.daily", 100));
                     ScoreboardManager.update(player.server);
                     DailyRewardManager.markClaimed(player.getUUID());
                     player.sendSystemMessage(Component.literal("§aYou claimed your daily $100."));
@@ -158,7 +196,7 @@ public class PlotzMod {
                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                             .executes(ctx -> {
                                 if (!(ctx.getSource().getEntity() instanceof ServerPlayer sender)) {
-                                    ctx.getSource().sendFailure(Component.literal("Only players can use /ec pay."));
+                                    ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                                     return 0;
                                 }
 
@@ -188,6 +226,14 @@ public class PlotzMod {
                                 String targetName = BalanceManager.resolveDisplayName(sender.server, targetId);
                                 sender.sendSystemMessage(Component.literal("§aYou paid $" + amount + " to " + targetName + "."));
 
+                                TransactionHistoryManager.add(sender.getUUID(), LanguageManager.format("history.pay.sent", targetName, amount));
+
+                                if (BalanceManager.TREASURY_ACCOUNT_ID.equals(targetId)) {
+                                    TransactionHistoryManager.addTreasury(LanguageManager.format("history.pay.received", sender.getGameProfile().getName(), amount));
+                                } else {
+                                    TransactionHistoryManager.add(targetId, LanguageManager.format("history.pay.received", sender.getGameProfile().getName(), amount));
+                                }
+
                                 ServerPlayer onlineTarget = sender.server.getPlayerList().getPlayer(targetId);
                                 if (onlineTarget != null) {
                                     onlineTarget.sendSystemMessage(Component.literal("§aYou received $" + amount + " from " + sender.getGameProfile().getName() + "."));
@@ -199,7 +245,7 @@ public class PlotzMod {
                 .then(Commands.literal("admin").requires(source -> source.hasPermission(2))
                     .then(Commands.literal("pos1").executes(ctx -> {
                         if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                            ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
+                            ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                             return 0;
                         }
                         BlockPos pos = player.blockPosition();
@@ -209,7 +255,7 @@ public class PlotzMod {
                     }))
                     .then(Commands.literal("pos2").executes(ctx -> {
                         if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
-                            ctx.getSource().sendFailure(Component.literal("Only players can use this command."));
+                            ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
                             return 0;
                         }
                         BlockPos pos = player.blockPosition();
@@ -231,97 +277,6 @@ public class PlotzMod {
                         ctx.getSource().sendSuccess(() -> Component.literal("§aCapital area cleared."), false);
                         return 1;
                     }))
-                    .then(Commands.literal("setmoney")
-                        .then(Commands.argument("account", StringArgumentType.word())
-                            .suggests((ctx, builder) ->
-                                SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
-                            )
-                            .then(Commands.argument("amount", IntegerArgumentType.integer(0))
-                                .executes(ctx -> {
-                                    String account = StringArgumentType.getString(ctx, "account");
-                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                                    if (account.equalsIgnoreCase("treasury") || account.equalsIgnoreCase("server")) {
-                                        TreasuryManager.setTreasury(amount);
-                                        ScoreboardManager.update(ctx.getSource().getServer());
-                                        ctx.getSource().sendSuccess(() -> Component.literal("§aSet Treasury to $" + amount), false);
-                                        return 1;
-                                    }
-
-                                    Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
-                                    if (target.isEmpty()) {
-                                        ctx.getSource().sendFailure(Component.literal("§cOnly known players or Treasury are allowed."));
-                                        return 0;
-                                    }
-
-                                    BalanceManager.setBalance(target.get(), amount);
-                                    ScoreboardManager.update(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("§aSet balance of " + account + " to $" + amount), false);
-                                    return 1;
-                                }))))
-                    .then(Commands.literal("addmoney")
-                        .then(Commands.argument("account", StringArgumentType.word())
-                            .suggests((ctx, builder) ->
-                                SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
-                            )
-                            .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                .executes(ctx -> {
-                                    String account = StringArgumentType.getString(ctx, "account");
-                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                                    if (account.equalsIgnoreCase("treasury") || account.equalsIgnoreCase("server")) {
-                                        TreasuryManager.addTreasury(amount);
-                                        ScoreboardManager.update(ctx.getSource().getServer());
-                                        ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to Treasury"), false);
-                                        return 1;
-                                    }
-
-                                    Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
-                                    if (target.isEmpty()) {
-                                        ctx.getSource().sendFailure(Component.literal("§cOnly known players or Treasury are allowed."));
-                                        return 0;
-                                    }
-
-                                    BalanceManager.addBalance(target.get(), amount);
-                                    ScoreboardManager.update(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("§aAdded $" + amount + " to " + account), false);
-                                    return 1;
-                                }))))
-                    .then(Commands.literal("removemoney")
-                        .then(Commands.argument("account", StringArgumentType.word())
-                            .suggests((ctx, builder) ->
-                                SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
-                            )
-                            .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                .executes(ctx -> {
-                                    String account = StringArgumentType.getString(ctx, "account");
-                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                                    if (account.equalsIgnoreCase("treasury") || account.equalsIgnoreCase("server")) {
-                                        if (!TreasuryManager.removeTreasury(amount)) {
-                                            ctx.getSource().sendFailure(Component.literal("§cTreasury does not have enough money."));
-                                            return 0;
-                                        }
-                                        ScoreboardManager.update(ctx.getSource().getServer());
-                                        ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from Treasury"), false);
-                                        return 1;
-                                    }
-
-                                    Optional<UUID> target = BalanceManager.resolveKnownPlayer(ctx.getSource().getServer(), account);
-                                    if (target.isEmpty()) {
-                                        ctx.getSource().sendFailure(Component.literal("§cOnly known players or Treasury are allowed."));
-                                        return 0;
-                                    }
-
-                                    if (!BalanceManager.removeBalance(target.get(), amount)) {
-                                        ctx.getSource().sendFailure(Component.literal("§cAccount does not have enough money."));
-                                        return 0;
-                                    }
-
-                                    ScoreboardManager.update(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("§aRemoved $" + amount + " from " + account), false);
-                                    return 1;
-                                }))))
                 )
         );
     }
@@ -337,17 +292,14 @@ public class PlotzMod {
                 event.setCanceled(true);
                 return;
             }
-
             if (DraftInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
                 return;
             }
-
             if (JobsInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
                 return;
             }
-
             if (ChecksInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
             }
