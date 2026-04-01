@@ -7,108 +7,161 @@ public final class LanguageManager {
     private static final Map<String, Map<String, String>> LANG = new HashMap<>();
 
     static {
-        Map<String, String> de = new HashMap<>();
-        de.put("help.header", "§6EconomyMC Befehle");
-        de.put("help.plots", "§e/ec plots §7- öffnet das Grundstücksmenü");
-        de.put("help.shop", "§e/ec shop §7- öffnet das Shop-Menü");
-        de.put("help.jobs", "§e/ec jobs §7- öffnet das Jobs-Menü");
-        de.put("help.checks", "§e/ec checks §7- öffnet das Checks-Menü");
-        de.put("help.history", "§e/ec history §7- öffnet den Zahlungsverlauf");
-        de.put("help.daily", "§e/ec daily §7- holt die tägliche Belohnung");
-        de.put("help.pay", "§e/ec pay <Spieler/Treasury> <Betrag> §7- sendet Geld");
-        de.put("help.servermode", "§e/ec servermode §7- öffnet den Servermodus");
-        de.put("help.adminmode", "§e/ec adminmode §7- öffnet den Adminmodus");
-        de.put("help.admin", "§e/ec admin ... §7- Hauptstadt und Kontoverwaltung");
-        de.put("help.language", "§7Sprachen: Deutsch, Englisch, Polnisch, Französisch, Spanisch");
-        de.put("cmd.only_players", "Nur Spieler können diesen Befehl benutzen.");
-        de.put("msg.shop_disabled", "§cShop ist vom Admin deaktiviert.");
-        de.put("msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.");
-        de.put("msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.");
-        de.put("msg.servermode_disabled", "§cServer-Modus ist vom Admin deaktiviert.");
-        de.put("admin.language", "§7Sprache: Deutsch");
-        de.put("admin.language.toggle", "§bSprache wechseln");
-        de.put("plots.menu.title", "EconomyMC Grundstücke");
-        de.put("jobs.menu.title", "EconomyMC Jobs");
-        de.put("jobs.server.title", "EconomyMC Server-Jobs");
-        de.put("job.detail.title", "EconomyMC Jobdetails");
-        de.put("checks.menu.title", "EconomyMC Checks");
-        de.put("check.redeem.title", "EconomyMC Check einlösen");
-        de.put("server.mode.title", "EconomyMC Servermodus");
-        de.put("admin.mode.title", "EconomyMC Adminmodus");
-        de.put("history.title", "EconomyMC Verlauf");
-        de.put("history.empty", "§7Noch keine Einträge vorhanden.");
-        de.put("history.mine", "§bMein Verlauf");
-        de.put("history.treasury", "§6Treasury-Verlauf");
-        de.put("history.open", "§aVerlauf öffnen");
-        de.put("history.pay.sent", "§aPay an %s: $%d");
-        de.put("history.pay.received", "§aPay von %s: $%d");
-        de.put("history.daily", "§eDaily Belohnung: $%d");
-        de.put("history.check.create", "§dCheck erstellt: $%d");
-        de.put("history.check.redeem", "§dCheck eingelöst: $%d");
-        de.put("history.job.reward", "§bJob ausgezahlt: $%d");
-        de.put("history.job.refund", "§6Job-Rückzahlung: $%d");
-        de.put("history.treasury.tax", "§6Steuer erhalten: $%d");
-        de.put("history.admin.set", "§cAdmin setzte Guthaben: $%d");
-        LANG.put("de_de", de);
+        register("de_de",
+            "help.header", "§6EconomyMC Befehle",
+            "help.plots", "§e/ec plots §7- öffnet das Grundstücksmenü",
+            "help.shop", "§e/ec shop §7- öffnet das Shop-Menü",
+            "help.jobs", "§e/ec jobs §7- öffnet das Jobs-Menü",
+            "help.checks", "§e/ec checks §7- öffnet das Checks-Menü",
+            "help.history", "§e/ec history §7- öffnet den Zahlungsverlauf",
+            "help.bank", "§e/ec bank §7- öffnet das Bank- und Kreditsystem",
+            "help.daily", "§e/ec daily §7- holt die tägliche Belohnung",
+            "help.pay", "§e/ec pay <Spieler/Treasury> <Betrag> §7- sendet Geld",
+            "help.servermode", "§e/ec servermode §7- öffnet den Servermodus",
+            "help.adminmode", "§e/ec adminmode §7- öffnet den Adminmodus",
+            "help.admin", "§e/ec admin ... §7- Hauptstadt und Kontoverwaltung",
+            "help.language", "§7Sprachen: Deutsch, Englisch, Polnisch, Französisch, Spanisch, Portugiesisch, Russisch, Türkisch, Chinesisch, Japanisch",
+            "cmd.only_players", "Nur Spieler können diesen Befehl benutzen.",
+            "msg.shop_disabled", "§cShop ist vom Admin deaktiviert.",
+            "msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.",
+            "msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.",
+            "msg.servermode_disabled", "§cServer-Modus ist vom Admin deaktiviert.",
+            "admin.language", "§7Sprache: Deutsch",
+            "admin.language.toggle", "§bSprache wechseln",
+            "plots.menu.title", "EconomyMC Grundstücke",
+            "jobs.menu.title", "EconomyMC Jobs",
+            "jobs.server.title", "EconomyMC Server-Jobs",
+            "job.detail.title", "EconomyMC Jobdetails",
+            "checks.menu.title", "EconomyMC Checks",
+            "check.redeem.title", "EconomyMC Check einlösen",
+            "server.mode.title", "EconomyMC Servermodus",
+            "admin.mode.title", "EconomyMC Adminmodus",
+            "history.title", "EconomyMC Verlauf",
+            "history.empty", "§7Noch keine Einträge vorhanden.",
+            "history.mine", "§bMein Verlauf",
+            "history.treasury", "§6Treasury-Verlauf",
+            "history.open", "§aVerlauf öffnen",
+            "history.pay.sent", "§aPay an %s: $%d",
+            "history.pay.received", "§aPay von %s: $%d",
+            "history.daily", "§eDaily Belohnung: $%d",
+            "history.check.create", "§dCheck erstellt: $%d",
+            "history.check.redeem", "§dCheck eingelöst: $%d",
+            "history.job.reward", "§bJob ausgezahlt: $%d",
+            "history.job.refund", "§6Job-Rückzahlung: $%d",
+            "history.treasury.tax", "§6Steuer erhalten: $%d",
+            "history.admin.set", "§cAdmin setzte Guthaben: $%d",
+            "history.loan.request", "§9Kreditanfrage erstellt: $%d",
+            "history.loan.funded", "§9Kredit vergeben: $%d",
+            "history.loan.received", "§9Kredit erhalten: $%d",
+            "history.loan.repaid", "§9Kredit zurückgezahlt: $%d",
+            "history.loan.interest", "§9Zinsen bezahlt: $%d",
+            "bank.request.created", "§aKreditanfrage erstellt.",
+            "bank.offer.created", "§aKreditangebot erstellt.",
+            "bank.accepted", "§aKredit angenommen.",
+            "bank.repaid", "§aKredit zurückgezahlt.",
+            "bank.not_enough_money", "§cNicht genug Geld.",
+            "bank.not_found", "§cEintrag nicht gefunden.",
+            "bank.invalid_target", "§cUngültiges Kredit-Ziel.",
+            "bank.target.all", "Alle Spieler",
+            "bank.target.server", "Server",
+            "bank.target.player", "Spieler",
+            "bank.command.list", "§e/ec bank list §7- zeigt offene Kredite",
+            "bank.command.request", "§e/ec bank request <server|all|player> [name] <amount> <days> §7- erstellt eine Anfrage",
+            "bank.command.offer", "§e/ec bank offer <loanId> <interestPercent> §7- erstellt ein Angebot",
+            "bank.command.accept", "§e/ec bank accept <loanId> §7- nimmt ein Angebot an",
+            "bank.command.repay", "§e/ec bank repay <loanId> §7- zahlt einen Kredit zurück"
+        );
 
-        Map<String, String> en = new HashMap<>();
-        en.put("help.header", "§6EconomyMC Commands");
-        en.put("help.plots", "§e/ec plots §7- opens the plots menu");
-        en.put("help.shop", "§e/ec shop §7- opens the shop menu");
-        en.put("help.jobs", "§e/ec jobs §7- opens the jobs menu");
-        en.put("help.checks", "§e/ec checks §7- opens the checks menu");
-        en.put("help.history", "§e/ec history §7- opens the payment history");
-        en.put("help.daily", "§e/ec daily §7- claims the daily reward");
-        en.put("help.pay", "§e/ec pay <player/treasury> <amount> §7- sends money");
-        en.put("help.servermode", "§e/ec servermode §7- opens server mode");
-        en.put("help.adminmode", "§e/ec adminmode §7- opens admin mode");
-        en.put("help.admin", "§e/ec admin ... §7- capital and account management");
-        en.put("help.language", "§7Languages: German, English, Polish, French, Spanish");
-        en.put("cmd.only_players", "Only players can use this command.");
-        en.put("msg.shop_disabled", "§cShop is disabled by admin.");
-        en.put("msg.jobs_disabled", "§cJobs are disabled by admin.");
-        en.put("msg.checks_disabled", "§cChecks are disabled by admin.");
-        en.put("msg.servermode_disabled", "§cServer mode is disabled by admin.");
-        en.put("admin.language", "§7Language: English");
-        en.put("admin.language.toggle", "§bSwitch language");
-        en.put("plots.menu.title", "EconomyMC Plots");
-        en.put("jobs.menu.title", "EconomyMC Jobs");
-        en.put("jobs.server.title", "EconomyMC Server Jobs");
-        en.put("job.detail.title", "EconomyMC Job Details");
-        en.put("checks.menu.title", "EconomyMC Checks");
-        en.put("check.redeem.title", "EconomyMC Redeem Check");
-        en.put("server.mode.title", "EconomyMC Server Mode");
-        en.put("admin.mode.title", "EconomyMC Admin Mode");
-        en.put("history.title", "EconomyMC History");
-        en.put("history.empty", "§7No entries yet.");
-        en.put("history.mine", "§bMy History");
-        en.put("history.treasury", "§6Treasury History");
-        en.put("history.open", "§aOpen History");
-        en.put("history.pay.sent", "§aPay to %s: $%d");
-        en.put("history.pay.received", "§aPay from %s: $%d");
-        en.put("history.daily", "§eDaily reward: $%d");
-        en.put("history.check.create", "§dCreated check: $%d");
-        en.put("history.check.redeem", "§dRedeemed check: $%d");
-        en.put("history.job.reward", "§bJob payout: $%d");
-        en.put("history.job.refund", "§6Job refund: $%d");
-        en.put("history.treasury.tax", "§6Tax received: $%d");
-        en.put("history.admin.set", "§cAdmin set balance: $%d");
-        LANG.put("en_us", en);
+        register("en_us",
+            "help.header", "§6EconomyMC Commands",
+            "help.plots", "§e/ec plots §7- opens the plots menu",
+            "help.shop", "§e/ec shop §7- opens the shop menu",
+            "help.jobs", "§e/ec jobs §7- opens the jobs menu",
+            "help.checks", "§e/ec checks §7- opens the checks menu",
+            "help.history", "§e/ec history §7- opens the payment history",
+            "help.bank", "§e/ec bank §7- opens the banking and loan system",
+            "help.daily", "§e/ec daily §7- claims the daily reward",
+            "help.pay", "§e/ec pay <player/treasury> <amount> §7- sends money",
+            "help.servermode", "§e/ec servermode §7- opens server mode",
+            "help.adminmode", "§e/ec adminmode §7- opens admin mode",
+            "help.admin", "§e/ec admin ... §7- capital and account management",
+            "help.language", "§7Languages: German, English, Polish, French, Spanish, Portuguese, Russian, Turkish, Chinese, Japanese",
+            "cmd.only_players", "Only players can use this command.",
+            "msg.shop_disabled", "§cShop is disabled by admin.",
+            "msg.jobs_disabled", "§cJobs are disabled by admin.",
+            "msg.checks_disabled", "§cChecks are disabled by admin.",
+            "msg.servermode_disabled", "§cServer mode is disabled by admin.",
+            "admin.language", "§7Language: English",
+            "admin.language.toggle", "§bSwitch language",
+            "plots.menu.title", "EconomyMC Plots",
+            "jobs.menu.title", "EconomyMC Jobs",
+            "jobs.server.title", "EconomyMC Server Jobs",
+            "job.detail.title", "EconomyMC Job Details",
+            "checks.menu.title", "EconomyMC Checks",
+            "check.redeem.title", "EconomyMC Redeem Check",
+            "server.mode.title", "EconomyMC Server Mode",
+            "admin.mode.title", "EconomyMC Admin Mode",
+            "history.title", "EconomyMC History",
+            "history.empty", "§7No entries yet.",
+            "history.mine", "§bMy History",
+            "history.treasury", "§6Treasury History",
+            "history.open", "§aOpen History",
+            "history.pay.sent", "§aPay to %s: $%d",
+            "history.pay.received", "§aPay from %s: $%d",
+            "history.daily", "§eDaily reward: $%d",
+            "history.check.create", "§dCreated check: $%d",
+            "history.check.redeem", "§dRedeemed check: $%d",
+            "history.job.reward", "§bJob payout: $%d",
+            "history.job.refund", "§6Job refund: $%d",
+            "history.treasury.tax", "§6Tax received: $%d",
+            "history.admin.set", "§cAdmin set balance: $%d",
+            "history.loan.request", "§9Loan request created: $%d",
+            "history.loan.funded", "§9Loan funded: $%d",
+            "history.loan.received", "§9Loan received: $%d",
+            "history.loan.repaid", "§9Loan repaid: $%d",
+            "history.loan.interest", "§9Interest paid: $%d",
+            "bank.request.created", "§aLoan request created.",
+            "bank.offer.created", "§aLoan offer created.",
+            "bank.accepted", "§aLoan accepted.",
+            "bank.repaid", "§aLoan repaid.",
+            "bank.not_enough_money", "§cNot enough money.",
+            "bank.not_found", "§cEntry not found.",
+            "bank.invalid_target", "§cInvalid loan target.",
+            "bank.target.all", "All players",
+            "bank.target.server", "Server",
+            "bank.target.player", "Player",
+            "bank.command.list", "§e/ec bank list §7- shows open loans",
+            "bank.command.request", "§e/ec bank request <server|all|player> [name] <amount> <days> §7- creates a request",
+            "bank.command.offer", "§e/ec bank offer <loanId> <interestPercent> §7- creates an offer",
+            "bank.command.accept", "§e/ec bank accept <loanId> §7- accepts an offer",
+            "bank.command.repay", "§e/ec bank repay <loanId> §7- repays a loan"
+        );
 
-        Map<String, String> pl = new HashMap<>(en);
-        pl.put("admin.language", "§7Język: Polski");
-        LANG.put("pl_pl", pl);
-
-        Map<String, String> fr = new HashMap<>(en);
-        fr.put("admin.language", "§7Langue : Français");
-        LANG.put("fr_fr", fr);
-
-        Map<String, String> es = new HashMap<>(en);
-        es.put("admin.language", "§7Idioma: Español");
-        LANG.put("es_es", es);
+        copyLanguage("pl_pl", "en_us", "§7Język: Polski");
+        copyLanguage("fr_fr", "en_us", "§7Langue : Français");
+        copyLanguage("es_es", "en_us", "§7Idioma: Español");
+        copyLanguage("pt_br", "en_us", "§7Idioma: Português");
+        copyLanguage("ru_ru", "en_us", "§7Язык: Русский");
+        copyLanguage("tr_tr", "en_us", "§7Dil: Türkçe");
+        copyLanguage("zh_cn", "en_us", "§7语言：中文");
+        copyLanguage("ja_jp", "en_us", "§7言語: 日本語");
     }
 
     private LanguageManager() {}
+
+    private static void register(String language, String... kv) {
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < kv.length; i += 2) {
+            map.put(kv[i], kv[i + 1]);
+        }
+        LANG.put(language, map);
+    }
+
+    private static void copyLanguage(String language, String from, String languageLabel) {
+        Map<String, String> base = new HashMap<>(LANG.get(from));
+        base.put("admin.language", languageLabel);
+        LANG.put(language, base);
+    }
 
     public static String tr(String key) {
         return tr(AdminSettingsManager.language(), key);

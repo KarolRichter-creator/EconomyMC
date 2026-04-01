@@ -19,6 +19,7 @@ import de.karl_der_iii.economymc.service.DraftInputManager;
 import de.karl_der_iii.economymc.service.JobManager;
 import de.karl_der_iii.economymc.service.JobsInputManager;
 import de.karl_der_iii.economymc.service.LanguageManager;
+import de.karl_der_iii.economymc.service.LoanManager;
 import de.karl_der_iii.economymc.service.OpacBridge;
 import de.karl_der_iii.economymc.service.ScoreboardManager;
 import de.karl_der_iii.economymc.service.ShopInputManager;
@@ -39,6 +40,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,12 +65,18 @@ public class PlotzMod {
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.jobs")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.checks")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.history")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.bank")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.daily")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.pay")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.servermode")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.adminmode")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.admin")), false);
         source.sendSuccess(() -> Component.literal(LanguageManager.tr("help.language")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("bank.command.list")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("bank.command.request")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("bank.command.offer")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("bank.command.accept")), false);
+        source.sendSuccess(() -> Component.literal(LanguageManager.tr("bank.command.repay")), false);
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
@@ -104,6 +112,161 @@ public class PlotzMod {
                     PlotzHistoryMenu.open(player, false);
                     return 1;
                 }))
+
+                .then(Commands.literal("bank")
+                    .executes(ctx -> {
+                        sendHelp(ctx.getSource());
+                        return 1;
+                    })
+
+                    .then(Commands.literal("list").executes(ctx -> {
+                        if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                            ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                            return 0;
+                        }
+
+                        List<LoanManager.LoanEntry> loans = LoanManager.getVisibleLoans(player.getUUID(), player.hasPermissions(2));
+                        if (loans.isEmpty()) {
+                            player.sendSystemMessage(Component.literal(LanguageManager.tr("history.empty")));
+                            return 1;
+                        }
+
+                        for (LoanManager.LoanEntry loan : loans) {
+                            player.sendSystemMessage(Component.literal(
+                                "§e#" + loan.id()
+                                    + " §7| $" + loan.principal()
+                                    + " | " + loan.status().name()
+                                    + " | borrower: " + loan.borrowerName()
+                                    + " | lender: " + (loan.lenderName().isBlank() ? LanguageManager.tr("bank.target.server") : loan.lenderName())
+                            ));
+                        }
+                        return 1;
+                    }))
+
+                    .then(Commands.literal("request")
+                        .then(Commands.literal("server")
+                            .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                .then(Commands.argument("days", IntegerArgumentType.integer(1))
+                                    .executes(ctx -> {
+                                        if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                            ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                                            return 0;
+                                        }
+
+                                        int amount = IntegerArgumentType.getInteger(ctx, "amount");
+                                        int days = IntegerArgumentType.getInteger(ctx, "days");
+                                        LoanManager.createRequest(player.getUUID(), player.getGameProfile().getName(), LoanManager.LoanTargetType.SERVER, null, "", amount, days);
+                                        player.sendSystemMessage(Component.literal(LanguageManager.tr("bank.request.created")));
+                                        return 1;
+                                    })))))
+
+                    .then(Commands.literal("request")
+                        .then(Commands.literal("all")
+                            .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                .then(Commands.argument("days", IntegerArgumentType.integer(1))
+                                    .executes(ctx -> {
+                                        if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                            ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                                            return 0;
+                                        }
+
+                                        int amount = IntegerArgumentType.getInteger(ctx, "amount");
+                                        int days = IntegerArgumentType.getInteger(ctx, "days");
+                                        LoanManager.createRequest(player.getUUID(), player.getGameProfile().getName(), LoanManager.LoanTargetType.ALL_PLAYERS, null, "", amount, days);
+                                        player.sendSystemMessage(Component.literal(LanguageManager.tr("bank.request.created")));
+                                        return 1;
+                                    })))))
+
+                    .then(Commands.literal("request")
+                        .then(Commands.literal("player")
+                            .then(Commands.argument("name", StringArgumentType.word())
+                                .suggests((ctx, builder) ->
+                                    SharedSuggestionProvider.suggest(BalanceManager.getKnownAccountNames(ctx.getSource().getServer()), builder)
+                                )
+                                .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                    .then(Commands.argument("days", IntegerArgumentType.integer(1))
+                                        .executes(ctx -> {
+                                            if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                                ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                                                return 0;
+                                            }
+
+                                            String name = StringArgumentType.getString(ctx, "name");
+                                            Optional<UUID> target = BalanceManager.resolveKnownPlayer(player.server, name);
+                                            if (target.isEmpty()) {
+                                                ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("bank.invalid_target")));
+                                                return 0;
+                                            }
+
+                                            int amount = IntegerArgumentType.getInteger(ctx, "amount");
+                                            int days = IntegerArgumentType.getInteger(ctx, "days");
+                                            LoanManager.createRequest(player.getUUID(), player.getGameProfile().getName(), LoanManager.LoanTargetType.SPECIFIC_PLAYER, target.get(), name, amount, days);
+                                            player.sendSystemMessage(Component.literal(LanguageManager.tr("bank.request.created")));
+                                            return 1;
+                                        }))))))
+
+                    .then(Commands.literal("offer")
+                        .then(Commands.argument("loanId", StringArgumentType.word())
+                            .then(Commands.argument("interestPercent", IntegerArgumentType.integer(0))
+                                .executes(ctx -> {
+                                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                                        return 0;
+                                    }
+
+                                    String loanId = StringArgumentType.getString(ctx, "loanId");
+                                    int interestPercent = IntegerArgumentType.getInteger(ctx, "interestPercent");
+
+                                    boolean ok = LoanManager.makeOffer(loanId, player.getUUID(), player.getGameProfile().getName(), interestPercent);
+                                    if (!ok) {
+                                        ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("bank.not_found")));
+                                        return 0;
+                                    }
+
+                                    player.sendSystemMessage(Component.literal(LanguageManager.tr("bank.offer.created")));
+                                    return 1;
+                                }))))
+
+                    .then(Commands.literal("accept")
+                        .then(Commands.argument("loanId", StringArgumentType.word())
+                            .executes(ctx -> {
+                                if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                    ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                                    return 0;
+                                }
+
+                                String loanId = StringArgumentType.getString(ctx, "loanId");
+                                boolean ok = LoanManager.acceptOffer(loanId);
+                                if (!ok) {
+                                    ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("bank.not_found")));
+                                    return 0;
+                                }
+
+                                player.sendSystemMessage(Component.literal(LanguageManager.tr("bank.accepted")));
+                                ScoreboardManager.update(player.server);
+                                return 1;
+                            })))
+
+                    .then(Commands.literal("repay")
+                        .then(Commands.argument("loanId", StringArgumentType.word())
+                            .executes(ctx -> {
+                                if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                    ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("cmd.only_players")));
+                                    return 0;
+                                }
+
+                                String loanId = StringArgumentType.getString(ctx, "loanId");
+                                boolean ok = LoanManager.repayLoan(loanId, player.getUUID());
+                                if (!ok) {
+                                    ctx.getSource().sendFailure(Component.literal(LanguageManager.tr("bank.not_enough_money")));
+                                    return 0;
+                                }
+
+                                player.sendSystemMessage(Component.literal(LanguageManager.tr("bank.repaid")));
+                                ScoreboardManager.update(player.server);
+                                return 1;
+                            })))
+                )
 
                 .then(Commands.literal("shop").executes(ctx -> {
                     if (!AdminSettingsManager.shopEnabled()) {
