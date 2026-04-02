@@ -29,11 +29,11 @@ public class PlotzPlotsHubMenu extends ChestMenu {
     }
 
     public PlotzPlotsHubMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
-        this(containerId, inventory, viewer, new SimpleContainer(36));
+        this(containerId, inventory, viewer, new SimpleContainer(45));
     }
 
     private PlotzPlotsHubMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
-        super(MenuType.GENERIC_9x4, containerId, inventory, box, 4);
+        super(MenuType.GENERIC_9x5, containerId, inventory, box, 5);
         this.viewer = viewer;
         this.box = box;
         refresh();
@@ -47,10 +47,7 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         UUID id = viewer.getUUID();
         boolean capitalHere = PlotzLogic.isCapital(viewer.blockPosition());
 
-        box.setItem(4, MenuUtil.named(
-            Items.COMPASS,
-            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
-        ));
+        box.setItem(4, MenuUtil.named(Items.MAP, LanguageManager.tr("plots.menu.title")));
 
         box.setItem(10, MenuUtil.named(
             Items.BOOK,
@@ -73,17 +70,27 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         ));
 
         box.setItem(22, MenuUtil.named(
+            Items.NAME_TAG,
+            LanguageManager.tr("plots.connector")
+        ));
+
+        box.setItem(28, MenuUtil.named(
             Items.WRITABLE_BOOK,
             LanguageManager.tr("plots.sales") + " §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
         ));
 
-        box.setItem(24, MenuUtil.named(
+        box.setItem(30, MenuUtil.named(
             Items.EMERALD,
             LanguageManager.tr("plots.create.sale")
         ));
 
-        box.setItem(27, MenuUtil.playerInfoHead(viewer));
-        box.setItem(35, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
+        box.setItem(32, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
+        ));
+
+        box.setItem(36, MenuUtil.playerInfoHead(viewer));
+        box.setItem(40, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         broadcastChanges();
     }
@@ -130,17 +137,17 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 22) {
+        if (slotId == 28) {
             PlotzMySalesMenu.open(sp);
             return;
         }
 
-        if (slotId == 24) {
+        if (slotId == 30) {
             PlotzCreateSaleMenu.open(sp);
             return;
         }
 
-        if (slotId == 35) {
+        if (slotId == 40) {
             PlotzMainMenu.open(sp);
         }
     }

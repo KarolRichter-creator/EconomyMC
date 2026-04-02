@@ -15,6 +15,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class PlotzAdminModeMenu extends ChestMenu {
+    private static final String[] LANG_ORDER = {
+        "de_de", "en_us", "pl_pl", "fr_fr", "es_es", "pt_br", "ru_ru", "tr_tr", "zh_cn", "ja_jp"
+    };
+
     private final ServerPlayer viewer;
     private final SimpleContainer box;
 
@@ -26,11 +30,11 @@ public class PlotzAdminModeMenu extends ChestMenu {
     }
 
     public PlotzAdminModeMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
-        this(containerId, inventory, viewer, new SimpleContainer(36));
+        this(containerId, inventory, viewer, new SimpleContainer(45));
     }
 
     private PlotzAdminModeMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
-        super(MenuType.GENERIC_9x4, containerId, inventory, box, 4);
+        super(MenuType.GENERIC_9x5, containerId, inventory, box, 5);
         this.viewer = viewer;
         this.box = box;
         refresh();
@@ -38,9 +42,30 @@ public class PlotzAdminModeMenu extends ChestMenu {
 
     private ItemStack toggleItem(boolean enabled, String title) {
         return MenuUtil.named(
-            enabled ? Items.LIME_DYE : Items.GRAY_DYE,
-            (enabled ? "§a" : "§7") + title + ": " + (enabled ? LanguageManager.tr("admin.on") : LanguageManager.tr("admin.off"))
+            enabled ? Items.LIME_DYE : Items.BARRIER,
+            (enabled ? "§a" : "§c") + title + " §7- " +
+                (enabled ? LanguageManager.tr("admin.on") : LanguageManager.tr("admin.off"))
         );
+    }
+
+    private String currentLangCode() {
+        return AdminSettingsManager.language();
+    }
+
+    private int currentLangIndex() {
+        String current = currentLangCode();
+        for (int i = 0; i < LANG_ORDER.length; i++) {
+            if (LANG_ORDER[i].equalsIgnoreCase(current)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private void setLangByIndex(int index) {
+        if (index < 0) index = LANG_ORDER.length - 1;
+        if (index >= LANG_ORDER.length) index = 0;
+        AdminSettingsManager.setLanguage(LANG_ORDER[index]);
     }
 
     private void refresh() {
@@ -69,11 +94,15 @@ public class PlotzAdminModeMenu extends ChestMenu {
             LanguageManager.tr("admin.min_cancel") + ": " + AdminSettingsManager.minCancelPercent() + "%"
         ));
 
-        box.setItem(23, MenuUtil.named(Items.GLOBE_BANNER_PATTERN, LanguageManager.currentLanguageLabel()));
-        box.setItem(24, MenuUtil.named(Items.WRITABLE_BOOK, LanguageManager.tr("admin.language.toggle")));
+        box.setItem(23, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.previous")));
+        box.setItem(24, MenuUtil.named(
+            Items.GLOBE_BANNER_PATTERN,
+            LanguageManager.tr("admin.language") + ": " + LanguageManager.languageName(currentLangCode())
+        ));
+        box.setItem(25, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.next")));
 
         box.setItem(31, MenuUtil.playerInfoHead(viewer));
-        box.setItem(35, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
+        box.setItem(40, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         broadcastChanges();
     }
@@ -82,23 +111,27 @@ public class PlotzAdminModeMenu extends ChestMenu {
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (!(player instanceof ServerPlayer sp)) return;
 
-        if (slotId == 10) AdminSettingsManager.setJobsEnabled(!AdminSettingsManager.jobsEnabled());
-        if (slotId == 11) AdminSettingsManager.setChecksEnabled(!AdminSettingsManager.checksEnabled());
-        if (slotId == 12) AdminSettingsManager.setShopEnabled(!AdminSettingsManager.shopEnabled());
-        if (slotId == 13) AdminSettingsManager.setPlotMarketEnabled(!AdminSettingsManager.plotMarketEnabled());
-        if (slotId == 14) AdminSettingsManager.setServerModeEnabled(!AdminSettingsManager.serverModeEnabled());
+        switch (slotId) {
+            case 10 -> AdminSettingsManager.setJobsEnabled(!AdminSettingsManager.jobsEnabled());
+            case 11 -> AdminSettingsManager.setChecksEnabled(!AdminSettingsManager.checksEnabled());
+            case 12 -> AdminSettingsManager.setShopEnabled(!AdminSettingsManager.shopEnabled());
+            case 13 -> AdminSettingsManager.setPlotMarketEnabled(!AdminSettingsManager.plotMarketEnabled());
+            case 14 -> AdminSettingsManager.setServerModeEnabled(!AdminSettingsManager.serverModeEnabled());
 
-        if (slotId == 19) AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + 1);
-        if (slotId == 20) AdminSettingsManager.setMinOverduePercent(AdminSettingsManager.minOverduePercent() + 1);
-        if (slotId == 21) AdminSettingsManager.setMinCancelPercent(AdminSettingsManager.minCancelPercent() + 1);
+            case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
+            case 20 -> AdminSettingsManager.setMinOverduePercent(AdminSettingsManager.minOverduePercent() + (button == 1 ? -1 : 1));
+            case 21 -> AdminSettingsManager.setMinCancelPercent(AdminSettingsManager.minCancelPercent() + (button == 1 ? -1 : 1));
 
-        if (slotId == 23 || slotId == 24) {
-            AdminSettingsManager.setLanguage(AdminSettingsManager.nextLanguage());
-        }
+            case 23 -> setLangByIndex(currentLangIndex() - 1);
+            case 24 -> setLangByIndex(currentLangIndex() + 1);
+            case 25 -> setLangByIndex(currentLangIndex() + 1);
 
-        if (slotId == 35) {
-            PlotzMainMenu.open(sp);
-            return;
+            case 40 -> {
+                PlotzMainMenu.open(sp);
+                return;
+            }
+            default -> {
+            }
         }
 
         refresh();
