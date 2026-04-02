@@ -79,7 +79,7 @@ public class PlotzBankMenu extends ChestMenu {
             slot++;
         }
 
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
     }
@@ -117,7 +117,7 @@ public class PlotzBankMenu extends ChestMenu {
         String loanId = loanIdsBySlot.get(slotId);
         if (loanId != null) {
             sp.closeContainer();
-            sp.sendSystemMessage(Component.literal("§eLoan ID: " + loanId));
+            sp.sendSystemMessage(Component.literal("§e" + LanguageManager.tr("bank.loan_id") + ": " + loanId));
             sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.offer")));
             sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.accept")));
             sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.repay")));

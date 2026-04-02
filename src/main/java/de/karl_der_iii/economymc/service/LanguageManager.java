@@ -31,6 +31,16 @@ public final class LanguageManager {
         en.put("admin.language", "§7Language: English");
         en.put("admin.language.toggle", "§bSwitch language");
         en.put("admin.mode.title", "EconomyMC Admin Mode");
+        en.put("admin.on", "ON");
+        en.put("admin.off", "OFF");
+        en.put("admin.jobs", "Jobs");
+        en.put("admin.checks", "Checks");
+        en.put("admin.shop", "Shop");
+        en.put("admin.plot_market", "Plot Market");
+        en.put("admin.server_mode", "Server Mode");
+        en.put("admin.min_tax", "§7Min Tax");
+        en.put("admin.min_overdue", "§7Min Overdue");
+        en.put("admin.min_cancel", "§7Min Cancel");
 
         en.put("common.close", "§cClose");
         en.put("common.back", "§cBack");
@@ -88,6 +98,12 @@ public final class LanguageManager {
         en.put("shop.input.price_positive", "§cPrice must be above 0.");
         en.put("shop.input.price_set", "§aShop price set to $");
         en.put("shop.input.invalid_number", "§cThat is not a valid number.");
+        en.put("shop.listing_missing", "Listing no longer exists");
+        en.put("shop.withdraw", "§cWithdraw Listing");
+        en.put("shop.buy", "§aBuy");
+        en.put("shop.withdrawn", "§aListing withdrawn.");
+        en.put("shop.not_enough_money", "§cYou do not have enough money.");
+        en.put("shop.bought", "§aItem(s) bought for $%d §7(Tax: $%d)");
 
         en.put("jobs.menu.title", "EconomyMC Jobs");
         en.put("jobs.server.title", "EconomyMC Server Jobs");
@@ -190,6 +206,16 @@ public final class LanguageManager {
         en.put("history.treasury.tax", "§6Tax received: $%d");
         en.put("history.admin.set", "§cAdmin set balance: $%d");
 
+        en.put("bank.title", "EconomyMC Bank");
+        en.put("bank.target.server", "Server");
+        en.put("bank.target.player", "Player");
+        en.put("bank.target.all", "All Players");
+        en.put("bank.command.request", "Create Loan Request");
+        en.put("bank.command.offer", "Create Loan Offer");
+        en.put("bank.command.accept", "Accept Loan");
+        en.put("bank.command.repay", "Repay Loan");
+        en.put("bank.loan_id", "Loan ID");
+
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -215,6 +241,16 @@ public final class LanguageManager {
         de.put("admin.language", "§7Sprache: Deutsch");
         de.put("admin.language.toggle", "§bSprache wechseln");
         de.put("admin.mode.title", "EconomyMC Adminmodus");
+        de.put("admin.on", "AN");
+        de.put("admin.off", "AUS");
+        de.put("admin.jobs", "Jobs");
+        de.put("admin.checks", "Checks");
+        de.put("admin.shop", "Shop");
+        de.put("admin.plot_market", "Grundstücksmarkt");
+        de.put("admin.server_mode", "Servermodus");
+        de.put("admin.min_tax", "§7Min. Steuer");
+        de.put("admin.min_overdue", "§7Min. Überzug");
+        de.put("admin.min_cancel", "§7Min. Abbruch");
 
         de.put("common.close", "§cSchließen");
         de.put("common.back", "§cZurück");
@@ -272,6 +308,12 @@ public final class LanguageManager {
         de.put("shop.input.price_positive", "§cDer Preis muss über 0 liegen.");
         de.put("shop.input.price_set", "§aShop-Preis gesetzt auf $");
         de.put("shop.input.invalid_number", "§cDas ist keine gültige Zahl.");
+        de.put("shop.listing_missing", "Angebot existiert nicht mehr");
+        de.put("shop.withdraw", "§cAngebot zurücknehmen");
+        de.put("shop.buy", "§aKaufen");
+        de.put("shop.withdrawn", "§aAngebot zurückgenommen.");
+        de.put("shop.not_enough_money", "§cDu hast nicht genug Geld.");
+        de.put("shop.bought", "§aItem(s) gekauft für $%d §7(Steuer: $%d)");
 
         de.put("jobs.menu.title", "EconomyMC Jobs");
         de.put("jobs.server.title", "EconomyMC Server-Jobs");
@@ -374,11 +416,32 @@ public final class LanguageManager {
         de.put("history.treasury.tax", "§6Steuer erhalten: $%d");
         de.put("history.admin.set", "§cAdmin setzte Guthaben: $%d");
 
+        de.put("bank.title", "EconomyMC Bank");
+        de.put("bank.target.server", "Server");
+        de.put("bank.target.player", "Spieler");
+        de.put("bank.target.all", "Alle Spieler");
+        de.put("bank.command.request", "Kreditanfrage erstellen");
+        de.put("bank.command.offer", "Kreditangebot erstellen");
+        de.put("bank.command.accept", "Kredit annehmen");
+        de.put("bank.command.repay", "Kredit zurückzahlen");
+        de.put("bank.loan_id", "Kredit-ID");
+
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);
         pl.put("admin.language", "§7Język: Polski");
         pl.put("admin.mode.title", "Tryb administratora EconomyMC");
+        pl.put("admin.on", "WŁ");
+        pl.put("admin.off", "WYŁ");
+        pl.put("admin.jobs", "Zadania");
+        pl.put("admin.checks", "Czeki");
+        pl.put("admin.shop", "Sklep");
+        pl.put("admin.plot_market", "Rynek działek");
+        pl.put("admin.server_mode", "Tryb serwera");
+        pl.put("admin.min_tax", "§7Min. podatek");
+        pl.put("admin.min_overdue", "§7Min. kara");
+        pl.put("admin.min_cancel", "§7Min. anulowanie");
+
         pl.put("common.close", "§cZamknij");
         pl.put("common.back", "§cPowrót");
         pl.put("common.next", "§7Następna strona");
@@ -396,9 +459,17 @@ public final class LanguageManager {
         pl.put("common.click_to_view", "§7Kliknij, aby zobaczyć");
         pl.put("common.publish", "§bOpublikuj");
         pl.put("common.sell", "§aSprzedaj");
+
         pl.put("plots.menu.title", "EconomyMC Działki");
         pl.put("shop.menu.title", "EconomyMC Sklep");
         pl.put("shop.sell.title", "EconomyMC Sprzedaj przedmiot");
+        pl.put("shop.listing_missing", "Oferta już nie istnieje");
+        pl.put("shop.withdraw", "§cWycofaj ofertę");
+        pl.put("shop.buy", "§aKup");
+        pl.put("shop.withdrawn", "§aOferta wycofana.");
+        pl.put("shop.not_enough_money", "§cNie masz wystarczająco pieniędzy.");
+        pl.put("shop.bought", "§aKupiono przedmiot(y) za $%d §7(Podatek: $%d)");
+
         pl.put("jobs.menu.title", "EconomyMC Zadania");
         pl.put("jobs.server.title", "Zadania serwera EconomyMC");
         pl.put("checks.menu.title", "EconomyMC Czeki");
@@ -407,6 +478,17 @@ public final class LanguageManager {
         pl.put("history.title", "EconomyMC Historia");
         pl.put("history.mine", "§bMoja historia");
         pl.put("history.treasury", "§6Historia skarbca");
+
+        pl.put("bank.title", "Bank EconomyMC");
+        pl.put("bank.target.server", "Serwer");
+        pl.put("bank.target.player", "Gracz");
+        pl.put("bank.target.all", "Wszyscy gracze");
+        pl.put("bank.command.request", "Utwórz prośbę o pożyczkę");
+        pl.put("bank.command.offer", "Utwórz ofertę pożyczki");
+        pl.put("bank.command.accept", "Akceptuj pożyczkę");
+        pl.put("bank.command.repay", "Spłać pożyczkę");
+        pl.put("bank.loan_id", "ID pożyczki");
+
         LANG.put("pl_pl", pl);
 
         Map<String, String> fr = new HashMap<>(en);
@@ -438,6 +520,7 @@ public final class LanguageManager {
         fr.put("check.redeem.title", "Encaisser un chèque EconomyMC");
         fr.put("server.mode.title", "Mode serveur EconomyMC");
         fr.put("history.title", "Historique EconomyMC");
+        fr.put("bank.title", "Banque EconomyMC");
         LANG.put("fr_fr", fr);
 
         Map<String, String> es = new HashMap<>(en);
@@ -469,6 +552,7 @@ public final class LanguageManager {
         es.put("check.redeem.title", "Canjear cheque EconomyMC");
         es.put("server.mode.title", "Modo servidor EconomyMC");
         es.put("history.title", "Historial EconomyMC");
+        es.put("bank.title", "Banco EconomyMC");
         LANG.put("es_es", es);
 
         Map<String, String> pt = new HashMap<>(en);
@@ -500,6 +584,7 @@ public final class LanguageManager {
         pt.put("check.redeem.title", "Resgatar cheque EconomyMC");
         pt.put("server.mode.title", "Modo servidor EconomyMC");
         pt.put("history.title", "Histórico EconomyMC");
+        pt.put("bank.title", "Banco EconomyMC");
         LANG.put("pt_br", pt);
 
         Map<String, String> ru = new HashMap<>(en);
@@ -531,6 +616,7 @@ public final class LanguageManager {
         ru.put("check.redeem.title", "Погасить чек EconomyMC");
         ru.put("server.mode.title", "Серверный режим EconomyMC");
         ru.put("history.title", "История EconomyMC");
+        ru.put("bank.title", "Банк EconomyMC");
         LANG.put("ru_ru", ru);
 
         Map<String, String> tr = new HashMap<>(en);
@@ -562,6 +648,7 @@ public final class LanguageManager {
         tr.put("check.redeem.title", "EconomyMC çeki bozdur");
         tr.put("server.mode.title", "EconomyMC sunucu modu");
         tr.put("history.title", "EconomyMC Geçmiş");
+        tr.put("bank.title", "EconomyMC Banka");
         LANG.put("tr_tr", tr);
 
         Map<String, String> zh = new HashMap<>(en);
@@ -593,6 +680,7 @@ public final class LanguageManager {
         zh.put("check.redeem.title", "兑换 EconomyMC 支票");
         zh.put("server.mode.title", "EconomyMC 服务器模式");
         zh.put("history.title", "EconomyMC 历史");
+        zh.put("bank.title", "EconomyMC 银行");
         LANG.put("zh_cn", zh);
 
         Map<String, String> ja = new HashMap<>(en);
@@ -624,6 +712,7 @@ public final class LanguageManager {
         ja.put("check.redeem.title", "EconomyMC 小切手を換金");
         ja.put("server.mode.title", "EconomyMC サーバーモード");
         ja.put("history.title", "EconomyMC 履歴");
+        ja.put("bank.title", "EconomyMC 銀行");
         LANG.put("ja_jp", ja);
     }
 

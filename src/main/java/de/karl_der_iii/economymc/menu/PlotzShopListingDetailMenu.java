@@ -2,6 +2,7 @@ package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.BalanceManager;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.ScoreboardManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.core.component.DataComponents;
@@ -32,7 +33,7 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
     public static void open(ServerPlayer player, String listingId, int returnPage) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzShopListingDetailMenu(containerId, inventory, player, listingId, returnPage),
-            Component.literal("Shop Listing")
+            Component.literal(LanguageManager.tr("shop.menu.title"))
         ));
     }
 
@@ -57,17 +58,17 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
         if (listing.items().size() == 1) {
             ItemStack stack = listing.items().get(0).copy();
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.literal("§6Base Price: $" + base));
-            lore.add(Component.literal("§cTax: $" + tax));
-            lore.add(Component.literal("§aTotal: $" + total));
-            lore.add(Component.literal("§7Seller: " + listing.sellerName()));
-            lore.add(Component.literal("§7Amount: " + stack.getCount()));
+            lore.add(Component.literal(LanguageManager.tr("shop.base_price") + base));
+            lore.add(Component.literal(LanguageManager.tr("shop.tax") + tax));
+            lore.add(Component.literal(LanguageManager.tr("shop.total") + total));
+            lore.add(Component.literal(LanguageManager.tr("common.seller") + ": " + listing.sellerName()));
+            lore.add(Component.literal(LanguageManager.tr("common.amount") + ": " + stack.getCount()));
             stack.set(DataComponents.LORE, new ItemLore(lore));
             return stack;
         }
 
         ItemStack boxItem = new ItemStack(Items.SHULKER_BOX);
-        boxItem.set(DataComponents.CUSTOM_NAME, Component.literal("§dShop Bundle"));
+        boxItem.set(DataComponents.CUSTOM_NAME, Component.literal(LanguageManager.tr("shop.bundle")));
 
         Map<String, Integer> grouped = new LinkedHashMap<>();
         int totalCount = 0;
@@ -79,12 +80,12 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
         }
 
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.literal("§6Base Price: $" + base));
-        lore.add(Component.literal("§cTax: $" + tax));
-        lore.add(Component.literal("§aTotal: $" + total));
-        lore.add(Component.literal("§7Seller: " + listing.sellerName()));
-        lore.add(Component.literal("§7Stacks inside: " + listing.items().size()));
-        lore.add(Component.literal("§7Total items: " + totalCount));
+        lore.add(Component.literal(LanguageManager.tr("shop.base_price") + base));
+        lore.add(Component.literal(LanguageManager.tr("shop.tax") + tax));
+        lore.add(Component.literal(LanguageManager.tr("shop.total") + total));
+        lore.add(Component.literal(LanguageManager.tr("common.seller") + ": " + listing.sellerName()));
+        lore.add(Component.literal(LanguageManager.tr("shop.stacks_inside") + listing.items().size()));
+        lore.add(Component.literal(LanguageManager.tr("shop.total_items") + totalCount));
 
         for (Map.Entry<String, Integer> entry : grouped.entrySet()) {
             lore.add(Component.literal("§f" + entry.getValue() + "x " + entry.getKey()));
@@ -101,20 +102,20 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
 
         PlotzStore.ShopListing listing = PlotzStore.getShopListingById(listingId);
         if (listing == null) {
-            box.setItem(13, MenuUtil.named(Items.BARRIER, "§cListing no longer exists"));
-            box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
+            box.setItem(13, MenuUtil.named(Items.BARRIER, "§c" + LanguageManager.tr("shop.listing_missing")));
+            box.setItem(21, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
             MenuUtil.putPlayerInfoHead(box, viewer, 18);
             broadcastChanges();
             return;
         }
 
         box.setItem(13, createPreview(listing));
-        box.setItem(21, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(21, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         if (listing.sellerId().equals(viewer.getUUID())) {
-            box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, "§cWithdraw Listing"));
+            box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("shop.withdraw")));
         } else {
-            box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, "§aBuy"));
+            box.setItem(23, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("shop.buy")));
         }
 
         MenuUtil.putPlayerInfoHead(box, viewer, 18);
@@ -136,7 +137,7 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
 
         PlotzStore.ShopListing listing = PlotzStore.getShopListingById(listingId);
         if (listing == null) {
-            sp.sendSystemMessage(Component.literal("§cListing no longer exists."));
+            sp.sendSystemMessage(Component.literal("§c" + LanguageManager.tr("shop.listing_missing")));
             PlotzShopMenu.open(sp, returnPage);
             return;
         }
@@ -149,7 +150,7 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
             }
 
             PlotzStore.removeShopListing(listingId);
-            sp.sendSystemMessage(Component.literal("§aListing withdrawn."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("shop.withdrawn")));
             PlotzShopMenu.open(sp, returnPage);
             return;
         }
@@ -158,7 +159,7 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
         int tax = TreasuryManager.calculateTax(listing.price());
 
         if (!BalanceManager.removeBalance(sp.getUUID(), total)) {
-            sp.sendSystemMessage(Component.literal("§cYou do not have enough money."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("shop.not_enough_money")));
             return;
         }
 
@@ -173,7 +174,7 @@ public class PlotzShopListingDetailMenu extends ChestMenu {
         }
 
         PlotzStore.removeShopListing(listingId);
-        sp.sendSystemMessage(Component.literal("§aItem(s) bought for $" + total + " §7(Tax: $" + tax + ")"));
+        sp.sendSystemMessage(Component.literal(LanguageManager.format("shop.bought", total, tax)));
         PlotzShopMenu.open(sp, returnPage);
     }
 

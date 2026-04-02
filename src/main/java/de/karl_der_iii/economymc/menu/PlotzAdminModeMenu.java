@@ -37,7 +37,10 @@ public class PlotzAdminModeMenu extends ChestMenu {
     }
 
     private ItemStack toggleItem(boolean enabled, String title) {
-        return MenuUtil.named(enabled ? Items.LIME_DYE : Items.GRAY_DYE, (enabled ? "§a" : "§7") + title + ": " + (enabled ? "ON" : "OFF"));
+        return MenuUtil.named(
+            enabled ? Items.LIME_DYE : Items.GRAY_DYE,
+            (enabled ? "§a" : "§7") + title + ": " + (enabled ? LanguageManager.tr("admin.on") : LanguageManager.tr("admin.off"))
+        );
     }
 
     private void refresh() {
@@ -45,15 +48,15 @@ public class PlotzAdminModeMenu extends ChestMenu {
             box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
-        box.setItem(10, toggleItem(AdminSettingsManager.jobsEnabled(), "Jobs"));
-        box.setItem(11, toggleItem(AdminSettingsManager.checksEnabled(), "Checks"));
-        box.setItem(12, toggleItem(AdminSettingsManager.shopEnabled(), "Shop"));
-        box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), "Plot Market"));
-        box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), "Server Mode"));
+        box.setItem(10, toggleItem(AdminSettingsManager.jobsEnabled(), LanguageManager.tr("admin.jobs")));
+        box.setItem(11, toggleItem(AdminSettingsManager.checksEnabled(), LanguageManager.tr("admin.checks")));
+        box.setItem(12, toggleItem(AdminSettingsManager.shopEnabled(), LanguageManager.tr("admin.shop")));
+        box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), LanguageManager.tr("admin.plot_market")));
+        box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), LanguageManager.tr("admin.server_mode")));
 
-        box.setItem(16, MenuUtil.named(Items.PAPER, "§7Min Tax: " + AdminSettingsManager.minTaxPercent() + "%"));
-        box.setItem(17, MenuUtil.named(Items.PAPER, "§7Min Overdue: " + AdminSettingsManager.minOverduePercent() + "%"));
-        box.setItem(18, MenuUtil.named(Items.PAPER, "§7Min Cancel: " + AdminSettingsManager.minCancelPercent() + "%"));
+        box.setItem(16, MenuUtil.named(Items.PAPER, LanguageManager.tr("admin.min_tax") + ": " + AdminSettingsManager.minTaxPercent() + "%"));
+        box.setItem(17, MenuUtil.named(Items.PAPER, LanguageManager.tr("admin.min_overdue") + ": " + AdminSettingsManager.minOverduePercent() + "%"));
+        box.setItem(18, MenuUtil.named(Items.PAPER, LanguageManager.tr("admin.min_cancel") + ": " + AdminSettingsManager.minCancelPercent() + "%"));
 
         box.setItem(20, MenuUtil.named(Items.GLOBE_BANNER_PATTERN, LanguageManager.currentLanguageLabel()));
         box.setItem(21, MenuUtil.named(Items.WRITABLE_BOOK, LanguageManager.tr("admin.language.toggle")));
