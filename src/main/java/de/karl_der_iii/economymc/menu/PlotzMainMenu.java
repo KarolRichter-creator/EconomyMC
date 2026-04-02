@@ -40,7 +40,7 @@ public class PlotzMainMenu extends ChestMenu {
         refresh();
     }
 
-    private ItemStack sectionItem(boolean enabled, ItemStack enabledStack, String enabledTitle, String disabledTitle) {
+    private ItemStack sectionItem(boolean enabled, ItemStack enabledStack, String disabledTitle) {
         if (enabled) {
             return enabledStack;
         }
@@ -59,21 +59,18 @@ public class PlotzMainMenu extends ChestMenu {
         box.setItem(12, sectionItem(
             AdminSettingsManager.shopEnabled(),
             MenuUtil.named(Items.CHEST, LanguageManager.tr("main.shop")),
-            LanguageManager.tr("main.shop"),
             LanguageManager.tr("main.disabled.shop")
         ));
 
         box.setItem(14, sectionItem(
             AdminSettingsManager.jobsEnabled(),
             MenuUtil.named(Items.BOOK, LanguageManager.tr("main.jobs")),
-            LanguageManager.tr("main.jobs"),
             LanguageManager.tr("main.disabled.jobs")
         ));
 
         box.setItem(16, sectionItem(
             AdminSettingsManager.checksEnabled(),
             MenuUtil.named(Items.PAPER, LanguageManager.tr("main.checks")),
-            LanguageManager.tr("main.checks"),
             LanguageManager.tr("main.disabled.checks")
         ));
 
@@ -85,7 +82,6 @@ public class PlotzMainMenu extends ChestMenu {
         box.setItem(38, sectionItem(
             AdminSettingsManager.serverModeEnabled(),
             MenuUtil.named(Items.IRON_BARS, LanguageManager.tr("main.servermode")),
-            LanguageManager.tr("main.servermode"),
             LanguageManager.tr("main.disabled.servermode")
         ));
 

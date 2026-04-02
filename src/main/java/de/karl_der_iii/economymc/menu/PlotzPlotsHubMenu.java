@@ -97,7 +97,9 @@ public class PlotzPlotsHubMenu extends ChestMenu {
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) return;
+        if (!(player instanceof ServerPlayer sp)) {
+            return;
+        }
 
         if (slotId == 11) {
             if (!PlotzLogic.canBuyNormalCredit(sp)) {

@@ -86,28 +86,52 @@ public class PlotzServerModeMenu extends ChestMenu {
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) return;
+        if (!(player instanceof ServerPlayer sp)) {
+            return;
+        }
 
         if (slotId == 49) {
             PlotzMainMenu.open(sp);
             return;
         }
 
-        if (slotId == 10 && !AdminSettingsManager.autoTaxEnabled()) TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() - 1);
-        if (slotId == 12 && !AdminSettingsManager.autoTaxEnabled()) TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() + 1);
-        if (slotId == 13) AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
+        if (slotId == 10 && !AdminSettingsManager.autoTaxEnabled()) {
+            TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() - 1);
+        }
+        if (slotId == 12 && !AdminSettingsManager.autoTaxEnabled()) {
+            TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() + 1);
+        }
+        if (slotId == 13) {
+            AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
+        }
 
-        if (slotId == 14) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
-        if (slotId == 16) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
+        if (slotId == 14) {
+            TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
+        }
+        if (slotId == 16) {
+            TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
+        }
 
-        if (slotId == 28) TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
-        if (slotId == 30) TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
+        if (slotId == 28) {
+            TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
+        }
+        if (slotId == 30) {
+            TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
+        }
 
-        if (slotId == 32) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
-        if (slotId == 34) TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
+        if (slotId == 32) {
+            TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
+        }
+        if (slotId == 34) {
+            TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
+        }
 
-        if (slotId == 37) AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() - 1);
-        if (slotId == 39) AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + 1);
+        if (slotId == 37) {
+            AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() - 1);
+        }
+        if (slotId == 39) {
+            AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + 1);
+        }
 
         if (slotId == 40) {
             JobsInputManager.startServerJob(sp);

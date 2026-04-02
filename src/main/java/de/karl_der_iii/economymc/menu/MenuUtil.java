@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class MenuUtil {
-    private MenuUtil() {}
+    private MenuUtil() {
+    }
 
     public static ItemStack named(net.minecraft.world.item.Item item, String name) {
         ItemStack stack = new ItemStack(item);

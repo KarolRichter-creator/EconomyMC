@@ -42,8 +42,8 @@ public class PlotzAdminModeMenu extends ChestMenu {
 
     private ItemStack toggleItem(boolean enabled, String title) {
         return MenuUtil.named(
-            enabled ? Items.LIME_DYE : Items.BARRIER,
-            (enabled ? "§a" : "§c") + title + " §7- " +
+            enabled ? Items.LIME_DYE : Items.GRAY_DYE,
+            (enabled ? "§a" : "§7") + title + " §7- " +
                 (enabled ? LanguageManager.tr("admin.on") : LanguageManager.tr("admin.off"))
         );
     }
@@ -63,8 +63,12 @@ public class PlotzAdminModeMenu extends ChestMenu {
     }
 
     private void setLangByIndex(int index) {
-        if (index < 0) index = LANG_ORDER.length - 1;
-        if (index >= LANG_ORDER.length) index = 0;
+        if (index < 0) {
+            index = LANG_ORDER.length - 1;
+        }
+        if (index >= LANG_ORDER.length) {
+            index = 0;
+        }
         AdminSettingsManager.setLanguage(LANG_ORDER[index]);
     }
 
@@ -109,7 +113,9 @@ public class PlotzAdminModeMenu extends ChestMenu {
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) return;
+        if (!(player instanceof ServerPlayer sp)) {
+            return;
+        }
 
         switch (slotId) {
             case 10 -> AdminSettingsManager.setJobsEnabled(!AdminSettingsManager.jobsEnabled());
