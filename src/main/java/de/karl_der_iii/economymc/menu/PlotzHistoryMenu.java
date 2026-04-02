@@ -54,6 +54,8 @@ public class PlotzHistoryMenu extends ChestMenu {
         UUID owner = treasuryView ? BalanceManager.TREASURY_ACCOUNT_ID : viewer.getUUID();
         List<TransactionHistoryManager.Entry> entries = TransactionHistoryManager.getEntries(owner, 45);
 
+        box.setItem(4, MenuUtil.named(Items.CLOCK, treasuryView ? LanguageManager.tr("history.treasury") : LanguageManager.tr("history.mine")));
+
         if (entries.isEmpty()) {
             box.setItem(22, MenuUtil.named(Items.BOOK, LanguageManager.tr("history.empty")));
         } else {
@@ -67,15 +69,21 @@ public class PlotzHistoryMenu extends ChestMenu {
         }
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.close")));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         box.setItem(52, MenuUtil.named(Items.PAPER, treasuryView ? LanguageManager.tr("history.treasury") : LanguageManager.tr("history.mine")));
         broadcastChanges();
     }
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
+        if (!(player instanceof ServerPlayer sp)) return;
+
         if (slotId == 49) {
-            player.closeContainer();
+            if (treasuryView) {
+                PlotzServerModeMenu.open(sp);
+            } else {
+                PlotzMainMenu.open(sp);
+            }
         }
     }
 

@@ -47,8 +47,7 @@ public class PlotzServerModeMenu extends ChestMenu {
     private void refresh() {
         fillBackground();
 
-        box.setItem(4, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("server.treasury_balance") + TreasuryManager.getTreasury()));
-
+        box.setItem(4, MenuUtil.named(Items.IRON_BARS, LanguageManager.tr("server.mode.title")));
         box.setItem(10, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.tax_minus")));
         box.setItem(11, MenuUtil.named(
             AdminSettingsManager.autoTaxEnabled() ? Items.COMPASS : Items.PAPER,
@@ -80,7 +79,8 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         box.setItem(40, MenuUtil.named(Items.EMERALD, LanguageManager.tr("server.create_job")));
         box.setItem(42, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
-        box.setItem(44, MenuUtil.named(Items.MAP, LanguageManager.tr("server.info")));
+        box.setItem(44, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("server.treasury_balance") + TreasuryManager.getTreasury()));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         box.setItem(53, MenuUtil.named(Items.CLOCK, LanguageManager.tr("history.treasury")));
 
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
@@ -91,15 +91,14 @@ public class PlotzServerModeMenu extends ChestMenu {
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (!(player instanceof ServerPlayer sp)) return;
 
-        if (slotId == 10 && !AdminSettingsManager.autoTaxEnabled()) {
-            TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() - 1);
+        if (slotId == 49) {
+            PlotzMainMenu.open(sp);
+            return;
         }
-        if (slotId == 12 && !AdminSettingsManager.autoTaxEnabled()) {
-            TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() + 1);
-        }
-        if (slotId == 13) {
-            AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
-        }
+
+        if (slotId == 10 && !AdminSettingsManager.autoTaxEnabled()) TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() - 1);
+        if (slotId == 12 && !AdminSettingsManager.autoTaxEnabled()) TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() + 1);
+        if (slotId == 13) AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
 
         if (slotId == 14) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
         if (slotId == 16) TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
