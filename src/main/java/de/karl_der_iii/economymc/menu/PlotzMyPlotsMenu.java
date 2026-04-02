@@ -1,6 +1,7 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.OpacBridge;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,7 +30,7 @@ public class PlotzMyPlotsMenu extends ChestMenu {
 
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzMyPlotsMenu(containerId, inventory, player),
-            Component.literal("My Plots")
+            Component.literal(LanguageManager.tr("myplots.menu.title"))
         ));
     }
 
@@ -73,17 +74,15 @@ public class PlotzMyPlotsMenu extends ChestMenu {
 
             box.setItem(slot, MenuUtil.named(
                 plot.capital() ? Items.FILLED_MAP : Items.MAP,
-                (plot.capital() ? "§6" : "§b")
-                    + plot.title()
-                    + " §7| " + plot.chunkCount() + " Chunks | " + plot.location()
+                LanguageManager.format("myplots.entry", plot.capital() ? "§6" : "§b", plot.title(), plot.chunkCount(), plot.location())
             ));
 
             plotBySlot.put(slot, plot);
             slot++;
         }
 
-        box.setItem(47, MenuUtil.named(Items.PAPER, "§7Click a plot to create a sale draft"));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(47, MenuUtil.named(Items.PAPER, LanguageManager.tr("myplots.info")));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
     }
@@ -109,12 +108,12 @@ public class PlotzMyPlotsMenu extends ChestMenu {
         }
 
         if (PlotzStore.hasListingForLocation(plot.location())) {
-            sp.sendSystemMessage(Component.literal("§cThis plot is already listed in the market."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("myplots.already_listed")));
             return;
         }
 
         if (PlotzStore.hasAnyDraftForLocation(plot.location())) {
-            sp.sendSystemMessage(Component.literal("§cThis plot already has a sale draft."));
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("myplots.already_draft")));
             return;
         }
 
@@ -126,13 +125,13 @@ public class PlotzMyPlotsMenu extends ChestMenu {
             plot.chunkCount(),
             plot.location(),
             plot.capital() ? 10000 : 5000,
-            "Edit later",
-            "Edit later",
-            "Edit later",
+            LanguageManager.tr("myplots.edit_later"),
+            LanguageManager.tr("myplots.edit_later"),
+            LanguageManager.tr("myplots.edit_later"),
             false
         ));
 
-        sp.sendSystemMessage(Component.literal("§aSale draft selected: " + plot.title()));
+        sp.sendSystemMessage(Component.literal(LanguageManager.format("myplots.draft_selected", plot.title())));
         PlotzCreateSaleMenu.open(sp);
     }
 

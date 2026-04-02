@@ -60,7 +60,7 @@ public class PlotzChecksMenu extends ChestMenu {
             CheckManager.CheckEntry entry = checks.get(i);
             box.setItem(slot, MenuUtil.named(
                 entry.redeemed() ? Items.GRAY_DYE : Items.PAPER,
-                (entry.redeemed() ? "§7" : "§e") + "Check $" + entry.amount() + " - " + entry.creatorName()
+                LanguageManager.format("checks.entry", entry.redeemed() ? "§7" : "§e", entry.amount(), entry.creatorName())
             ));
             checkIds.put(slot, entry.id());
             slot++;

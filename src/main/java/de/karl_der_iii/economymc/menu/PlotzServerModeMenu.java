@@ -53,13 +53,13 @@ public class PlotzServerModeMenu extends ChestMenu {
         box.setItem(11, MenuUtil.named(
             AdminSettingsManager.autoTaxEnabled() ? Items.COMPASS : Items.PAPER,
             LanguageManager.tr("server.tax_rate") + TreasuryManager.getTaxPercent() + "% " +
-                (AdminSettingsManager.autoTaxEnabled() ? "§8(Auto)" : "§8(Manual)")
+                (AdminSettingsManager.autoTaxEnabled() ? "§8(" + LanguageManager.tr("admin.auto") + ")" : "§8(" + LanguageManager.tr("admin.manual") + ")")
         ));
         box.setItem(12, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.tax_plus")));
         box.setItem(13, MenuUtil.named(
             AdminSettingsManager.autoTaxEnabled() ? Items.LIME_DYE : Items.GRAY_DYE,
             (AdminSettingsManager.autoTaxEnabled() ? "§a" : "§7") + LanguageManager.tr("server.auto_tax") + ": " +
-                (AdminSettingsManager.autoTaxEnabled() ? "ON" : "OFF")
+                (AdminSettingsManager.autoTaxEnabled() ? LanguageManager.tr("admin.on") : LanguageManager.tr("admin.off"))
         ));
 
         box.setItem(14, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.overdue_minus")));

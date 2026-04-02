@@ -1,6 +1,7 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
+import de.karl_der_iii.economymc.service.LanguageManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -25,7 +26,7 @@ public class PlotzMySalesMenu extends ChestMenu {
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
             (containerId, inventory, p) -> new PlotzMySalesMenu(containerId, inventory, player),
-            Component.literal("My Sales")
+            Component.literal(LanguageManager.tr("mysales.menu.title"))
         ));
     }
 
@@ -60,15 +61,13 @@ public class PlotzMySalesMenu extends ChestMenu {
 
             box.setItem(slot, MenuUtil.named(
                 listing.capital() ? Items.ENCHANTED_BOOK : Items.BOOK,
-                (listing.capital() ? "§6" : "§d")
-                    + listing.title()
-                    + " §7| " + listing.price() + "$"
+                LanguageManager.format("mysales.entry", listing.capital() ? "§6" : "§d", listing.title(), listing.price())
             ));
             listingIdsBySlot.put(slot, listing.listingId());
             slot++;
         }
 
-        box.setItem(49, MenuUtil.named(Items.BARRIER, "§cBack"));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         MenuUtil.putPlayerInfoHead(box, viewer, 45);
         broadcastChanges();
     }

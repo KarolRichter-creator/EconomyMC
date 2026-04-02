@@ -111,7 +111,7 @@ public class PlotzListingDetailMenu extends ChestMenu {
             return;
         }
 
-    PlotzLogic.paySeller(sp, listing.sellerName(), listing.price());
+        PlotzLogic.paySeller(sp, listing.sellerName(), listing.price());
 
         PlotzStore.addOwnedPlot(new PlotzStore.PlotEntry(
             sp.getUUID(),

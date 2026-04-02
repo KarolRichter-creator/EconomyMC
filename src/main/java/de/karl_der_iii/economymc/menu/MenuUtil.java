@@ -30,7 +30,6 @@ public final class MenuUtil {
         int capitalCredits = PlotzStore.getCapitalCredits(player.getUUID());
 
         ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
-
         stack.set(DataComponents.CUSTOM_NAME, Component.literal("§e" + player.getGameProfile().getName()));
         stack.set(
             DataComponents.LORE,
@@ -41,7 +40,6 @@ public final class MenuUtil {
             ))
         );
         stack.set(DataComponents.PROFILE, new ResolvableProfile(player.getGameProfile()));
-
         return stack;
     }
 

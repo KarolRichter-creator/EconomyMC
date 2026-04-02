@@ -23,13 +23,13 @@ public final class ChecksInputManager {
 
     public static void startCreate(ServerPlayer player) {
         DRAFTS.put(player.getUUID(), new Draft(Stage.CREATE_AMOUNT, 0, ""));
-        player.sendSystemMessage(Component.literal("§eEnter the check amount in chat now."));
+        player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.amount")));
         player.closeContainer();
     }
 
     public static void startRedeem(ServerPlayer player, String checkId) {
         DRAFTS.put(player.getUUID(), new Draft(Stage.REDEEM_CODE, 0, checkId));
-        player.sendSystemMessage(Component.literal("§eEnter the check code in chat now."));
+        player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.code")));
         player.closeContainer();
     }
 
@@ -43,24 +43,24 @@ public final class ChecksInputManager {
                 try {
                     amount = Integer.parseInt(message.trim());
                 } catch (NumberFormatException e) {
-                    player.sendSystemMessage(Component.literal("§cThat is not a valid number."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.invalid_number")));
                     return true;
                 }
 
                 if (amount <= 0) {
-                    player.sendSystemMessage(Component.literal("§cAmount must be above 0."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.amount_positive")));
                     return true;
                 }
 
                 if (!BalanceManager.removeBalance(player.getUUID(), amount)) {
-                    player.sendSystemMessage(Component.literal("§cYou do not have enough money."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.not_enough")));
                     DRAFTS.remove(player.getUUID());
                     PlotzChecksMenu.open(player, 0);
                     return true;
                 }
 
                 DRAFTS.put(player.getUUID(), new Draft(Stage.CREATE_CODE, amount, ""));
-                player.sendSystemMessage(Component.literal("§eEnter the check code in chat now."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.code")));
                 return true;
             }
             case CREATE_CODE -> {
@@ -71,7 +71,7 @@ public final class ChecksInputManager {
                     draft.amount(),
                     message.trim()
                 );
-                player.sendSystemMessage(Component.literal("§aCheck created."));
+                player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.created")));
                 PlotzChecksMenu.open(player, 0);
                 return true;
             }
@@ -84,9 +84,9 @@ public final class ChecksInputManager {
                     player.getGameProfile().getName()
                 );
                 if (!ok) {
-                    player.sendSystemMessage(Component.literal("§cInvalid code or check already redeemed."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.invalid_code")));
                 } else {
-                    player.sendSystemMessage(Component.literal("§aCheck redeemed successfully."));
+                    player.sendSystemMessage(Component.literal(LanguageManager.tr("checks.input.redeemed_success")));
                 }
                 PlotzChecksMenu.open(player, 0);
                 return true;
