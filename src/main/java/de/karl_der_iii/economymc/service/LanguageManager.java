@@ -35,6 +35,7 @@ public final class LanguageManager {
         en.put("common.seller", "§7Seller");
         en.put("common.amount", "§7Amount");
         en.put("common.click_to_view", "§7Click to view");
+        en.put("common.sell", "§aSell");
 
         en.put("menu.player.balance", "§6Balance: $%d");
         en.put("menu.player.normal", "§7Normal Credits: %d");
@@ -119,12 +120,59 @@ public final class LanguageManager {
         en.put("jobs.status.confirmed", "§aConfirmed");
         en.put("jobs.status.cancelled", "§cCancelled");
         en.put("jobs.status.failed", "§4Failed");
+        en.put("jobs.detail.title", "EconomyMC Job Details");
+        en.put("jobs.detail.not_found", "§cJob not found");
+        en.put("jobs.detail.description_title", "§eDescription");
+        en.put("jobs.detail.description", "§7Description:");
+        en.put("jobs.detail.info", "§bJob Info");
+        en.put("jobs.detail.reward", "§6Reward: $");
+        en.put("jobs.detail.status", "§7Status: ");
+        en.put("jobs.detail.owner", "§7Owner: ");
+        en.put("jobs.detail.times", "§dTimes");
+        en.put("jobs.detail.created", "§7Created: ");
+        en.put("jobs.detail.available", "§7Available: ");
+        en.put("jobs.detail.due", "§7Due: ");
+        en.put("jobs.detail.accept", "§aAccept Job");
+        en.put("jobs.detail.complete", "§bMark Complete");
+        en.put("jobs.detail.confirm", "§aConfirm Completion");
+        en.put("jobs.detail.cancel", "§cCancel Job");
+
+        en.put("shop.menu.title", "EconomyMC Shop");
+        en.put("shop.detail.title", "EconomyMC Shop Detail");
+        en.put("shop.detail.not_found", "§cListing not found");
+        en.put("shop.detail.info", "§bListing Info");
+        en.put("shop.detail.buy", "§aBuy");
+        en.put("shop.bundle", "§dShop Bundle");
+        en.put("shop.base_price", "§6Base Price: $");
+        en.put("shop.tax", "§cTax: $");
+        en.put("shop.total", "§aTotal: $");
+        en.put("shop.stacks_inside", "§7Stacks inside: ");
+        en.put("shop.total_items", "§7Total items: ");
+        en.put("shop.and_more", "§8...and more");
+
+        en.put("checks.menu.title", "EconomyMC Checks");
+        en.put("checks.create", "§aCreate Check");
+        en.put("checks.entry", "%sCheck $%d - %s");
 
         en.put("history.title", "EconomyMC History");
+        en.put("history.mine", "§bMy History");
+        en.put("history.empty", "§7No entries yet.");
         en.put("history.treasury", "§6Treasury History");
         en.put("history.daily", "§eDaily reward: $%d");
         en.put("history.pay.sent", "§aPay to %s: $%d");
         en.put("history.pay.received", "§aPay from %s: $%d");
+
+        en.put("bank.title", "EconomyMC Bank");
+        en.put("bank.not_found", "§cLoan not found");
+        en.put("bank.loan_id", "Loan ID");
+        en.put("bank.target.server", "Server");
+        en.put("bank.command.repay", "Repay Loan");
+        en.put("bank.detail.title", "EconomyMC Loan Details");
+        en.put("bank.detail.info_hint", "§7Open a loan to see details");
+        en.put("bank.detail.borrower", "§7Borrower: ");
+        en.put("bank.detail.lender", "§7Lender: ");
+        en.put("bank.detail.amount", "§6Amount: $");
+        en.put("bank.detail.status", "§7Status: ");
 
         en.put("daily.already", "§cDaily already claimed for today. Come back in %dh %dm.");
         en.put("daily.claimed", "§aYou claimed your daily $100.");
@@ -152,6 +200,7 @@ public final class LanguageManager {
         de.put("common.seller", "§7Verkäufer");
         de.put("common.amount", "§7Betrag");
         de.put("common.click_to_view", "§7Zum Anzeigen klicken");
+        de.put("common.sell", "§aVerkaufen");
 
         de.put("menu.player.balance", "§6Kontostand: $%d");
         de.put("menu.player.normal", "§7Normale Credits: %d");
@@ -236,12 +285,59 @@ public final class LanguageManager {
         de.put("jobs.status.confirmed", "§aBestätigt");
         de.put("jobs.status.cancelled", "§cAbgebrochen");
         de.put("jobs.status.failed", "§4Gescheitert");
+        de.put("jobs.detail.title", "EconomyMC Jobdetails");
+        de.put("jobs.detail.not_found", "§cJob nicht gefunden");
+        de.put("jobs.detail.description_title", "§eBeschreibung");
+        de.put("jobs.detail.description", "§7Beschreibung:");
+        de.put("jobs.detail.info", "§bJob-Info");
+        de.put("jobs.detail.reward", "§6Belohnung: $");
+        de.put("jobs.detail.status", "§7Status: ");
+        de.put("jobs.detail.owner", "§7Besitzer: ");
+        de.put("jobs.detail.times", "§dZeiten");
+        de.put("jobs.detail.created", "§7Erstellt: ");
+        de.put("jobs.detail.available", "§7Verfügbar: ");
+        de.put("jobs.detail.due", "§7Fällig: ");
+        de.put("jobs.detail.accept", "§aJob annehmen");
+        de.put("jobs.detail.complete", "§bAls erledigt markieren");
+        de.put("jobs.detail.confirm", "§aFertigstellung bestätigen");
+        de.put("jobs.detail.cancel", "§cJob abbrechen");
+
+        de.put("shop.menu.title", "EconomyMC Shop");
+        de.put("shop.detail.title", "EconomyMC Shop-Details");
+        de.put("shop.detail.not_found", "§cAngebot nicht gefunden");
+        de.put("shop.detail.info", "§bAngebots-Info");
+        de.put("shop.detail.buy", "§aKaufen");
+        de.put("shop.bundle", "§dShop-Bündel");
+        de.put("shop.base_price", "§6Grundpreis: $");
+        de.put("shop.tax", "§cSteuer: $");
+        de.put("shop.total", "§aGesamt: $");
+        de.put("shop.stacks_inside", "§7Stacks enthalten: ");
+        de.put("shop.total_items", "§7Gesamtanzahl Items: ");
+        de.put("shop.and_more", "§8...und mehr");
+
+        de.put("checks.menu.title", "EconomyMC Checks");
+        de.put("checks.create", "§aCheck erstellen");
+        de.put("checks.entry", "%sCheck $%d - %s");
 
         de.put("history.title", "EconomyMC Verlauf");
+        de.put("history.mine", "§bMein Verlauf");
+        de.put("history.empty", "§7Noch keine Einträge vorhanden.");
         de.put("history.treasury", "§6Treasury-Verlauf");
         de.put("history.daily", "§eTägliche Belohnung: $%d");
         de.put("history.pay.sent", "§aÜberweisung an %s: $%d");
         de.put("history.pay.received", "§aÜberweisung von %s: $%d");
+
+        de.put("bank.title", "EconomyMC Bank");
+        de.put("bank.not_found", "§cKredit nicht gefunden");
+        de.put("bank.loan_id", "Kredit-ID");
+        de.put("bank.target.server", "Server");
+        de.put("bank.command.repay", "Kredit zurückzahlen");
+        de.put("bank.detail.title", "EconomyMC Kreditdetails");
+        de.put("bank.detail.info_hint", "§7Öffne einen Kredit für Details");
+        de.put("bank.detail.borrower", "§7Kreditnehmer: ");
+        de.put("bank.detail.lender", "§7Kreditgeber: ");
+        de.put("bank.detail.amount", "§6Betrag: $");
+        de.put("bank.detail.status", "§7Status: ");
 
         de.put("daily.already", "§cDaily für heute schon abgeholt. Komm in %dh %dm zurück.");
         de.put("daily.claimed", "§aDu hast dein tägliches $100 abgeholt.");

@@ -21,7 +21,7 @@ import java.util.Map;
 public class PlotzBankMenu extends ChestMenu {
     private final ServerPlayer viewer;
     private final SimpleContainer box;
-    private final Map<Integer, String> loanIdsBySlot = new HashMap<>();
+    private final Map<Integer, String> loanIds = new HashMap<>();
 
     public static void open(ServerPlayer player) {
         player.openMenu(new SimpleMenuProvider(
@@ -42,24 +42,16 @@ public class PlotzBankMenu extends ChestMenu {
     }
 
     private void refresh() {
-        loanIdsBySlot.clear();
+        loanIds.clear();
 
         for (int i = 0; i < box.getContainerSize(); i++) {
             box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
-        box.setItem(10, MenuUtil.named(Items.GOLD_BLOCK, "§6" + LanguageManager.tr("bank.target.server")));
-        box.setItem(11, MenuUtil.named(Items.PLAYER_HEAD, "§b" + LanguageManager.tr("bank.target.player")));
-        box.setItem(12, MenuUtil.named(Items.BOOK, "§e" + LanguageManager.tr("bank.target.all")));
-
-        box.setItem(14, MenuUtil.named(Items.PAPER, LanguageManager.tr("bank.command.request")));
-        box.setItem(15, MenuUtil.named(Items.EMERALD, LanguageManager.tr("bank.command.offer")));
-        box.setItem(16, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("bank.command.accept")));
-        box.setItem(17, MenuUtil.named(Items.CHEST, LanguageManager.tr("bank.command.repay")));
+        box.setItem(4, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("bank.title")));
 
         List<LoanManager.LoanEntry> loans = LoanManager.getVisibleLoans(viewer.getUUID(), viewer.hasPermissions(2));
-        int slot = 27;
-
+        int slot = 0;
         for (LoanManager.LoanEntry loan : loans) {
             if (slot >= 45) break;
 
@@ -69,18 +61,20 @@ public class PlotzBankMenu extends ChestMenu {
 
             box.setItem(slot, MenuUtil.named(
                 Items.PAPER,
-                "§e#" + loan.id()
-                    + " §7| $" + loan.principal()
-                    + " | " + loan.status().name()
-                    + " | " + loan.borrowerName()
-                    + " -> " + lender
+                "§e#" + loan.id() + " §7| $" + loan.principal() + " | " + loan.status().name(),
+                List.of(
+                    LanguageManager.tr("bank.detail.borrower") + loan.borrowerName(),
+                    LanguageManager.tr("bank.detail.lender") + lender
+                )
             ));
-            loanIdsBySlot.put(slot, loan.id());
+            loanIds.put(slot, loan.id());
             slot++;
         }
 
+        box.setItem(45, MenuUtil.playerInfoHead(viewer));
         box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
-        MenuUtil.putPlayerInfoHead(box, viewer, 45);
+        box.setItem(53, MenuUtil.named(Items.PAPER, LanguageManager.tr("bank.detail.info_hint")));
+
         broadcastChanges();
     }
 
@@ -93,34 +87,9 @@ public class PlotzBankMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 10) {
-            sp.closeContainer();
-            sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.request")));
-            sp.sendSystemMessage(Component.literal("§e/ec bank request server <amount> <days>"));
-            return;
-        }
-
-        if (slotId == 11) {
-            sp.closeContainer();
-            sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.request")));
-            sp.sendSystemMessage(Component.literal("§e/ec bank request player <name> <amount> <days>"));
-            return;
-        }
-
-        if (slotId == 12) {
-            sp.closeContainer();
-            sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.request")));
-            sp.sendSystemMessage(Component.literal("§e/ec bank request all <amount> <days>"));
-            return;
-        }
-
-        String loanId = loanIdsBySlot.get(slotId);
+        String loanId = loanIds.get(slotId);
         if (loanId != null) {
-            sp.closeContainer();
-            sp.sendSystemMessage(Component.literal("§e" + LanguageManager.tr("bank.loan_id") + ": " + loanId));
-            sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.offer")));
-            sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.accept")));
-            sp.sendSystemMessage(Component.literal("§7" + LanguageManager.tr("bank.command.repay")));
+            PlotzBankLoanDetailMenu.open(sp, loanId);
         }
     }
 
