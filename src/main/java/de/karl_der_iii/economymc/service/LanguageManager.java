@@ -21,6 +21,8 @@ public final class LanguageManager {
 
         Map<String, String> en = new HashMap<>();
 
+        // Common
+        en.put("cmd.only_players", "Only players can use this command.");
         en.put("common.close", "§cClose");
         en.put("common.back", "§cBack");
         en.put("common.next", "§7Next Page");
@@ -36,13 +38,39 @@ public final class LanguageManager {
         en.put("common.seller", "§7Seller");
         en.put("common.amount", "§7Amount");
         en.put("common.click_to_view", "§7Click to view");
+        en.put("common.publish", "§bPublish");
         en.put("common.sell", "§aSell");
         en.put("common.treasury", "Treasury");
+        en.put("common.location", "§7Location");
+        en.put("common.chunks", "§7Chunks");
 
+        // Help
+        en.put("help.header", "§6EconomyMC Commands");
+        en.put("help.plots", "§e/ec §7- opens the main menu");
+        en.put("help.shop", "§7Shop is in the main menu");
+        en.put("help.jobs", "§7Jobs are in the main menu");
+        en.put("help.checks", "§7Checks are in the main menu");
+        en.put("help.history", "§7History is in the main menu");
+        en.put("help.bank", "§7Bank is in the main menu");
+        en.put("help.daily", "§7Daily reward is in the main menu");
+        en.put("help.pay", "§7Pay is in the main menu");
+        en.put("help.servermode", "§7Server mode is in the main menu");
+        en.put("help.adminmode", "§7Admin mode is in the main menu");
+        en.put("help.admin", "§7Admin functions are in the main menu");
+        en.put("help.language", "§7Languages: German, English, Polish, French, Spanish, Portuguese, Russian, Turkish, Chinese, Japanese");
+
+        // Disabled messages
+        en.put("msg.shop_disabled", "§cShop is disabled by admin.");
+        en.put("msg.jobs_disabled", "§cJobs are disabled by admin.");
+        en.put("msg.checks_disabled", "§cChecks are disabled by admin.");
+        en.put("msg.servermode_disabled", "§cServer mode is disabled by admin.");
+
+        // Player head
         en.put("menu.player.balance", "§6Balance: $%d");
         en.put("menu.player.normal", "§7Normal Credits: %d");
         en.put("menu.player.capital", "§7Capital Credits: %d");
 
+        // Main menu
         en.put("main.menu.title", "EconomyMC");
         en.put("main.plots", "§aPlots");
         en.put("main.shop", "§eShop");
@@ -60,21 +88,7 @@ public final class LanguageManager {
         en.put("main.disabled.checks", "§8Checks Disabled");
         en.put("main.disabled.servermode", "§8Server Mode Disabled");
 
-        en.put("plots.menu.title", "EconomyMC Plots");
-        en.put("plots.position.capital", "§6Current Position: Capital Zone");
-        en.put("plots.position.normal", "§7Current Position: Normal Zone");
-        en.put("plots.buy.normal", "§eBuy Normal Claim Credits");
-        en.put("plots.buy.capital", "§6Buy Capital Claim Credits");
-        en.put("plots.create.sale", "§aCreate Sale Listing");
-        en.put("plots.market", "§3Market Listings");
-        en.put("plots.mine", "§bMy Plots");
-        en.put("plots.sales", "§dMy Sales");
-        en.put("plots.connector", "§7OpenPants Connect");
-        en.put("plots.buy.normal.fail", "§cYou do not have enough money for a normal claim credit.");
-        en.put("plots.buy.normal.ok", "§aBought 1 normal claim credit.");
-        en.put("plots.buy.capital.fail", "§cYou do not have enough money for a capital claim credit.");
-        en.put("plots.buy.capital.ok", "§aBought 1 capital claim credit.");
-
+        // Admin
         en.put("admin.mode.title", "EconomyMC Admin Mode");
         en.put("admin.jobs", "Jobs");
         en.put("admin.checks", "Checks");
@@ -87,73 +101,66 @@ public final class LanguageManager {
         en.put("admin.language", "Language");
         en.put("admin.language.previous", "§ePrevious Language");
         en.put("admin.language.next", "§eNext Language");
+        en.put("admin.language.toggle", "§eChange Language");
         en.put("admin.on", "ON");
         en.put("admin.off", "OFF");
         en.put("admin.auto", "Auto");
         en.put("admin.manual", "Manual");
 
-        en.put("server.mode.title", "EconomyMC Server Mode");
-        en.put("server.tax_minus", "§cTax -1%");
-        en.put("server.tax_rate", "§7Tax Rate: ");
-        en.put("server.tax_plus", "§aTax +1%");
-        en.put("server.auto_tax", "Auto Tax");
-        en.put("server.overdue_minus", "§cOverdue -1%");
-        en.put("server.overdue_penalty", "§7Overdue Penalty: ");
-        en.put("server.overdue_plus", "§aOverdue +1%");
-        en.put("server.cancel_minus", "§cCancel -1%");
-        en.put("server.cancel_penalty", "§7Cancel Penalty: ");
-        en.put("server.cancel_plus", "§aCancel +1%");
-        en.put("server.days_minus", "§cDays -1");
-        en.put("server.max_overdue_days", "§7Max Overdue Days: ");
-        en.put("server.days_plus", "§aDays +1");
-        en.put("server.start_hour_minus", "§cStart Hour -1");
-        en.put("server.job_open_hour", "§7Job Open Hour: ");
-        en.put("server.start_hour_plus", "§aStart Hour +1");
-        en.put("server.create_job", "§aCreate Server Job");
-        en.put("server.open_jobs", "§bOpen Server Jobs");
-        en.put("server.treasury_balance", "§6Treasury: $");
+        // Plots
+        en.put("plots.menu.title", "EconomyMC Plots");
+        en.put("plots.position.capital", "§6Current Position: Capital Zone");
+        en.put("plots.position.normal", "§7Current Position: Normal Zone");
+        en.put("plots.buy.normal", "§eBuy Normal Claim Credits");
+        en.put("plots.buy.capital", "§6Buy Capital Claim Credits");
+        en.put("plots.create.sale", "§aCreate Sale Listing");
+        en.put("plots.market", "§3Market Listings");
+        en.put("plots.mine", "§bMy Plots");
+        en.put("plots.sales", "§dMy Sales");
+        en.put("plots.history", "§aOpen History");
+        en.put("plots.connector", "§7OpenPants Connect");
+        en.put("plots.buy.normal.fail", "§cYou do not have enough money for a normal claim credit.");
+        en.put("plots.buy.normal.ok", "§aBought 1 normal claim credit.");
+        en.put("plots.buy.capital.fail", "§cYou do not have enough money for a capital claim credit.");
+        en.put("plots.buy.capital.ok", "§aBought 1 capital claim credit.");
 
-        en.put("jobs.menu.title", "EconomyMC Jobs");
-        en.put("jobs.server.title", "EconomyMC Server Jobs");
-        en.put("jobs.add", "§aCreate Job");
-        en.put("jobs.create_hint", "§7Create only in this menu");
-        en.put("jobs.status.open", "§aOpen");
-        en.put("jobs.status.opens_at", "§eOpens at: ");
-        en.put("jobs.status.in_progress", "§6In progress: ");
-        en.put("jobs.status.completed", "§bCompleted");
-        en.put("jobs.status.confirmed", "§aConfirmed");
-        en.put("jobs.status.cancelled", "§cCancelled");
-        en.put("jobs.status.failed", "§4Failed");
-        en.put("jobs.detail.title", "EconomyMC Job Details");
-        en.put("jobs.detail.not_found", "§cJob not found");
-        en.put("jobs.detail.description_title", "§eDescription");
-        en.put("jobs.detail.description", "§7Description:");
-        en.put("jobs.detail.info", "§bJob Info");
-        en.put("jobs.detail.reward", "§6Reward: $");
-        en.put("jobs.detail.status", "§7Status: ");
-        en.put("jobs.detail.owner", "§7Owner: ");
-        en.put("jobs.detail.times", "§dTimes");
-        en.put("jobs.detail.created", "§7Created: ");
-        en.put("jobs.detail.available", "§7Available: ");
-        en.put("jobs.detail.due", "§7Due: ");
-        en.put("jobs.detail.accept", "§aAccept Job");
-        en.put("jobs.detail.complete", "§bMark Complete");
-        en.put("jobs.detail.confirm", "§aConfirm Completion");
-        en.put("jobs.detail.cancel", "§cCancel Job");
+        // My plots / sales / market / listings / sale draft
+        en.put("market.menu.title", "EconomyMC Market");
+        en.put("market.back", "§cBack");
+        en.put("myplots.menu.title", "My Plots");
+        en.put("myplots.info", "§7Click a plot to create a sale draft");
+        en.put("myplots.already_listed", "§cThis plot is already listed in the market.");
+        en.put("myplots.already_draft", "§cThis plot already has a sale draft.");
+        en.put("myplots.edit_later", "Edit later");
+        en.put("mysales.menu.title", "My Sales");
+        en.put("listing.menu.title", "EconomyMC Listing");
+        en.put("listing.missing", "§cListing no longer exists");
+        en.put("listing.buy", "§aBuy");
+        en.put("listing.buy.own", "§cYou cannot buy your own listing.");
+        en.put("listing.not.enough", "§cYou do not have enough money.");
+        en.put("listing.not.exists", "§cListing no longer exists.");
+        en.put("sale.menu.title", "EconomyMC Create Sale Listing");
+        en.put("sale.no_draft", "§cNo sale draft selected");
+        en.put("sale.plot", "§bPlot: ");
+        en.put("sale.chunks", " Chunks");
+        en.put("sale.set_price", "§eSet Price");
+        en.put("sale.set_description", "§7Set Description");
+        en.put("sale.set_built", "§7Set Built On Plot");
+        en.put("sale.set_justification", "§7Set Price Justification");
+        en.put("sale.negotiable", "§aNegotiable");
+        en.put("sale.fixed", "§6Fixed Price");
+        en.put("sale.publish", "§bPublish Listing");
+        en.put("sale.location", "§7Location: ");
+        en.put("sale.clear_draft", "§cClear Draft");
+        en.put("sale.already_listed", "§cThis plot is already listed in the market.");
+        en.put("sale.published", "§aListing published.");
+        en.put("sale.cleared", "§aSale draft cleared.");
+        en.put("sale.selected_capital", "§6Selected Capital Plot");
+        en.put("sale.selected_plot", "§7Selected Plot");
 
-        en.put("jobs.input.title", "Enter the job title in chat now.");
-        en.put("jobs.input.server_title", "Enter the server job title in chat now.");
-        en.put("jobs.input.description", "Enter the job description in chat now.");
-        en.put("jobs.input.reward", "Enter the reward amount in chat now.");
-        en.put("jobs.input.due_days", "Enter the due time in full days now.");
-        en.put("jobs.input.invalid_number", "That is not a valid number.");
-        en.put("jobs.input.reward_positive", "Reward must be above 0.");
-        en.put("jobs.input.days_positive", "Due days must be above 0.");
-        en.put("jobs.input.treasury_missing", "The treasury does not have enough money for this server job.");
-        en.put("jobs.input.player_missing_money", "You do not have enough money to create this job.");
-        en.put("jobs.input.created", "Job created.");
-
+        // Shop
         en.put("shop.menu.title", "EconomyMC Shop");
+        en.put("shop.sell.title", "EconomyMC Sell Item");
         en.put("shop.detail.title", "EconomyMC Shop Detail");
         en.put("shop.detail.not_found", "§cListing not found");
         en.put("shop.detail.info", "§bListing Info");
@@ -165,33 +172,128 @@ public final class LanguageManager {
         en.put("shop.stacks_inside", "§7Stacks inside: ");
         en.put("shop.total_items", "§7Total items: ");
         en.put("shop.and_more", "§8...and more");
+        en.put("shop.sell.set_price", "§eSet Price");
+        en.put("shop.sell.publish", "§aPublish");
+        en.put("shop.sell.put_items_first", "§cPut items in first.");
+        en.put("shop.sell.published", "§aShop listing published.");
+        en.put("shop.input.enter_price", "§eEnter the shop price in chat now.");
+        en.put("shop.input.no_draft", "§cNo shop draft selected.");
+        en.put("shop.input.price_positive", "§cPrice must be above 0.");
+        en.put("shop.input.price_set", "§aShop price set to $");
+        en.put("shop.input.invalid_number", "§cThat is not a valid number.");
+        en.put("shop.listing_missing", "Listing no longer exists");
+        en.put("shop.not_enough_money", "§cYou do not have enough money.");
+        en.put("shop.buy", "§aBuy");
+        en.put("shop.withdraw", "§cWithdraw Listing");
+        en.put("shop.withdrawn", "§aListing withdrawn.");
 
+        // Jobs
+        en.put("jobs.menu.title", "EconomyMC Jobs");
+        en.put("jobs.server.title", "EconomyMC Server Jobs");
+        en.put("job.detail.title", "EconomyMC Job Details");
+        en.put("jobs.add", "§aAdd Job");
+        en.put("jobs.create_hint", "§7Create jobs in the correct menu");
+        en.put("jobs.status.open", "§aOpen");
+        en.put("jobs.status.opens_at", "§eOpens ");
+        en.put("jobs.status.in_progress", "§6In Progress: ");
+        en.put("jobs.status.completed", "§bCompleted");
+        en.put("jobs.status.confirmed", "§aConfirmed");
+        en.put("jobs.status.cancelled", "§cCancelled");
+        en.put("jobs.status.failed", "§4Failed");
+        en.put("jobs.reward", "§6Reward: $");
+        en.put("jobs.created_by", "§7Created by: ");
+        en.put("jobs.description", "§7Description: ");
+        en.put("jobs.due_in", "§7Due in: ");
+        en.put("jobs.day_suffix", " day(s)");
+        en.put("jobs.current_payout", "§7Current payout: $");
+        en.put("jobs.unavailable", "§cJob no longer available");
+        en.put("jobs.accept", "§aAccept Job");
+        en.put("jobs.accept_server", "§aAccept Server Job");
+        en.put("jobs.available_at", "§eAvailable at ");
+        en.put("jobs.withdraw", "§cWithdraw Job");
+        en.put("jobs.mark_completed", "§bMark as Completed");
+        en.put("jobs.cancel_job", "§cCancel Job");
+        en.put("jobs.in_progress_by", "§7In Progress by ");
+        en.put("jobs.confirm_job", "§aConfirm Job");
+        en.put("jobs.waiting_confirmation", "§7Waiting for confirmation");
+
+        en.put("jobs.input.title", "§eEnter the job title in chat now.");
+        en.put("jobs.input.server_title", "§eEnter the server job title in chat now.");
+        en.put("jobs.input.description", "§eEnter the job description in chat now.");
+        en.put("jobs.input.reward", "§eEnter the reward amount in chat now.");
+        en.put("jobs.input.due_days", "§eEnter the due time in full days now.");
+        en.put("jobs.input.invalid_number", "§cThat is not a valid number.");
+        en.put("jobs.input.reward_positive", "§cReward must be above 0.");
+        en.put("jobs.input.days_positive", "§cDue days must be above 0.");
+        en.put("jobs.input.treasury_missing", "§cThe treasury does not have enough money for this server job.");
+        en.put("jobs.input.player_missing_money", "§cYou do not have enough money to create this job.");
+        en.put("jobs.input.created", "§aJob created.");
+
+        en.put("jobs.error.accept_yet", "§cThis job cannot be accepted yet.");
+        en.put("jobs.error.not_open", "§cThis job is no longer open.");
+        en.put("jobs.error.own_job", "§cYou cannot accept your own job.");
+        en.put("jobs.error.withdraw", "§cCould not withdraw job.");
+        en.put("jobs.error.complete", "§cCould not mark job as completed.");
+        en.put("jobs.error.confirm", "§cCould not confirm job.");
+        en.put("jobs.error.cancel", "§cCould not cancel job.");
+
+        en.put("jobs.msg.accepted", "§aYou accepted the job.");
+        en.put("jobs.msg.accepted_server", "§aYou accepted the server job.");
+        en.put("jobs.msg.withdrawn", "§aJob withdrawn.");
+        en.put("jobs.msg.withdrawn_server", "§aServer job withdrawn.");
+        en.put("jobs.msg.completed", "§aJob marked as completed.");
+        en.put("jobs.msg.confirmed", "§aJob confirmed.");
+        en.put("jobs.msg.cancelled_penalty", "§cJob cancelled. Penalty: $");
+
+        // Checks
         en.put("checks.menu.title", "EconomyMC Checks");
+        en.put("check.redeem.title", "EconomyMC Redeem Check");
         en.put("checks.create", "§aCreate Check");
+        en.put("checks.creator", "§eCreator: ");
+        en.put("checks.amount", "§6Amount: $");
+        en.put("checks.redeem", "§aRedeem");
+        en.put("checks.redeemed", "§7Already redeemed");
+        en.put("checks.not_found", "§cCheck not found");
+        en.put("checks.no_longer", "§cThis check can no longer be redeemed.");
         en.put("checks.entry", "%sCheck $%d - %s");
 
-        en.put("checks.input.amount", "Enter the check amount in chat now.");
-        en.put("checks.input.code", "Enter the check code in chat now.");
-        en.put("checks.input.invalid_number", "That is not a valid number.");
-        en.put("checks.input.amount_positive", "Amount must be above 0.");
-        en.put("checks.input.not_enough", "You do not have enough money.");
-        en.put("checks.input.created", "Check created.");
-        en.put("checks.input.invalid_code", "Invalid code or check already redeemed.");
-        en.put("checks.input.redeemed_success", "Check redeemed successfully.");
+        en.put("checks.input.amount", "§eEnter the check amount in chat now.");
+        en.put("checks.input.code", "§eEnter the check code in chat now.");
+        en.put("checks.input.invalid_number", "§cThat is not a valid number.");
+        en.put("checks.input.amount_positive", "§cAmount must be above 0.");
+        en.put("checks.input.not_enough", "§cYou do not have enough money.");
+        en.put("checks.input.created", "§aCheck created.");
+        en.put("checks.input.invalid_code", "§cInvalid code or check already redeemed.");
+        en.put("checks.input.redeemed_success", "§aCheck redeemed successfully.");
 
+        // History
         en.put("history.title", "EconomyMC History");
-        en.put("history.mine", "§bMy History");
         en.put("history.empty", "§7No entries yet.");
+        en.put("history.mine", "§bMy History");
         en.put("history.treasury", "§6Treasury History");
-        en.put("history.daily", "§eDaily reward: $%d");
+        en.put("history.open", "§aOpen History");
         en.put("history.pay.sent", "§aPay to %s: $%d");
         en.put("history.pay.received", "§aPay from %s: $%d");
+        en.put("history.daily", "§eDaily reward: $%d");
 
+        // Bank
         en.put("bank.title", "EconomyMC Bank");
-        en.put("bank.not_found", "§cLoan not found");
         en.put("bank.loan_id", "Loan ID");
+        en.put("bank.invalid_target", "§cUnknown target player.");
+        en.put("bank.not_enough_money", "§cYou do not have enough money.");
+        en.put("bank.not_found", "§cLoan not found.");
+        en.put("bank.request.created", "§aLoan request created.");
+        en.put("bank.offer.created", "§aLoan offer created.");
+        en.put("bank.accepted", "§aLoan accepted.");
+        en.put("bank.repaid", "§aLoan repaid.");
         en.put("bank.target.server", "Server");
+        en.put("bank.target.player", "Player");
+        en.put("bank.target.all", "All Players");
+        en.put("bank.command.request", "Create Loan Request");
+        en.put("bank.command.offer", "Create Loan Offer");
+        en.put("bank.command.accept", "Accept Loan");
         en.put("bank.command.repay", "Repay Loan");
+        en.put("bank.command.list", "Open loans");
         en.put("bank.detail.title", "EconomyMC Loan Details");
         en.put("bank.detail.info_hint", "§7Open a loan to see details");
         en.put("bank.detail.borrower", "§7Borrower: ");
@@ -199,6 +301,7 @@ public final class LanguageManager {
         en.put("bank.detail.amount", "§6Amount: $");
         en.put("bank.detail.status", "§7Status: ");
 
+        // Pay
         en.put("pay.menu.title", "EconomyMC Pay");
         en.put("pay.menu.player", "§ePay %s");
         en.put("pay.menu.info", "§7Select a player");
@@ -211,17 +314,15 @@ public final class LanguageManager {
         en.put("pay.sent", "§aYou paid $%d to %s.");
         en.put("pay.received", "§aYou received $%d from %s.");
 
+        // Daily
         en.put("daily.already", "§cDaily already claimed for today. Come back in %dh %dm.");
         en.put("daily.claimed", "§aYou claimed your daily $100.");
-
-        en.put("msg.shop_disabled", "§cShop is disabled by admin.");
-        en.put("msg.jobs_disabled", "§cJobs are disabled by admin.");
-        en.put("msg.checks_disabled", "§cChecks are disabled by admin.");
-        en.put("msg.servermode_disabled", "§cServer mode is disabled by admin.");
 
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
+
+        de.put("cmd.only_players", "Nur Spieler können diesen Befehl benutzen.");
         de.put("common.close", "§cSchließen");
         de.put("common.back", "§cZurück");
         de.put("common.next", "§7Nächste Seite");
@@ -237,19 +338,35 @@ public final class LanguageManager {
         de.put("common.seller", "§7Verkäufer");
         de.put("common.amount", "§7Betrag");
         de.put("common.click_to_view", "§7Zum Anzeigen klicken");
+        de.put("common.publish", "§bVeröffentlichen");
         de.put("common.sell", "§aVerkaufen");
-        de.put("common.treasury", "Treasury");
+        de.put("common.location", "§7Ort");
+        de.put("common.chunks", "§7Chunks");
+
+        de.put("help.header", "§6EconomyMC Befehle");
+        de.put("help.plots", "§e/ec §7- öffnet das Hauptmenü");
+        de.put("help.shop", "§7Shop ist im Hauptmenü");
+        de.put("help.jobs", "§7Jobs sind im Hauptmenü");
+        de.put("help.checks", "§7Checks sind im Hauptmenü");
+        de.put("help.history", "§7Verlauf ist im Hauptmenü");
+        de.put("help.bank", "§7Bank ist im Hauptmenü");
+        de.put("help.daily", "§7Tägliche Belohnung ist im Hauptmenü");
+        de.put("help.pay", "§7Bezahlen ist im Hauptmenü");
+        de.put("help.servermode", "§7Servermodus ist im Hauptmenü");
+        de.put("help.adminmode", "§7Adminmodus ist im Hauptmenü");
+        de.put("help.admin", "§7Adminfunktionen sind im Hauptmenü");
+        de.put("help.language", "§7Sprachen: Deutsch, Englisch, Polnisch, Französisch, Spanisch, Portugiesisch, Russisch, Türkisch, Chinesisch, Japanisch");
+
+        de.put("msg.shop_disabled", "§cShop ist vom Admin deaktiviert.");
+        de.put("msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.");
+        de.put("msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.");
+        de.put("msg.servermode_disabled", "§cServer-Modus ist vom Admin deaktiviert.");
 
         de.put("menu.player.balance", "§6Kontostand: $%d");
         de.put("menu.player.normal", "§7Normale Credits: %d");
         de.put("menu.player.capital", "§7Hauptstadt-Credits: %d");
 
-        de.put("main.menu.title", "EconomyMC");
         de.put("main.plots", "§aGrundstücke");
-        de.put("main.shop", "§eShop");
-        de.put("main.jobs", "§bJobs");
-        de.put("main.checks", "§dChecks");
-        de.put("main.bank", "§6Bank");
         de.put("main.history", "§7Verlauf");
         de.put("main.daily", "§aTägliche Belohnung");
         de.put("main.pay", "§6Bezahlen");
@@ -261,6 +378,20 @@ public final class LanguageManager {
         de.put("main.disabled.checks", "§8Checks deaktiviert");
         de.put("main.disabled.servermode", "§8Servermodus deaktiviert");
 
+        de.put("admin.mode.title", "EconomyMC Adminmodus");
+        de.put("admin.plot_market", "Grundstücksmarkt");
+        de.put("admin.server_mode", "Servermodus");
+        de.put("admin.min_tax", "Mindeststeuer");
+        de.put("admin.min_overdue", "Mindest-Überzugsstrafe");
+        de.put("admin.min_cancel", "Mindest-Abbruchstrafe");
+        de.put("admin.language", "Sprache");
+        de.put("admin.language.previous", "§eVorherige Sprache");
+        de.put("admin.language.next", "§eNächste Sprache");
+        de.put("admin.language.toggle", "§eSprache wechseln");
+        de.put("admin.on", "AN");
+        de.put("admin.off", "AUS");
+        de.put("admin.manual", "Manuell");
+
         de.put("plots.menu.title", "EconomyMC Grundstücke");
         de.put("plots.position.capital", "§6Aktuelle Position: Hauptstadt-Zone");
         de.put("plots.position.normal", "§7Aktuelle Position: Normale Zone");
@@ -270,91 +401,44 @@ public final class LanguageManager {
         de.put("plots.market", "§3Marktangebote");
         de.put("plots.mine", "§bMeine Grundstücke");
         de.put("plots.sales", "§dMeine Verkäufe");
-        de.put("plots.connector", "§7OpenPants Connect");
+        de.put("plots.history", "§aVerlauf öffnen");
         de.put("plots.buy.normal.fail", "§cDu hast nicht genug Geld für einen normalen Claim-Credit.");
         de.put("plots.buy.normal.ok", "§a1 normaler Claim-Credit gekauft.");
         de.put("plots.buy.capital.fail", "§cDu hast nicht genug Geld für einen Hauptstadt-Claim-Credit.");
         de.put("plots.buy.capital.ok", "§a1 Hauptstadt-Claim-Credit gekauft.");
 
-        de.put("admin.mode.title", "EconomyMC Adminmodus");
-        de.put("admin.jobs", "Jobs");
-        de.put("admin.checks", "Checks");
-        de.put("admin.shop", "Shop");
-        de.put("admin.plot_market", "Grundstücksmarkt");
-        de.put("admin.server_mode", "Servermodus");
-        de.put("admin.min_tax", "Mindeststeuer");
-        de.put("admin.min_overdue", "Mindest-Überzugsstrafe");
-        de.put("admin.min_cancel", "Mindest-Abbruchstrafe");
-        de.put("admin.language", "Sprache");
-        de.put("admin.language.previous", "§eVorherige Sprache");
-        de.put("admin.language.next", "§eNächste Sprache");
-        de.put("admin.on", "AN");
-        de.put("admin.off", "AUS");
-        de.put("admin.auto", "Auto");
-        de.put("admin.manual", "Manuell");
-
-        de.put("server.mode.title", "EconomyMC Servermodus");
-        de.put("server.tax_minus", "§cSteuer -1%");
-        de.put("server.tax_rate", "§7Steuersatz: ");
-        de.put("server.tax_plus", "§aSteuer +1%");
-        de.put("server.auto_tax", "Automatische Steuer");
-        de.put("server.overdue_minus", "§cÜberzug -1%");
-        de.put("server.overdue_penalty", "§7Überzugsgebühr: ");
-        de.put("server.overdue_plus", "§aÜberzug +1%");
-        de.put("server.cancel_minus", "§cAbbruch -1%");
-        de.put("server.cancel_penalty", "§7Abbruchgebühr: ");
-        de.put("server.cancel_plus", "§aAbbruch +1%");
-        de.put("server.days_minus", "§cTage -1");
-        de.put("server.max_overdue_days", "§7Max. Überzugstage: ");
-        de.put("server.days_plus", "§aTage +1");
-        de.put("server.start_hour_minus", "§cStartstunde -1");
-        de.put("server.job_open_hour", "§7Job-Startstunde: ");
-        de.put("server.start_hour_plus", "§aStartstunde +1");
-        de.put("server.create_job", "§aServer-Job erstellen");
-        de.put("server.open_jobs", "§bServer-Jobs öffnen");
-        de.put("server.treasury_balance", "§6Treasury: $");
-
-        de.put("jobs.menu.title", "EconomyMC Jobs");
-        de.put("jobs.server.title", "EconomyMC Server-Jobs");
-        de.put("jobs.add", "§aJob erstellen");
-        de.put("jobs.create_hint", "§7Erstellen nur in diesem Menü");
-        de.put("jobs.status.open", "§aOffen");
-        de.put("jobs.status.opens_at", "§eÖffnet um: ");
-        de.put("jobs.status.in_progress", "§6In Bearbeitung: ");
-        de.put("jobs.status.completed", "§bErledigt");
-        de.put("jobs.status.confirmed", "§aBestätigt");
-        de.put("jobs.status.cancelled", "§cAbgebrochen");
-        de.put("jobs.status.failed", "§4Gescheitert");
-        de.put("jobs.detail.title", "EconomyMC Jobdetails");
-        de.put("jobs.detail.not_found", "§cJob nicht gefunden");
-        de.put("jobs.detail.description_title", "§eBeschreibung");
-        de.put("jobs.detail.description", "§7Beschreibung:");
-        de.put("jobs.detail.info", "§bJob-Info");
-        de.put("jobs.detail.reward", "§6Belohnung: $");
-        de.put("jobs.detail.status", "§7Status: ");
-        de.put("jobs.detail.owner", "§7Besitzer: ");
-        de.put("jobs.detail.times", "§dZeiten");
-        de.put("jobs.detail.created", "§7Erstellt: ");
-        de.put("jobs.detail.available", "§7Verfügbar: ");
-        de.put("jobs.detail.due", "§7Fällig: ");
-        de.put("jobs.detail.accept", "§aJob annehmen");
-        de.put("jobs.detail.complete", "§bAls erledigt markieren");
-        de.put("jobs.detail.confirm", "§aFertigstellung bestätigen");
-        de.put("jobs.detail.cancel", "§cJob abbrechen");
-
-        de.put("jobs.input.title", "Gib jetzt den Jobtitel im Chat ein.");
-        de.put("jobs.input.server_title", "Gib jetzt den Server-Jobtitel im Chat ein.");
-        de.put("jobs.input.description", "Gib jetzt die Jobbeschreibung im Chat ein.");
-        de.put("jobs.input.reward", "Gib jetzt die Belohnung im Chat ein.");
-        de.put("jobs.input.due_days", "Gib jetzt die Fälligkeit in vollen Tagen ein.");
-        de.put("jobs.input.invalid_number", "Das ist keine gültige Zahl.");
-        de.put("jobs.input.reward_positive", "Die Belohnung muss über 0 liegen.");
-        de.put("jobs.input.days_positive", "Die Tage müssen über 0 liegen.");
-        de.put("jobs.input.treasury_missing", "Das Treasury hat nicht genug Geld für diesen Server-Job.");
-        de.put("jobs.input.player_missing_money", "Du hast nicht genug Geld, um diesen Job zu erstellen.");
-        de.put("jobs.input.created", "Job erstellt.");
+        de.put("market.menu.title", "EconomyMC Markt");
+        de.put("myplots.menu.title", "Meine Grundstücke");
+        de.put("myplots.info", "§7Klicke ein Grundstück an, um einen Verkaufsentwurf zu erstellen");
+        de.put("myplots.already_listed", "§cDieses Grundstück ist bereits gelistet.");
+        de.put("myplots.already_draft", "§cFür dieses Grundstück gibt es schon einen Entwurf.");
+        de.put("myplots.edit_later", "Später bearbeiten");
+        de.put("mysales.menu.title", "Meine Verkäufe");
+        de.put("listing.menu.title", "EconomyMC Angebot");
+        de.put("listing.missing", "§cAngebot existiert nicht mehr");
+        de.put("listing.buy.own", "§cDu kannst dein eigenes Angebot nicht kaufen.");
+        de.put("listing.not.enough", "§cDu hast nicht genug Geld.");
+        de.put("listing.not.exists", "§cAngebot existiert nicht mehr.");
+        de.put("sale.menu.title", "EconomyMC Verkaufsangebot erstellen");
+        de.put("sale.no_draft", "§cKein Verkaufsentwurf ausgewählt");
+        de.put("sale.plot", "§bGrundstück: ");
+        de.put("sale.set_price", "§ePreis setzen");
+        de.put("sale.set_description", "§7Beschreibung setzen");
+        de.put("sale.set_built", "§7Bebauung setzen");
+        de.put("sale.set_justification", "§7Preisbegründung setzen");
+        de.put("sale.negotiable", "§aVerhandelbar");
+        de.put("sale.fixed", "§6Festpreis");
+        de.put("sale.publish", "§bAngebot veröffentlichen");
+        de.put("sale.location", "§7Ort: ");
+        de.put("sale.clear_draft", "§cEntwurf löschen");
+        de.put("sale.already_listed", "§cDieses Grundstück ist bereits gelistet.");
+        de.put("sale.published", "§aAngebot veröffentlicht.");
+        de.put("sale.cleared", "§aVerkaufsentwurf gelöscht.");
+        de.put("sale.selected_capital", "§6Ausgewähltes Hauptstadt-Grundstück");
+        de.put("sale.selected_plot", "§7Ausgewähltes Grundstück");
 
         de.put("shop.menu.title", "EconomyMC Shop");
+        de.put("shop.sell.title", "EconomyMC Gegenstand verkaufen");
         de.put("shop.detail.title", "EconomyMC Shop-Details");
         de.put("shop.detail.not_found", "§cAngebot nicht gefunden");
         de.put("shop.detail.info", "§bAngebots-Info");
@@ -366,32 +450,119 @@ public final class LanguageManager {
         de.put("shop.stacks_inside", "§7Stacks enthalten: ");
         de.put("shop.total_items", "§7Gesamtanzahl Items: ");
         de.put("shop.and_more", "§8...und mehr");
+        de.put("shop.sell.set_price", "§ePreis setzen");
+        de.put("shop.sell.publish", "§aVeröffentlichen");
+        de.put("shop.sell.put_items_first", "§cLege zuerst Items hinein.");
+        de.put("shop.sell.published", "§aShop-Angebot veröffentlicht.");
+        de.put("shop.input.enter_price", "§eGib jetzt den Shop-Preis im Chat ein.");
+        de.put("shop.input.no_draft", "§cKein Shop-Entwurf ausgewählt.");
+        de.put("shop.input.price_positive", "§cDer Preis muss über 0 liegen.");
+        de.put("shop.input.price_set", "§aShop-Preis gesetzt auf $");
+        de.put("shop.input.invalid_number", "§cDas ist keine gültige Zahl.");
+        de.put("shop.listing_missing", "Angebot existiert nicht mehr");
+        de.put("shop.not_enough_money", "§cDu hast nicht genug Geld.");
+        de.put("shop.withdraw", "§cAngebot zurückziehen");
+        de.put("shop.withdrawn", "§aAngebot zurückgezogen.");
+
+        de.put("job.detail.title", "EconomyMC Jobdetails");
+        de.put("jobs.add", "§aJob hinzufügen");
+        de.put("jobs.create_hint", "§7Erstelle Jobs im richtigen Menü");
+        de.put("jobs.status.open", "§aOffen");
+        de.put("jobs.status.opens_at", "§eÖffnet ");
+        de.put("jobs.status.in_progress", "§6In Bearbeitung: ");
+        de.put("jobs.status.completed", "§bErledigt");
+        de.put("jobs.status.confirmed", "§aBestätigt");
+        de.put("jobs.status.cancelled", "§cAbgebrochen");
+        de.put("jobs.status.failed", "§4Gescheitert");
+        de.put("jobs.reward", "§6Belohnung: $");
+        de.put("jobs.created_by", "§7Erstellt von: ");
+        de.put("jobs.description", "§7Beschreibung: ");
+        de.put("jobs.due_in", "§7Fällig in: ");
+        de.put("jobs.day_suffix", " Tag(e)");
+        de.put("jobs.current_payout", "§7Aktuelle Auszahlung: $");
+        de.put("jobs.unavailable", "§cJob nicht mehr verfügbar");
+        de.put("jobs.accept", "§aJob annehmen");
+        de.put("jobs.accept_server", "§aServer-Job annehmen");
+        de.put("jobs.available_at", "§eVerfügbar ab ");
+        de.put("jobs.withdraw", "§cJob zurückziehen");
+        de.put("jobs.mark_completed", "§bAls erledigt markieren");
+        de.put("jobs.cancel_job", "§cJob abbrechen");
+        de.put("jobs.in_progress_by", "§7In Bearbeitung von ");
+        de.put("jobs.confirm_job", "§aJob bestätigen");
+        de.put("jobs.waiting_confirmation", "§7Wartet auf Bestätigung");
+
+        de.put("jobs.input.title", "§eGib jetzt den Jobtitel im Chat ein.");
+        de.put("jobs.input.server_title", "§eGib jetzt den Server-Jobtitel im Chat ein.");
+        de.put("jobs.input.description", "§eGib jetzt die Jobbeschreibung im Chat ein.");
+        de.put("jobs.input.reward", "§eGib jetzt die Belohnung im Chat ein.");
+        de.put("jobs.input.due_days", "§eGib jetzt die Fälligkeit in vollen Tagen ein.");
+        de.put("jobs.input.invalid_number", "§cDas ist keine gültige Zahl.");
+        de.put("jobs.input.reward_positive", "§cDie Belohnung muss über 0 liegen.");
+        de.put("jobs.input.days_positive", "§cDie Tage müssen über 0 liegen.");
+        de.put("jobs.input.treasury_missing", "§cDas Treasury hat nicht genug Geld für diesen Server-Job.");
+        de.put("jobs.input.player_missing_money", "§cDu hast nicht genug Geld, um diesen Job zu erstellen.");
+        de.put("jobs.input.created", "§aJob erstellt.");
+
+        de.put("jobs.error.accept_yet", "§cDieser Job kann noch nicht angenommen werden.");
+        de.put("jobs.error.not_open", "§cDieser Job ist nicht mehr offen.");
+        de.put("jobs.error.own_job", "§cDu kannst deinen eigenen Job nicht annehmen.");
+        de.put("jobs.error.withdraw", "§cJob konnte nicht zurückgezogen werden.");
+        de.put("jobs.error.complete", "§cJob konnte nicht als erledigt markiert werden.");
+        de.put("jobs.error.confirm", "§cJob konnte nicht bestätigt werden.");
+        de.put("jobs.error.cancel", "§cJob konnte nicht abgebrochen werden.");
+
+        de.put("jobs.msg.accepted", "§aDu hast den Job angenommen.");
+        de.put("jobs.msg.accepted_server", "§aDu hast den Server-Job angenommen.");
+        de.put("jobs.msg.withdrawn", "§aJob zurückgezogen.");
+        de.put("jobs.msg.withdrawn_server", "§aServer-Job zurückgezogen.");
+        de.put("jobs.msg.completed", "§aJob als erledigt markiert.");
+        de.put("jobs.msg.confirmed", "§aJob bestätigt.");
+        de.put("jobs.msg.cancelled_penalty", "§cJob abgebrochen. Strafe: $");
 
         de.put("checks.menu.title", "EconomyMC Checks");
+        de.put("check.redeem.title", "EconomyMC Check einlösen");
         de.put("checks.create", "§aCheck erstellen");
+        de.put("checks.creator", "§eErsteller: ");
+        de.put("checks.amount", "§6Betrag: $");
+        de.put("checks.redeem", "§aEinlösen");
+        de.put("checks.redeemed", "§7Bereits eingelöst");
+        de.put("checks.not_found", "§cCheck nicht gefunden");
+        de.put("checks.no_longer", "§cDieser Check kann nicht mehr eingelöst werden.");
         de.put("checks.entry", "%sCheck $%d - %s");
-        de.put("checks.input.amount", "Gib jetzt den Check-Betrag im Chat ein.");
-        de.put("checks.input.code", "Gib jetzt den Check-Code im Chat ein.");
-        de.put("checks.input.invalid_number", "Das ist keine gültige Zahl.");
-        de.put("checks.input.amount_positive", "Der Betrag muss über 0 liegen.");
-        de.put("checks.input.not_enough", "Du hast nicht genug Geld.");
-        de.put("checks.input.created", "Check erstellt.");
-        de.put("checks.input.invalid_code", "Ungültiger Code oder Check bereits eingelöst.");
-        de.put("checks.input.redeemed_success", "Check erfolgreich eingelöst.");
+
+        de.put("checks.input.amount", "§eGib jetzt den Check-Betrag im Chat ein.");
+        de.put("checks.input.code", "§eGib jetzt den Check-Code im Chat ein.");
+        de.put("checks.input.invalid_number", "§cDas ist keine gültige Zahl.");
+        de.put("checks.input.amount_positive", "§cDer Betrag muss über 0 liegen.");
+        de.put("checks.input.not_enough", "§cDu hast nicht genug Geld.");
+        de.put("checks.input.created", "§aCheck erstellt.");
+        de.put("checks.input.invalid_code", "§cUngültiger Code oder Check bereits eingelöst.");
+        de.put("checks.input.redeemed_success", "§aCheck erfolgreich eingelöst.");
 
         de.put("history.title", "EconomyMC Verlauf");
-        de.put("history.mine", "§bMein Verlauf");
         de.put("history.empty", "§7Noch keine Einträge vorhanden.");
+        de.put("history.mine", "§bMein Verlauf");
         de.put("history.treasury", "§6Treasury-Verlauf");
-        de.put("history.daily", "§eTägliche Belohnung: $%d");
+        de.put("history.open", "§aVerlauf öffnen");
         de.put("history.pay.sent", "§aÜberweisung an %s: $%d");
         de.put("history.pay.received", "§aÜberweisung von %s: $%d");
+        de.put("history.daily", "§eTägliche Belohnung: $%d");
 
-        de.put("bank.title", "EconomyMC Bank");
-        de.put("bank.not_found", "§cKredit nicht gefunden");
         de.put("bank.loan_id", "Kredit-ID");
-        de.put("bank.target.server", "Server");
+        de.put("bank.invalid_target", "§cUnbekannter Zielspieler.");
+        de.put("bank.not_enough_money", "§cDu hast nicht genug Geld.");
+        de.put("bank.not_found", "§cKredit nicht gefunden.");
+        de.put("bank.request.created", "§aKreditanfrage erstellt.");
+        de.put("bank.offer.created", "§aKreditangebot erstellt.");
+        de.put("bank.accepted", "§aKredit angenommen.");
+        de.put("bank.repaid", "§aKredit zurückgezahlt.");
+        de.put("bank.target.player", "Spieler");
+        de.put("bank.target.all", "Alle Spieler");
+        de.put("bank.command.request", "Kreditanfrage erstellen");
+        de.put("bank.command.offer", "Kreditangebot erstellen");
+        de.put("bank.command.accept", "Kredit annehmen");
         de.put("bank.command.repay", "Kredit zurückzahlen");
+        de.put("bank.command.list", "Offene Kredite");
         de.put("bank.detail.title", "EconomyMC Kreditdetails");
         de.put("bank.detail.info_hint", "§7Öffne einen Kredit für Details");
         de.put("bank.detail.borrower", "§7Kreditnehmer: ");
@@ -414,16 +585,15 @@ public final class LanguageManager {
         de.put("daily.already", "§cDaily für heute schon abgeholt. Komm in %dh %dm zurück.");
         de.put("daily.claimed", "§aDu hast dein tägliches $100 abgeholt.");
 
-        de.put("msg.shop_disabled", "§cShop ist vom Admin deaktiviert.");
-        de.put("msg.jobs_disabled", "§cJobs sind vom Admin deaktiviert.");
-        de.put("msg.checks_disabled", "§cChecks sind vom Admin deaktiviert.");
-        de.put("msg.servermode_disabled", "§cServer-Modus ist vom Admin deaktiviert.");
-
         LANG.put("de_de", de);
 
+        // Other languages: all keys exist, visible menu/input keys translated, rest safe fallback to English
         Map<String, String> pl = new HashMap<>(en);
         pl.put("common.close", "§cZamknij");
         pl.put("common.back", "§cPowrót");
+        pl.put("common.next", "§7Następna strona");
+        pl.put("common.previous", "§7Poprzednia strona");
+        pl.put("common.page", "§7Strona ");
         pl.put("menu.player.balance", "§6Stan konta: $%d");
         pl.put("menu.player.normal", "§7Zwykłe kredyty: %d");
         pl.put("menu.player.capital", "§7Kredyty stolicy: %d");
@@ -451,6 +621,7 @@ public final class LanguageManager {
         pl.put("admin.language", "Język");
         pl.put("admin.language.previous", "§ePoprzedni język");
         pl.put("admin.language.next", "§eNastępny język");
+        pl.put("admin.language.toggle", "§eZmień język");
         pl.put("admin.on", "WŁ");
         pl.put("admin.off", "WYŁ");
         pl.put("server.mode.title", "EconomyMC Tryb serwera");
@@ -459,13 +630,21 @@ public final class LanguageManager {
         pl.put("history.title", "EconomyMC Historia");
         pl.put("bank.title", "EconomyMC Bank");
         pl.put("pay.menu.title", "EconomyMC Płatność");
-        pl.put("jobs.input.title", "Wpisz teraz tytuł zadania na czacie.");
-        pl.put("checks.input.amount", "Wpisz teraz kwotę czeku na czacie.");
+        pl.put("jobs.input.title", "§eWpisz teraz tytuł zadania na czacie.");
+        pl.put("jobs.input.server_title", "§eWpisz teraz tytuł zadania serwera na czacie.");
+        pl.put("jobs.input.description", "§eWpisz teraz opis zadania na czacie.");
+        pl.put("jobs.input.reward", "§eWpisz teraz nagrodę na czacie.");
+        pl.put("jobs.input.due_days", "§eWpisz teraz liczbę dni na czacie.");
+        pl.put("checks.input.amount", "§eWpisz teraz kwotę czeku na czacie.");
+        pl.put("checks.input.code", "§eWpisz teraz kod czeku na czacie.");
         LANG.put("pl_pl", pl);
 
         Map<String, String> fr = new HashMap<>(en);
         fr.put("common.close", "§cFermer");
         fr.put("common.back", "§cRetour");
+        fr.put("common.next", "§7Page suivante");
+        fr.put("common.previous", "§7Page précédente");
+        fr.put("common.page", "§7Page ");
         fr.put("menu.player.balance", "§6Solde: $%d");
         fr.put("menu.player.normal", "§7Crédits normaux: %d");
         fr.put("menu.player.capital", "§7Crédits capitale: %d");
@@ -485,6 +664,7 @@ public final class LanguageManager {
         fr.put("admin.language", "Langue");
         fr.put("admin.language.previous", "§eLangue précédente");
         fr.put("admin.language.next", "§eLangue suivante");
+        fr.put("admin.language.toggle", "§eChanger la langue");
         fr.put("admin.on", "ACTIF");
         fr.put("admin.off", "INACTIF");
         fr.put("server.mode.title", "EconomyMC Mode serveur");
@@ -493,13 +673,16 @@ public final class LanguageManager {
         fr.put("history.title", "EconomyMC Historique");
         fr.put("bank.title", "EconomyMC Banque");
         fr.put("pay.menu.title", "EconomyMC Paiement");
-        fr.put("jobs.input.title", "Entrez maintenant le titre du job dans le chat.");
-        fr.put("checks.input.amount", "Entrez maintenant le montant du chèque dans le chat.");
+        fr.put("jobs.input.title", "§eEntrez maintenant le titre du job dans le chat.");
+        fr.put("checks.input.amount", "§eEntrez maintenant le montant du chèque dans le chat.");
         LANG.put("fr_fr", fr);
 
         Map<String, String> es = new HashMap<>(en);
         es.put("common.close", "§cCerrar");
         es.put("common.back", "§cAtrás");
+        es.put("common.next", "§7Página siguiente");
+        es.put("common.previous", "§7Página anterior");
+        es.put("common.page", "§7Página ");
         es.put("menu.player.balance", "§6Saldo: $%d");
         es.put("menu.player.normal", "§7Créditos normales: %d");
         es.put("menu.player.capital", "§7Créditos capital: %d");
@@ -518,7 +701,8 @@ public final class LanguageManager {
         es.put("admin.mode.title", "EconomyMC Modo admin");
         es.put("admin.language", "Idioma");
         es.put("admin.language.previous", "§eIdioma anterior");
-        es.put("admin.language.next", "§eSiguiente idioma");
+        es.put("admin.language.next", "§eIdioma siguiente");
+        es.put("admin.language.toggle", "§eCambiar idioma");
         es.put("admin.on", "ENC");
         es.put("admin.off", "APAG");
         es.put("server.mode.title", "EconomyMC Modo servidor");
@@ -527,13 +711,16 @@ public final class LanguageManager {
         es.put("history.title", "EconomyMC Historial");
         es.put("bank.title", "EconomyMC Banco");
         es.put("pay.menu.title", "EconomyMC Pago");
-        es.put("jobs.input.title", "Escribe ahora el título del trabajo en el chat.");
-        es.put("checks.input.amount", "Escribe ahora la cantidad del cheque en el chat.");
+        es.put("jobs.input.title", "§eEscribe ahora el título del trabajo en el chat.");
+        es.put("checks.input.amount", "§eEscribe ahora la cantidad del cheque en el chat.");
         LANG.put("es_es", es);
 
         Map<String, String> pt = new HashMap<>(en);
         pt.put("common.close", "§cFechar");
         pt.put("common.back", "§cVoltar");
+        pt.put("common.next", "§7Próxima página");
+        pt.put("common.previous", "§7Página anterior");
+        pt.put("common.page", "§7Página ");
         pt.put("menu.player.balance", "§6Saldo: $%d");
         pt.put("menu.player.normal", "§7Créditos normais: %d");
         pt.put("menu.player.capital", "§7Créditos da capital: %d");
@@ -553,6 +740,7 @@ public final class LanguageManager {
         pt.put("admin.language", "Idioma");
         pt.put("admin.language.previous", "§eIdioma anterior");
         pt.put("admin.language.next", "§ePróximo idioma");
+        pt.put("admin.language.toggle", "§eMudar idioma");
         pt.put("admin.on", "LIG");
         pt.put("admin.off", "DESL");
         pt.put("server.mode.title", "EconomyMC Modo servidor");
@@ -561,13 +749,16 @@ public final class LanguageManager {
         pt.put("history.title", "EconomyMC Histórico");
         pt.put("bank.title", "EconomyMC Banco");
         pt.put("pay.menu.title", "EconomyMC Pagamento");
-        pt.put("jobs.input.title", "Digite agora o título do trabalho no chat.");
-        pt.put("checks.input.amount", "Digite agora o valor do cheque no chat.");
+        pt.put("jobs.input.title", "§eDigite agora o título do trabalho no chat.");
+        pt.put("checks.input.amount", "§eDigite agora o valor do cheque no chat.");
         LANG.put("pt_br", pt);
 
         Map<String, String> ru = new HashMap<>(en);
         ru.put("common.close", "§cЗакрыть");
         ru.put("common.back", "§cНазад");
+        ru.put("common.next", "§7Следующая страница");
+        ru.put("common.previous", "§7Предыдущая страница");
+        ru.put("common.page", "§7Страница ");
         ru.put("menu.player.balance", "§6Баланс: $%d");
         ru.put("menu.player.normal", "§7Обычные кредиты: %d");
         ru.put("menu.player.capital", "§7Кредиты столицы: %d");
@@ -587,6 +778,7 @@ public final class LanguageManager {
         ru.put("admin.language", "Язык");
         ru.put("admin.language.previous", "§eПредыдущий язык");
         ru.put("admin.language.next", "§eСледующий язык");
+        ru.put("admin.language.toggle", "§eСменить язык");
         ru.put("admin.on", "ВКЛ");
         ru.put("admin.off", "ВЫКЛ");
         ru.put("server.mode.title", "EconomyMC Режим сервера");
@@ -595,13 +787,16 @@ public final class LanguageManager {
         ru.put("history.title", "EconomyMC История");
         ru.put("bank.title", "EconomyMC Банк");
         ru.put("pay.menu.title", "EconomyMC Платёж");
-        ru.put("jobs.input.title", "Введите название задания в чат.");
-        ru.put("checks.input.amount", "Введите сумму чека в чат.");
+        ru.put("jobs.input.title", "§eВведите название задания в чат.");
+        ru.put("checks.input.amount", "§eВведите сумму чека в чат.");
         LANG.put("ru_ru", ru);
 
         Map<String, String> tr = new HashMap<>(en);
         tr.put("common.close", "§cKapat");
         tr.put("common.back", "§cGeri");
+        tr.put("common.next", "§7Sonraki sayfa");
+        tr.put("common.previous", "§7Önceki sayfa");
+        tr.put("common.page", "§7Sayfa ");
         tr.put("menu.player.balance", "§6Bakiye: $%d");
         tr.put("menu.player.normal", "§7Normal krediler: %d");
         tr.put("menu.player.capital", "§7Başkent kredileri: %d");
@@ -621,6 +816,7 @@ public final class LanguageManager {
         tr.put("admin.language", "Dil");
         tr.put("admin.language.previous", "§eÖnceki dil");
         tr.put("admin.language.next", "§eSonraki dil");
+        tr.put("admin.language.toggle", "§eDili değiştir");
         tr.put("admin.on", "AÇIK");
         tr.put("admin.off", "KAPALI");
         tr.put("server.mode.title", "EconomyMC Sunucu modu");
@@ -629,13 +825,16 @@ public final class LanguageManager {
         tr.put("history.title", "EconomyMC Geçmiş");
         tr.put("bank.title", "EconomyMC Banka");
         tr.put("pay.menu.title", "EconomyMC Ödeme");
-        tr.put("jobs.input.title", "Şimdi iş başlığını sohbete yaz.");
-        tr.put("checks.input.amount", "Şimdi çek miktarını sohbete yaz.");
+        tr.put("jobs.input.title", "§eŞimdi iş başlığını sohbete yaz.");
+        tr.put("checks.input.amount", "§eŞimdi çek miktarını sohbete yaz.");
         LANG.put("tr_tr", tr);
 
         Map<String, String> zh = new HashMap<>(en);
         zh.put("common.close", "§c关闭");
         zh.put("common.back", "§c返回");
+        zh.put("common.next", "§7下一页");
+        zh.put("common.previous", "§7上一页");
+        zh.put("common.page", "§7第 ");
         zh.put("menu.player.balance", "§6余额: $%d");
         zh.put("menu.player.normal", "§7普通积分: %d");
         zh.put("menu.player.capital", "§7首都积分: %d");
@@ -655,6 +854,7 @@ public final class LanguageManager {
         zh.put("admin.language", "语言");
         zh.put("admin.language.previous", "§e上一个语言");
         zh.put("admin.language.next", "§e下一个语言");
+        zh.put("admin.language.toggle", "§e切换语言");
         zh.put("admin.on", "开");
         zh.put("admin.off", "关");
         zh.put("server.mode.title", "EconomyMC 服务器模式");
@@ -663,13 +863,16 @@ public final class LanguageManager {
         zh.put("history.title", "EconomyMC 历史");
         zh.put("bank.title", "EconomyMC 银行");
         zh.put("pay.menu.title", "EconomyMC 支付");
-        zh.put("jobs.input.title", "现在请在聊天中输入工作标题。");
-        zh.put("checks.input.amount", "现在请在聊天中输入支票金额。");
+        zh.put("jobs.input.title", "§e现在请在聊天中输入工作标题。");
+        zh.put("checks.input.amount", "§e现在请在聊天中输入支票金额。");
         LANG.put("zh_cn", zh);
 
         Map<String, String> ja = new HashMap<>(en);
         ja.put("common.close", "§c閉じる");
         ja.put("common.back", "§c戻る");
+        ja.put("common.next", "§7次のページ");
+        ja.put("common.previous", "§7前のページ");
+        ja.put("common.page", "§7ページ ");
         ja.put("menu.player.balance", "§6残高: $%d");
         ja.put("menu.player.normal", "§7通常クレジット: %d");
         ja.put("menu.player.capital", "§7首都クレジット: %d");
@@ -689,6 +892,7 @@ public final class LanguageManager {
         ja.put("admin.language", "言語");
         ja.put("admin.language.previous", "§e前の言語");
         ja.put("admin.language.next", "§e次の言語");
+        ja.put("admin.language.toggle", "§e言語を変更");
         ja.put("admin.on", "オン");
         ja.put("admin.off", "オフ");
         ja.put("server.mode.title", "EconomyMC サーバーモード");
@@ -697,8 +901,8 @@ public final class LanguageManager {
         ja.put("history.title", "EconomyMC 履歴");
         ja.put("bank.title", "EconomyMC 銀行");
         ja.put("pay.menu.title", "EconomyMC 支払い");
-        ja.put("jobs.input.title", "今すぐチャットにジョブ名を入力してください。");
-        ja.put("checks.input.amount", "今すぐチャットに小切手金額を入力してください。");
+        ja.put("jobs.input.title", "§e今すぐチャットにジョブ名を入力してください。");
+        ja.put("checks.input.amount", "§e今すぐチャットに小切手金額を入力してください。");
         LANG.put("ja_jp", ja);
     }
 
