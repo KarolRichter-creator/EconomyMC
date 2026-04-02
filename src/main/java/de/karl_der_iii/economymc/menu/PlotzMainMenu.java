@@ -1,6 +1,5 @@
 package de.karl_der_iii.economymc.menu;
 
-import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.AdminSettingsManager;
 import de.karl_der_iii.economymc.service.BalanceManager;
 import de.karl_der_iii.economymc.service.DailyRewardManager;
@@ -56,50 +55,20 @@ public class PlotzMainMenu extends ChestMenu {
         box.setItem(11, MenuUtil.named(Items.CHEST, LanguageManager.tr("main.shop")));
         box.setItem(12, MenuUtil.named(Items.BOOK, LanguageManager.tr("main.jobs")));
         box.setItem(13, MenuUtil.named(Items.PAPER, LanguageManager.tr("main.checks")));
-        box.setItem(14, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("main.bank")));
-        box.setItem(15, MenuUtil.named(Items.CLOCK, LanguageManager.tr("main.history")));
 
-        box.setItem(19, MenuUtil.named(
-            Items.COMPASS,
-            LanguageManager.tr("main.market") + " §7(" + PlotzStore.getListings().size() + ")"
-        ));
-
-        box.setItem(20, MenuUtil.named(
-            Items.GRASS_BLOCK,
-            LanguageManager.tr("main.myplots") + " §7(" + PlotzStore.getOwnedPlots(viewer.getUUID()).size() + ")"
-        ));
-
-        box.setItem(21, MenuUtil.named(
-            Items.WRITABLE_BOOK,
-            LanguageManager.tr("main.mysales") + " §7(" + PlotzStore.getListingsBySeller(viewer.getUUID()).size() + ")"
-        ));
-
-        box.setItem(22, MenuUtil.named(
-            Items.EMERALD,
-            LanguageManager.tr("main.daily")
-        ));
+        box.setItem(19, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("main.bank")));
+        box.setItem(20, MenuUtil.named(Items.CLOCK, LanguageManager.tr("main.history")));
+        box.setItem(21, MenuUtil.named(Items.EMERALD, LanguageManager.tr("main.daily")));
+        box.setItem(22, MenuUtil.named(Items.SUNFLOWER, LanguageManager.tr("main.pay")));
 
         if (AdminSettingsManager.serverModeEnabled()) {
-            box.setItem(24, MenuUtil.named(
-                Items.IRON_BARS,
-                LanguageManager.tr("main.servermode")
-            ));
+            box.setItem(30, MenuUtil.named(Items.IRON_BARS, LanguageManager.tr("main.servermode")));
         } else {
-            box.setItem(24, MenuUtil.named(
-                Items.BARRIER,
-                LanguageManager.tr("main.servermode.disabled")
-            ));
+            box.setItem(30, MenuUtil.named(Items.BARRIER, LanguageManager.tr("main.servermode.disabled")));
         }
 
-        box.setItem(31, MenuUtil.named(
-            Items.REDSTONE_TORCH,
-            LanguageManager.tr("main.adminmode")
-        ));
-
-        box.setItem(49, MenuUtil.named(
-            Items.BARRIER,
-            LanguageManager.tr("common.close")
-        ));
+        box.setItem(31, MenuUtil.named(Items.REDSTONE_TORCH, LanguageManager.tr("main.adminmode")));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.close")));
 
         broadcastChanges();
     }
@@ -133,12 +102,9 @@ public class PlotzMainMenu extends ChestMenu {
                     sp.sendSystemMessage(Component.literal(LanguageManager.tr("msg.checks_disabled")));
                 }
             }
-            case 14 -> PlotzBankMenu.open(sp);
-            case 15 -> PlotzHistoryMenu.open(sp, false);
-            case 19 -> PlotzMarketMenu.open(sp);
-            case 20 -> PlotzMyPlotsMenu.open(sp);
-            case 21 -> PlotzMySalesMenu.open(sp);
-            case 22 -> {
+            case 19 -> PlotzBankMenu.open(sp);
+            case 20 -> PlotzHistoryMenu.open(sp, false);
+            case 21 -> {
                 if (!DailyRewardManager.canClaim(sp.getUUID())) {
                     long remaining = DailyRewardManager.getRemainingMs(sp.getUUID()) / 1000L;
                     long hours = remaining / 3600L;
@@ -154,7 +120,8 @@ public class PlotzMainMenu extends ChestMenu {
                 sp.sendSystemMessage(Component.literal(LanguageManager.tr("daily.claimed")));
                 refresh();
             }
-            case 24 -> {
+            case 22 -> PlotzPayMenu.open(sp);
+            case 30 -> {
                 if (AdminSettingsManager.serverModeEnabled()) {
                     PlotzServerModeMenu.open(sp);
                 } else {

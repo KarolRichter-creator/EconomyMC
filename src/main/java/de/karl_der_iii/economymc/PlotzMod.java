@@ -7,10 +7,11 @@ import de.karl_der_iii.economymc.service.ChecksInputManager;
 import de.karl_der_iii.economymc.service.DraftInputManager;
 import de.karl_der_iii.economymc.service.JobManager;
 import de.karl_der_iii.economymc.service.JobsInputManager;
-import de.karl_der_iii.economymc.service.ShopInputManager;
-import de.karl_der_iii.economymc.service.ScoreboardManager;
-import de.karl_der_iii.economymc.service.TreasuryManager;
 import de.karl_der_iii.economymc.service.OpacBridge;
+import de.karl_der_iii.economymc.service.PayInputManager;
+import de.karl_der_iii.economymc.service.ScoreboardManager;
+import de.karl_der_iii.economymc.service.ShopInputManager;
+import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -75,6 +76,10 @@ public class PlotzMod {
                 return;
             }
             if (ChecksInputManager.handleChat(player, event.getRawText())) {
+                event.setCanceled(true);
+                return;
+            }
+            if (PayInputManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
             }
         }

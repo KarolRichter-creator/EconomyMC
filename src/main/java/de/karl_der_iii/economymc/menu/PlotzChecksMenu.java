@@ -67,7 +67,7 @@ public class PlotzChecksMenu extends ChestMenu {
         }
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.close")));
+        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
         box.setItem(50, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.previous")));
         box.setItem(51, MenuUtil.named(Items.PAPER, LanguageManager.tr("common.page") + (page + 1)));
         box.setItem(52, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.next")));
@@ -80,7 +80,7 @@ public class PlotzChecksMenu extends ChestMenu {
         if (!(player instanceof ServerPlayer sp)) return;
 
         if (slotId == 49) {
-            sp.closeContainer();
+            PlotzMainMenu.open(sp);
             return;
         }
 

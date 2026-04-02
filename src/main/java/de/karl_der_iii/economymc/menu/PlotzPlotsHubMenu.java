@@ -41,11 +41,16 @@ public class PlotzPlotsHubMenu extends ChestMenu {
 
     private void refresh() {
         for (int i = 0; i < box.getContainerSize(); i++) {
-            box.setItem(i, ItemStack.EMPTY);
+            box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
         UUID id = viewer.getUUID();
         boolean capitalHere = PlotzLogic.isCapital(viewer.blockPosition());
+
+        box.setItem(10, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
+        ));
 
         box.setItem(11, MenuUtil.named(
             Items.BOOK,
@@ -58,28 +63,23 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         ));
 
         box.setItem(15, MenuUtil.named(
-            Items.EMERALD,
-            LanguageManager.tr("plots.create.sale")
-        ));
-
-        box.setItem(19, MenuUtil.named(
-            Items.COMPASS,
-            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
-        ));
-
-        box.setItem(20, MenuUtil.named(
             Items.MAP,
             LanguageManager.tr("plots.mine") + " §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
         ));
 
-        box.setItem(22, MenuUtil.named(
+        box.setItem(16, MenuUtil.named(
             Items.WRITABLE_BOOK,
             LanguageManager.tr("plots.sales") + " §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
         ));
 
-        box.setItem(24, MenuUtil.named(
+        box.setItem(22, MenuUtil.named(
             Items.CHEST,
             LanguageManager.tr("plots.market") + " §7(" + PlotzStore.getListings().size() + ")"
+        ));
+
+        box.setItem(24, MenuUtil.named(
+            Items.EMERALD,
+            LanguageManager.tr("plots.create.sale")
         ));
 
         box.setItem(26, MenuUtil.named(
@@ -123,18 +123,18 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 20) {
-            PlotzMyPlotsMenu.open(sp);
-            return;
-        }
-
-        if (slotId == 22) {
+        if (slotId == 16) {
             PlotzMySalesMenu.open(sp);
             return;
         }
 
-        if (slotId == 24) {
+        if (slotId == 22) {
             PlotzMarketMenu.open(sp);
+            return;
+        }
+
+        if (slotId == 24) {
+            PlotzMyPlotsMenu.open(sp);
             return;
         }
 
