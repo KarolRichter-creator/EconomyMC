@@ -40,6 +40,13 @@ public class PlotzMainMenu extends ChestMenu {
         refresh();
     }
 
+    private ItemStack sectionItem(boolean enabled, ItemStack enabledStack, String enabledTitle, String disabledTitle) {
+        if (enabled) {
+            return enabledStack;
+        }
+        return MenuUtil.named(Items.BARRIER, disabledTitle);
+    }
+
     private void refresh() {
         for (int i = 0; i < box.getContainerSize(); i++) {
             box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
@@ -48,20 +55,39 @@ public class PlotzMainMenu extends ChestMenu {
         box.setItem(4, MenuUtil.named(Items.NETHER_STAR, LanguageManager.tr("main.menu.title")));
 
         box.setItem(10, MenuUtil.named(Items.MAP, LanguageManager.tr("main.plots")));
-        box.setItem(12, MenuUtil.named(Items.CHEST, LanguageManager.tr("main.shop")));
-        box.setItem(14, MenuUtil.named(Items.BOOK, LanguageManager.tr("main.jobs")));
-        box.setItem(16, MenuUtil.named(Items.PAPER, LanguageManager.tr("main.checks")));
+
+        box.setItem(12, sectionItem(
+            AdminSettingsManager.shopEnabled(),
+            MenuUtil.named(Items.CHEST, LanguageManager.tr("main.shop")),
+            LanguageManager.tr("main.shop"),
+            LanguageManager.tr("main.disabled.shop")
+        ));
+
+        box.setItem(14, sectionItem(
+            AdminSettingsManager.jobsEnabled(),
+            MenuUtil.named(Items.BOOK, LanguageManager.tr("main.jobs")),
+            LanguageManager.tr("main.jobs"),
+            LanguageManager.tr("main.disabled.jobs")
+        ));
+
+        box.setItem(16, sectionItem(
+            AdminSettingsManager.checksEnabled(),
+            MenuUtil.named(Items.PAPER, LanguageManager.tr("main.checks")),
+            LanguageManager.tr("main.checks"),
+            LanguageManager.tr("main.disabled.checks")
+        ));
 
         box.setItem(28, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("main.bank")));
         box.setItem(30, MenuUtil.named(Items.CLOCK, LanguageManager.tr("main.history")));
         box.setItem(32, MenuUtil.named(Items.EMERALD, LanguageManager.tr("main.daily")));
         box.setItem(34, MenuUtil.named(Items.SUNFLOWER, LanguageManager.tr("main.pay")));
 
-        if (AdminSettingsManager.serverModeEnabled()) {
-            box.setItem(38, MenuUtil.named(Items.IRON_BARS, LanguageManager.tr("main.servermode")));
-        } else {
-            box.setItem(38, MenuUtil.named(Items.BARRIER, LanguageManager.tr("main.servermode.disabled")));
-        }
+        box.setItem(38, sectionItem(
+            AdminSettingsManager.serverModeEnabled(),
+            MenuUtil.named(Items.IRON_BARS, LanguageManager.tr("main.servermode")),
+            LanguageManager.tr("main.servermode"),
+            LanguageManager.tr("main.disabled.servermode")
+        ));
 
         box.setItem(40, MenuUtil.named(Items.REDSTONE_TORCH, LanguageManager.tr("main.adminmode")));
         box.setItem(44, MenuUtil.playerInfoHead(viewer));
