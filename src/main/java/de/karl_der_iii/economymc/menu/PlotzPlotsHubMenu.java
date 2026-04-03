@@ -2,6 +2,7 @@ package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.LanguageManager;
+import de.karl_der_iii.economymc.service.OpacBridge;
 import de.karl_der_iii.economymc.service.PlotzLogic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +40,13 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         refresh();
     }
 
+    private ItemStack connectorItem() {
+        boolean connected = OpacBridge.isInstalled();
+        String base = LanguageManager.tr("plots.connector");
+        String state = connected ? " §a● Connected" : " §c● Not Connected";
+        return MenuUtil.named(connected ? Items.LIME_DYE : Items.RED_DYE, base + state);
+    }
+
     private void refresh() {
         for (int i = 0; i < box.getContainerSize(); i++) {
             box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
@@ -49,17 +57,12 @@ public class PlotzPlotsHubMenu extends ChestMenu {
 
         box.setItem(4, MenuUtil.named(Items.MAP, LanguageManager.tr("plots.menu.title")));
 
-        box.setItem(11, MenuUtil.named(
+        box.setItem(10, MenuUtil.named(
             Items.BOOK,
             LanguageManager.tr("plots.buy.normal") + " §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
         ));
 
-        box.setItem(13, MenuUtil.named(
-            Items.NAME_TAG,
-            LanguageManager.tr("plots.connector")
-        ));
-
-        box.setItem(15, MenuUtil.named(
+        box.setItem(16, MenuUtil.named(
             Items.ENCHANTED_BOOK,
             LanguageManager.tr("plots.buy.capital") + " §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
         ));
@@ -69,22 +72,24 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             LanguageManager.tr("plots.mine") + " §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
         ));
 
-        box.setItem(22, MenuUtil.named(
-            Items.COMPASS,
-            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
-        ));
+        box.setItem(22, connectorItem());
 
         box.setItem(24, MenuUtil.named(
             Items.CHEST,
             LanguageManager.tr("plots.market") + " §7(" + PlotzStore.getListings().size() + ")"
         ));
 
-        box.setItem(29, MenuUtil.named(
+        box.setItem(31, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
+        ));
+
+        box.setItem(28, MenuUtil.named(
             Items.WRITABLE_BOOK,
             LanguageManager.tr("plots.sales") + " §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
         ));
 
-        box.setItem(31, MenuUtil.named(
+        box.setItem(34, MenuUtil.named(
             Items.EMERALD,
             LanguageManager.tr("plots.create.sale")
         ));
@@ -101,7 +106,7 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 11) {
+        if (slotId == 10) {
             if (!PlotzLogic.canBuyNormalCredit(sp)) {
                 sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.normal.fail")));
                 return;
@@ -112,7 +117,7 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 15) {
+        if (slotId == 16) {
             if (!PlotzLogic.canBuyCapitalCredit(sp)) {
                 sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.capital.fail")));
                 return;
@@ -133,12 +138,12 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 29) {
+        if (slotId == 28) {
             PlotzMySalesMenu.open(sp);
             return;
         }
 
-        if (slotId == 31) {
+        if (slotId == 34) {
             PlotzCreateSaleMenu.open(sp);
             return;
         }

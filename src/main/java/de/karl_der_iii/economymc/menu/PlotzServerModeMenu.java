@@ -57,29 +57,29 @@ public class PlotzServerModeMenu extends ChestMenu {
         box.setItem(12, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.tax_plus")));
         box.setItem(13, stateItem(AdminSettingsManager.autoTaxEnabled(), LanguageManager.tr("server.auto_tax")));
 
-        box.setItem(14, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.overdue_minus")));
-        box.setItem(15, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.overdue_penalty") + TreasuryManager.getOverduePenaltyPercent() + "%"));
-        box.setItem(16, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.overdue_plus")));
+        box.setItem(19, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.overdue_minus")));
+        box.setItem(20, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.overdue_penalty") + TreasuryManager.getOverduePenaltyPercent() + "%"));
+        box.setItem(21, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.overdue_plus")));
 
-        box.setItem(28, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.cancel_minus")));
-        box.setItem(29, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.cancel_penalty") + TreasuryManager.getCancelPenaltyPercent() + "%"));
-        box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.cancel_plus")));
+        box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.cancel_minus")));
+        box.setItem(24, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.cancel_penalty") + TreasuryManager.getCancelPenaltyPercent() + "%"));
+        box.setItem(25, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.cancel_plus")));
 
-        box.setItem(32, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.days_minus")));
-        box.setItem(33, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.max_overdue_days") + TreasuryManager.getMaxOverdueDays()));
-        box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.days_plus")));
+        box.setItem(28, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.days_minus")));
+        box.setItem(29, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.max_overdue_days") + TreasuryManager.getMaxOverdueDays()));
+        box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.days_plus")));
 
-        box.setItem(37, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.start_hour_minus")));
-        box.setItem(38, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"));
-        box.setItem(39, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.start_hour_plus")));
+        box.setItem(32, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.start_hour_minus")));
+        box.setItem(33, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"));
+        box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.start_hour_plus")));
 
-        box.setItem(40, MenuUtil.named(Items.EMERALD, LanguageManager.tr("server.create_job")));
-        box.setItem(42, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
-        box.setItem(44, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("server.treasury_balance") + TreasuryManager.getTreasury()));
+        box.setItem(39, MenuUtil.named(Items.EMERALD, LanguageManager.tr("server.create_job")));
+        box.setItem(40, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
+        box.setItem(41, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("server.treasury_balance") + TreasuryManager.getTreasury()));
+        box.setItem(42, MenuUtil.named(Items.CLOCK, LanguageManager.tr("common.treasury")));
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
         box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
-        box.setItem(53, MenuUtil.named(Items.CLOCK, LanguageManager.tr("history.treasury")));
 
         broadcastChanges();
     }
@@ -105,45 +105,45 @@ public class PlotzServerModeMenu extends ChestMenu {
             AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
         }
 
-        if (slotId == 14) {
+        if (slotId == 19) {
             TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
         }
-        if (slotId == 16) {
+        if (slotId == 21) {
             TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
         }
 
-        if (slotId == 28) {
+        if (slotId == 23) {
             TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
         }
-        if (slotId == 30) {
+        if (slotId == 25) {
             TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
         }
 
-        if (slotId == 32) {
+        if (slotId == 28) {
             TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
         }
-        if (slotId == 34) {
+        if (slotId == 30) {
             TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
         }
 
-        if (slotId == 37) {
+        if (slotId == 32) {
             AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() - 1);
         }
-        if (slotId == 39) {
+        if (slotId == 34) {
             AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + 1);
         }
 
-        if (slotId == 40) {
+        if (slotId == 39) {
             JobsInputManager.startServerJob(sp);
             return;
         }
 
-        if (slotId == 42) {
+        if (slotId == 40) {
             PlotzJobsMenu.open(sp, 0, false, true);
             return;
         }
 
-        if (slotId == 53) {
+        if (slotId == 42) {
             PlotzHistoryMenu.open(sp, true);
             return;
         }
