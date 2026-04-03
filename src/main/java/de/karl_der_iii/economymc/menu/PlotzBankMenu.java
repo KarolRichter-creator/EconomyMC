@@ -1,5 +1,6 @@
 package de.karl_der_iii.economymc.menu;
 
+import de.karl_der_iii.economymc.service.BankInputManager;
 import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.LoanManager;
 import net.minecraft.network.chat.Component;
@@ -53,18 +54,27 @@ public class PlotzBankMenu extends ChestMenu {
         List<LoanManager.LoanEntry> loans = LoanManager.getVisibleLoans(viewer.getUUID(), viewer.hasPermissions(2));
         int slot = 0;
         for (LoanManager.LoanEntry loan : loans) {
-            if (slot >= 45) break;
+            if (slot >= 36) {
+                break;
+            }
 
             String lender = loan.lenderName().isBlank()
                 ? LanguageManager.tr("bank.target.server")
                 : loan.lenderName();
+
+            String target = switch (loan.targetType()) {
+                case SERVER -> LanguageManager.tr("bank.target.server");
+                case ALL_PLAYERS -> LanguageManager.tr("bank.target.all");
+                case SPECIFIC_PLAYER -> loan.targetPlayerName().isBlank() ? LanguageManager.tr("bank.target.player") : loan.targetPlayerName();
+            };
 
             box.setItem(slot, MenuUtil.named(
                 Items.PAPER,
                 "§e#" + loan.id() + " §7| $" + loan.principal() + " | " + loan.status().name(),
                 List.of(
                     LanguageManager.tr("bank.detail.borrower") + loan.borrowerName(),
-                    LanguageManager.tr("bank.detail.lender") + lender
+                    LanguageManager.tr("bank.detail.lender") + lender,
+                    "§7Target: " + target
                 )
             ));
             loanIds.put(slot, loan.id());
@@ -72,18 +82,35 @@ public class PlotzBankMenu extends ChestMenu {
         }
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
-        box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
-        box.setItem(53, MenuUtil.named(Items.PAPER, LanguageManager.tr("bank.detail.info_hint")));
+        box.setItem(47, MenuUtil.named(Items.IRON_BLOCK, LanguageManager.tr("bank.command.request") + " §7(" + LanguageManager.tr("bank.target.server") + ")"));
+        box.setItem(48, MenuUtil.named(Items.BOOK, LanguageManager.tr("bank.command.request") + " §7(" + LanguageManager.tr("bank.target.all") + ")"));
+        box.setItem(49, MenuUtil.named(Items.PLAYER_HEAD, LanguageManager.tr("bank.command.request") + " §7(" + LanguageManager.tr("bank.target.player") + ")"));
+        box.setItem(51, MenuUtil.named(Items.PAPER, LanguageManager.tr("bank.detail.info_hint")));
+        box.setItem(53, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         broadcastChanges();
     }
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if (!(player instanceof ServerPlayer sp)) return;
+        if (!(player instanceof ServerPlayer sp)) {
+            return;
+        }
 
-        if (slotId == 49) {
+        if (slotId == 53) {
             PlotzMainMenu.open(sp);
+            return;
+        }
+        if (slotId == 47) {
+            BankInputManager.startServerRequest(sp);
+            return;
+        }
+        if (slotId == 48) {
+            BankInputManager.startAllRequest(sp);
+            return;
+        }
+        if (slotId == 49) {
+            BankInputManager.startPlayerRequest(sp);
             return;
         }
 
