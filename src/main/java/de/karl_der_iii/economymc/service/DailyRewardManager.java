@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -59,9 +60,39 @@ public final class DailyRewardManager {
         return Math.max(0L, next - System.currentTimeMillis());
     }
 
+    public static int getStreak(UUID playerId) {
+        ensureLoaded();
+        return Math.max(0, parseInt(playerId + ".streak", 0));
+    }
+
+    public static int getCurrentReward(UUID playerId) {
+        ensureLoaded();
+        int base = AdminSettingsManager.dailyBaseReward();
+        int percent = AdminSettingsManager.dailyIncreasePercent();
+        int max = AdminSettingsManager.dailyMaxReward();
+        int streak = getStreak(playerId);
+
+        long reward = Math.round(base * (1.0 + ((long) streak * percent) / 100.0));
+        return (int) Math.max(base, Math.min(max, reward));
+    }
+
     public static void markClaimed(UUID playerId) {
         ensureLoaded();
-        PROPS.setProperty(playerId.toString(), LocalDate.now(ZoneId.systemDefault()).toString());
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        LocalDate last = getLastClaimDate(playerId);
+        int newStreak = 0;
+
+        if (last != null) {
+            long gap = ChronoUnit.DAYS.between(last, today);
+            if (gap == 1) {
+                newStreak = getStreak(playerId) + 1;
+            } else if (gap == 0) {
+                newStreak = getStreak(playerId);
+            }
+        }
+
+        PROPS.setProperty(playerId.toString(), today.toString());
+        PROPS.setProperty(playerId + ".streak", Integer.toString(Math.max(0, newStreak)));
         save();
     }
 
@@ -74,6 +105,14 @@ public final class DailyRewardManager {
             return LocalDate.parse(value);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    private static int parseInt(String key, int fallback) {
+        try {
+            return Integer.parseInt(PROPS.getProperty(key, Integer.toString(fallback)));
+        } catch (NumberFormatException e) {
+            return fallback;
         }
     }
 }

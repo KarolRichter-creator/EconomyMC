@@ -46,6 +46,9 @@ public final class AdminSettingsManager {
             PROPS.setProperty("jobAcceptHour", "2");
             PROPS.setProperty("autoTaxEnabled", "true");
             PROPS.setProperty("language", "de_de");
+            PROPS.setProperty("dailyBaseReward", "100");
+            PROPS.setProperty("dailyIncreasePercent", "1");
+            PROPS.setProperty("dailyMaxReward", "200");
             save();
             return;
         }
@@ -203,6 +206,51 @@ public final class AdminSettingsManager {
     public static void setJobAcceptHour(int hour) {
         ensureLoaded();
         PROPS.setProperty("jobAcceptHour", Integer.toString(Math.max(0, Math.min(23, hour))));
+        save();
+    }
+
+    public static int dailyBaseReward() {
+        ensureLoaded();
+        try {
+            return Math.max(1, Integer.parseInt(PROPS.getProperty("dailyBaseReward", "100")));
+        } catch (NumberFormatException e) {
+            return 100;
+        }
+    }
+
+    public static void setDailyBaseReward(int value) {
+        ensureLoaded();
+        PROPS.setProperty("dailyBaseReward", Integer.toString(Math.max(1, value)));
+        save();
+    }
+
+    public static int dailyIncreasePercent() {
+        ensureLoaded();
+        try {
+            return Math.max(0, Integer.parseInt(PROPS.getProperty("dailyIncreasePercent", "1")));
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+    }
+
+    public static void setDailyIncreasePercent(int value) {
+        ensureLoaded();
+        PROPS.setProperty("dailyIncreasePercent", Integer.toString(Math.max(0, value)));
+        save();
+    }
+
+    public static int dailyMaxReward() {
+        ensureLoaded();
+        try {
+            return Math.max(dailyBaseReward(), Integer.parseInt(PROPS.getProperty("dailyMaxReward", "200")));
+        } catch (NumberFormatException e) {
+            return 200;
+        }
+    }
+
+    public static void setDailyMaxReward(int value) {
+        ensureLoaded();
+        PROPS.setProperty("dailyMaxReward", Integer.toString(Math.max(dailyBaseReward(), value)));
         save();
     }
 

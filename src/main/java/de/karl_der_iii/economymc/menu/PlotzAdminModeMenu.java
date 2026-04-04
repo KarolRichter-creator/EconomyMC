@@ -30,11 +30,11 @@ public class PlotzAdminModeMenu extends ChestMenu {
     }
 
     public PlotzAdminModeMenu(int containerId, Inventory inventory, ServerPlayer viewer) {
-        this(containerId, inventory, viewer, new SimpleContainer(45));
+        this(containerId, inventory, viewer, new SimpleContainer(54));
     }
 
     private PlotzAdminModeMenu(int containerId, Inventory inventory, ServerPlayer viewer, SimpleContainer box) {
-        super(MenuType.GENERIC_9x5, containerId, inventory, box, 5);
+        super(MenuType.GENERIC_9x6, containerId, inventory, box, 6);
         this.viewer = viewer;
         this.box = box;
         refresh();
@@ -63,12 +63,8 @@ public class PlotzAdminModeMenu extends ChestMenu {
     }
 
     private void setLangByIndex(int index) {
-        if (index < 0) {
-            index = LANG_ORDER.length - 1;
-        }
-        if (index >= LANG_ORDER.length) {
-            index = 0;
-        }
+        if (index < 0) index = LANG_ORDER.length - 1;
+        if (index >= LANG_ORDER.length) index = 0;
         AdminSettingsManager.setLanguage(LANG_ORDER[index]);
     }
 
@@ -105,6 +101,10 @@ public class PlotzAdminModeMenu extends ChestMenu {
         ));
         box.setItem(25, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.next")));
 
+        box.setItem(28, MenuUtil.named(Items.EMERALD, "§aDaily Base: $" + AdminSettingsManager.dailyBaseReward()));
+        box.setItem(29, MenuUtil.named(Items.GOLD_NUGGET, "§eDaily +%: " + AdminSettingsManager.dailyIncreasePercent() + "%"));
+        box.setItem(30, MenuUtil.named(Items.GOLD_BLOCK, "§6Daily Max: $" + AdminSettingsManager.dailyMaxReward()));
+
         box.setItem(31, MenuUtil.playerInfoHead(viewer));
         box.setItem(40, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
@@ -129,8 +129,11 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 21 -> AdminSettingsManager.setMinCancelPercent(AdminSettingsManager.minCancelPercent() + (button == 1 ? -1 : 1));
 
             case 23 -> setLangByIndex(currentLangIndex() - 1);
-            case 24 -> setLangByIndex(currentLangIndex() + 1);
-            case 25 -> setLangByIndex(currentLangIndex() + 1);
+            case 24, 25 -> setLangByIndex(currentLangIndex() + 1);
+
+            case 28 -> AdminSettingsManager.setDailyBaseReward(AdminSettingsManager.dailyBaseReward() + (button == 1 ? -10 : 10));
+            case 29 -> AdminSettingsManager.setDailyIncreasePercent(AdminSettingsManager.dailyIncreasePercent() + (button == 1 ? -1 : 1));
+            case 30 -> AdminSettingsManager.setDailyMaxReward(AdminSettingsManager.dailyMaxReward() + (button == 1 ? -10 : 10));
 
             case 40 -> {
                 PlotzMainMenu.open(sp);

@@ -335,6 +335,25 @@ public final class LanguageManager {
         en.put("server.open_jobs", "§bOpen Server Jobs");
         en.put("server.treasury_balance", "§6Treasury: $");
 
+
+        en.put("common.treasury", "Treasury");
+        en.put("daily.ready", "§aDaily reward ready: $%d");
+        en.put("daily.streak", "§7Streak: %d day(s)");
+        en.put("daily.claimed.amount", "§aYou claimed your daily reward: $%d.");
+        en.put("history.check.create", "§eCheck created: $%d");
+        en.put("history.check.redeem", "§aCheck redeemed: $%d");
+        en.put("history.job.refund", "§6Job refund: $%d");
+        en.put("history.job.reward", "§aJob reward: $%d");
+        en.put("history.loan.funded", "§6Loan funded: $%d");
+        en.put("history.loan.interest", "§cLoan interest: $%d");
+        en.put("history.loan.received", "§aLoan received: $%d");
+        en.put("history.loan.repaid", "§eLoan repaid: $%d");
+        en.put("history.loan.request", "§7Loan requested: $%d");
+        en.put("listing.buy.success", "§aYou bought %s.");
+        en.put("market.entry", "%s §7- $%d - %d chunks");
+        en.put("myplots.draft_selected", "§aSale draft selected: %s");
+        en.put("myplots.entry", "%s%s §7- %d chunks - %s");
+        en.put("mysales.entry", "%s%s §7- $%d");
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -643,6 +662,25 @@ public final class LanguageManager {
         de.put("server.open_jobs", "§bServer-Jobs öffnen");
         de.put("server.treasury_balance", "§6Treasury: $");
 
+
+        de.put("common.treasury", "Staatskasse");
+        de.put("daily.ready", "§aDaily-Belohnung bereit: $%d");
+        de.put("daily.streak", "§7Serie: %d Tag(e)");
+        de.put("daily.claimed.amount", "§aDu hast deine Daily-Belohnung abgeholt: $%d.");
+        de.put("history.check.create", "§eCheck erstellt: $%d");
+        de.put("history.check.redeem", "§aCheck eingelöst: $%d");
+        de.put("history.job.refund", "§6Job-Rückerstattung: $%d");
+        de.put("history.job.reward", "§aJob-Belohnung: $%d");
+        de.put("history.loan.funded", "§6Kredit finanziert: $%d");
+        de.put("history.loan.interest", "§cKreditzinsen: $%d");
+        de.put("history.loan.received", "§aKredit erhalten: $%d");
+        de.put("history.loan.repaid", "§eKredit zurückgezahlt: $%d");
+        de.put("history.loan.request", "§7Kredit angefragt: $%d");
+        de.put("listing.buy.success", "§aDu hast %s gekauft.");
+        de.put("market.entry", "%s §7- $%d - %d Chunks");
+        de.put("myplots.draft_selected", "§aVerkaufsentwurf ausgewählt: %s");
+        de.put("myplots.entry", "%s%s §7- %d Chunks - %s");
+        de.put("mysales.entry", "%s%s §7- $%d");
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);
@@ -1302,8 +1340,22 @@ public final class LanguageManager {
     }
 
     public static String tr(String lang, String key) {
-        Map<String, String> source = LANG.getOrDefault(lang, LANG.get("en_us"));
-        return source.getOrDefault(key, LANG.get("en_us").getOrDefault(key, key));
+        Map<String, String> source = LANG.getOrDefault(lang, LANG.get("de_de"));
+        if (source != null && source.containsKey(key)) {
+            return source.get(key);
+        }
+
+        Map<String, String> german = LANG.get("de_de");
+        if (german != null && german.containsKey(key)) {
+            return german.get(key);
+        }
+
+        Map<String, String> english = LANG.get("en_us");
+        if (english != null && english.containsKey(key)) {
+            return english.get(key);
+        }
+
+        return key;
     }
 
     public static String format(String key, Object... args) {
