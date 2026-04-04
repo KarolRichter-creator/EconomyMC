@@ -101,9 +101,9 @@ public class PlotzAdminModeMenu extends ChestMenu {
         ));
         box.setItem(25, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.next")));
 
-        box.setItem(28, MenuUtil.named(Items.EMERALD, "§aDaily Base: $" + AdminSettingsManager.dailyBaseReward()));
-        box.setItem(29, MenuUtil.named(Items.GOLD_NUGGET, "§eDaily +%: " + AdminSettingsManager.dailyIncreasePercent() + "%"));
-        box.setItem(30, MenuUtil.named(Items.GOLD_BLOCK, "§6Daily Max: $" + AdminSettingsManager.dailyMaxReward()));
+        box.setItem(28, MenuUtil.named(Items.EMERALD, LanguageManager.tr("admin.daily.base") + AdminSettingsManager.dailyBaseReward()));
+        box.setItem(29, MenuUtil.named(Items.GOLD_NUGGET, LanguageManager.tr("admin.daily.rate") + AdminSettingsManager.dailyIncreasePercent() + "%"));
+        box.setItem(30, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("admin.daily.max") + AdminSettingsManager.dailyMaxReward()));
 
         box.setItem(31, MenuUtil.playerInfoHead(viewer));
         box.setItem(40, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));

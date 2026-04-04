@@ -3,6 +3,7 @@ package de.karl_der_iii.economymc.menu;
 import de.karl_der_iii.economymc.service.AdminSettingsManager;
 import de.karl_der_iii.economymc.service.JobsInputManager;
 import de.karl_der_iii.economymc.service.LanguageManager;
+import de.karl_der_iii.economymc.service.LoanManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +16,8 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.List;
 
 public class PlotzServerModeMenu extends ChestMenu {
     private final ServerPlayer viewer;
@@ -45,12 +48,24 @@ public class PlotzServerModeMenu extends ChestMenu {
         );
     }
 
+    private int serverLoanRequestCount() {
+        return (int) LoanManager.getVisibleLoans(viewer.getUUID(), true).stream()
+            .filter(loan -> loan.targetType() == LoanManager.LoanTargetType.SERVER)
+            .filter(loan -> loan.status() == LoanManager.LoanStatus.REQUESTED || loan.status() == LoanManager.LoanStatus.OFFERED)
+            .count();
+    }
+
     private void refresh() {
         for (int i = 0; i < box.getContainerSize(); i++) {
             box.setItem(i, MenuUtil.named(Items.GRAY_STAINED_GLASS_PANE, " "));
         }
 
-        box.setItem(4, MenuUtil.named(Items.IRON_BARS, LanguageManager.tr("server.mode.title")));
+        int serverLoanRequests = serverLoanRequestCount();
+
+        box.setItem(4, MenuUtil.named(
+            Items.GOLD_BLOCK,
+            LanguageManager.tr("common.treasury") + ": $" + TreasuryManager.getTreasury()
+        ));
 
         box.setItem(10, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.tax_minus")));
         box.setItem(11, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.tax_rate") + TreasuryManager.getTaxPercent() + "%"));
@@ -75,7 +90,11 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         box.setItem(39, MenuUtil.named(Items.EMERALD, LanguageManager.tr("server.create_job")));
         box.setItem(40, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
-        box.setItem(41, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("server.treasury_balance") + TreasuryManager.getTreasury()));
+        box.setItem(41, MenuUtil.named(
+            Items.GOLD_INGOT,
+            LanguageManager.tr("bank.title") + " §7(" + serverLoanRequests + ")",
+            List.of("§7" + LanguageManager.tr("bank.target.server"))
+        ));
         box.setItem(42, MenuUtil.named(Items.CLOCK, LanguageManager.tr("common.treasury")));
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
@@ -140,6 +159,11 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         if (slotId == 40) {
             PlotzJobsMenu.open(sp, 0, false, true);
+            return;
+        }
+
+        if (slotId == 41) {
+            PlotzBankMenu.open(sp);
             return;
         }
 

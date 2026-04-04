@@ -68,8 +68,8 @@ public class PlotzBankLoanDetailMenu extends ChestMenu {
         box.setItem(10, MenuUtil.named(Items.PAPER, LanguageManager.tr("bank.loan_id") + ": " + loan.id()));
         box.setItem(11, MenuUtil.named(Items.EMERALD, LanguageManager.tr("bank.detail.amount") + loan.principal()));
         box.setItem(12, MenuUtil.named(Items.CLOCK, LanguageManager.tr("bank.detail.status") + loan.status().name()));
-        box.setItem(13, MenuUtil.named(Items.CLOCK, "§7Days: " + loan.days()));
-        box.setItem(14, MenuUtil.named(Items.GOLD_NUGGET, "§7Total repay: $" + repayAmount));
+        box.setItem(13, MenuUtil.named(Items.CLOCK, LanguageManager.tr("bank.detail.days") + loan.days()));
+        box.setItem(14, MenuUtil.named(Items.GOLD_NUGGET, LanguageManager.tr("bank.detail.total_repay") + repayAmount));
         box.setItem(19, MenuUtil.named(Items.PLAYER_HEAD, LanguageManager.tr("bank.detail.borrower") + loan.borrowerName()));
         box.setItem(25, MenuUtil.named(Items.PLAYER_HEAD, LanguageManager.tr("bank.detail.lender") + lender));
 

@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
 import java.util.UUID;
 
 public class PlotzPlotsHubMenu extends ChestMenu {
@@ -42,9 +43,11 @@ public class PlotzPlotsHubMenu extends ChestMenu {
 
     private ItemStack connectorItem() {
         boolean connected = OpacBridge.isInstalled();
-        String base = LanguageManager.tr("plots.connector");
-        String state = connected ? " §a● Connected" : " §c● Not Connected";
-        return MenuUtil.named(connected ? Items.LIME_DYE : Items.RED_DYE, base + state);
+        return MenuUtil.named(
+            connected ? Items.LIME_DYE : Items.RED_DYE,
+            LanguageManager.tr("plots.connector"),
+            List.of(connected ? "§a●" : "§c●")
+        );
     }
 
     private void refresh() {
@@ -57,12 +60,14 @@ public class PlotzPlotsHubMenu extends ChestMenu {
 
         box.setItem(4, MenuUtil.named(Items.MAP, LanguageManager.tr("plots.menu.title")));
 
-        box.setItem(10, MenuUtil.named(
+        box.setItem(11, MenuUtil.named(
             Items.BOOK,
             LanguageManager.tr("plots.buy.normal") + " §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
         ));
 
-        box.setItem(16, MenuUtil.named(
+        box.setItem(13, connectorItem());
+
+        box.setItem(15, MenuUtil.named(
             Items.ENCHANTED_BOOK,
             LanguageManager.tr("plots.buy.capital") + " §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
         ));
@@ -72,7 +77,10 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             LanguageManager.tr("plots.mine") + " §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
         ));
 
-        box.setItem(22, connectorItem());
+        box.setItem(22, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
+        ));
 
         box.setItem(24, MenuUtil.named(
             Items.CHEST,
@@ -80,16 +88,11 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         ));
 
         box.setItem(31, MenuUtil.named(
-            Items.COMPASS,
-            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
-        ));
-
-        box.setItem(28, MenuUtil.named(
             Items.WRITABLE_BOOK,
             LanguageManager.tr("plots.sales") + " §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
         ));
 
-        box.setItem(34, MenuUtil.named(
+        box.setItem(33, MenuUtil.named(
             Items.EMERALD,
             LanguageManager.tr("plots.create.sale")
         ));
@@ -106,7 +109,7 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 10) {
+        if (slotId == 11) {
             if (!PlotzLogic.canBuyNormalCredit(sp)) {
                 sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.normal.fail")));
                 return;
@@ -117,7 +120,7 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 16) {
+        if (slotId == 15) {
             if (!PlotzLogic.canBuyCapitalCredit(sp)) {
                 sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.capital.fail")));
                 return;
@@ -138,12 +141,12 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 28) {
+        if (slotId == 31) {
             PlotzMySalesMenu.open(sp);
             return;
         }
 
-        if (slotId == 34) {
+        if (slotId == 33) {
             PlotzCreateSaleMenu.open(sp);
             return;
         }
