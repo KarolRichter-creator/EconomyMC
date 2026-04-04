@@ -23,7 +23,7 @@ repositories {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = "economymc"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
