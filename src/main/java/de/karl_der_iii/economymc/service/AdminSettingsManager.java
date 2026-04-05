@@ -49,6 +49,11 @@ public final class AdminSettingsManager {
             PROPS.setProperty("dailyBaseReward", "100");
             PROPS.setProperty("dailyIncreasePercent", "1");
             PROPS.setProperty("dailyMaxReward", "200");
+
+            // 2.8
+            PROPS.setProperty("treasuryTargetBudget", "200000");
+            PROPS.setProperty("autoTaxReactionStrength", "5");
+
             save();
             return;
         }
@@ -251,6 +256,37 @@ public final class AdminSettingsManager {
     public static void setDailyMaxReward(int value) {
         ensureLoaded();
         PROPS.setProperty("dailyMaxReward", Integer.toString(Math.max(dailyBaseReward(), value)));
+        save();
+    }
+
+    // 2.8
+    public static long treasuryTargetBudget() {
+        ensureLoaded();
+        try {
+            return Math.max(10000L, Long.parseLong(PROPS.getProperty("treasuryTargetBudget", "200000")));
+        } catch (NumberFormatException e) {
+            return 200000L;
+        }
+    }
+
+    public static void setTreasuryTargetBudget(long value) {
+        ensureLoaded();
+        PROPS.setProperty("treasuryTargetBudget", Long.toString(Math.max(10000L, value)));
+        save();
+    }
+
+    public static int autoTaxReactionStrength() {
+        ensureLoaded();
+        try {
+            return Math.max(1, Math.min(10, Integer.parseInt(PROPS.getProperty("autoTaxReactionStrength", "5"))));
+        } catch (NumberFormatException e) {
+            return 5;
+        }
+    }
+
+    public static void setAutoTaxReactionStrength(int value) {
+        ensureLoaded();
+        PROPS.setProperty("autoTaxReactionStrength", Integer.toString(Math.max(1, Math.min(10, value))));
         save();
     }
 

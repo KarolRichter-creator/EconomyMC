@@ -17,6 +17,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
+
 public class PlotzServerModeMenu extends ChestMenu {
     private final ServerPlayer viewer;
     private final SimpleContainer box;
@@ -62,11 +64,22 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         box.setItem(4, MenuUtil.named(
             Items.GOLD_BLOCK,
-            LanguageManager.tr("common.treasury") + ": $" + TreasuryManager.getTreasury()
+            LanguageManager.tr("common.treasury") + ": $" + TreasuryManager.getTreasury(),
+            List.of(
+                "§7Target Budget: $" + TreasuryManager.getTargetBudget(),
+                "§7Reaction: " + TreasuryManager.getReactionStrength() + "/10"
+            )
         ));
 
         box.setItem(10, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.tax_minus")));
-        box.setItem(11, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.tax_rate") + TreasuryManager.getTaxPercent() + "%"));
+        box.setItem(11, MenuUtil.named(
+            Items.PAPER,
+            LanguageManager.tr("server.tax_rate") + TreasuryManager.getTaxPercent() + "%",
+            List.of(
+                "§7Manual: " + TreasuryManager.getManualTaxPercent() + "%",
+                "§7Auto: " + (AdminSettingsManager.autoTaxEnabled() ? "ON" : "OFF")
+            )
+        ));
         box.setItem(12, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.tax_plus")));
         box.setItem(13, stateItem(AdminSettingsManager.autoTaxEnabled(), LanguageManager.tr("server.auto_tax")));
 
@@ -82,13 +95,28 @@ public class PlotzServerModeMenu extends ChestMenu {
         box.setItem(29, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.max_overdue_days") + TreasuryManager.getMaxOverdueDays()));
         box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.days_plus")));
 
-        box.setItem(32, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.start_hour_minus")));
-        box.setItem(33, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"));
-        box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.start_hour_plus")));
+        box.setItem(32, MenuUtil.named(
+            Items.CHEST,
+            "§eTarget Budget: $" + AdminSettingsManager.treasuryTargetBudget(),
+            List.of("§7Left click: +10000", "§7Right click: -10000")
+        ));
+        box.setItem(33, MenuUtil.named(
+            Items.COMPARATOR,
+            "§eReaction Strength: " + AdminSettingsManager.autoTaxReactionStrength(),
+            List.of("§7Left click: +1", "§7Right click: -1")
+        ));
+        box.setItem(34, MenuUtil.named(
+            Items.CLOCK,
+            LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"
+        ));
 
         box.setItem(39, MenuUtil.named(Items.EMERALD, LanguageManager.tr("server.create_job")));
         box.setItem(40, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
-        box.setItem(41, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("bank.title") + " §7(" + serverLoanRequests + ")"));
+        box.setItem(41, MenuUtil.named(
+            Items.GOLD_INGOT,
+            LanguageManager.tr("bank.title") + " §7(" + serverLoanRequests + ")",
+            List.of("§7" + LanguageManager.tr("bank.target.server"))
+        ));
         box.setItem(42, MenuUtil.named(Items.CLOCK, LanguageManager.tr("common.treasury")));
 
         box.setItem(45, MenuUtil.playerInfoHead(viewer));
@@ -140,10 +168,17 @@ public class PlotzServerModeMenu extends ChestMenu {
         }
 
         if (slotId == 32) {
-            AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() - 1);
+            long current = AdminSettingsManager.treasuryTargetBudget();
+            AdminSettingsManager.setTreasuryTargetBudget(current + (button == 1 ? -10000L : 10000L));
         }
+
+        if (slotId == 33) {
+            int current = AdminSettingsManager.autoTaxReactionStrength();
+            AdminSettingsManager.setAutoTaxReactionStrength(current + (button == 1 ? -1 : 1));
+        }
+
         if (slotId == 34) {
-            AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + 1);
+            AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + (button == 1 ? -1 : 1));
         }
 
         if (slotId == 39) {

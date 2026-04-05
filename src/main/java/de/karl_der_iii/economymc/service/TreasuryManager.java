@@ -158,16 +158,39 @@ public final class TreasuryManager {
         return (int) Math.floor(reward * ((getOverduePenaltyPercent() / 100.0) * overdueDays));
     }
 
+    // 2.8
+    public static long getTargetBudget() {
+        return AdminSettingsManager.treasuryTargetBudget();
+    }
+
+    public static int getReactionStrength() {
+        return AdminSettingsManager.autoTaxReactionStrength();
+    }
+
     private static int computeAutoTaxPercent() {
         long treasury = getTreasury();
-        int min = AdminSettingsManager.minTaxPercent();
+        long target = Math.max(10000L, AdminSettingsManager.treasuryTargetBudget());
+        int min = Math.max(0, AdminSettingsManager.minTaxPercent());
+        int reaction = AdminSettingsManager.autoTaxReactionStrength();
 
-        if (treasury >= 200000L) return min;
-        if (treasury >= 100000L) return Math.max(min, 2);
-        if (treasury >= 50000L) return Math.max(min, 3);
-        if (treasury >= 20000L) return Math.max(min, 4);
-        if (treasury >= 10000L) return Math.max(min, 5);
-        return Math.max(min, 6);
+        if (treasury >= target) {
+            return min;
+        }
+
+        double deficitRatio = (double) (target - treasury) / (double) target;
+        deficitRatio = Math.max(0.0, Math.min(2.0, deficitRatio));
+
+        int bonus = (int) Math.ceil(deficitRatio * reaction * 2.0);
+
+        if (treasury < target / 4L) {
+            bonus += Math.max(1, reaction / 2);
+        }
+
+        if (treasury < target / 10L) {
+            bonus += 1;
+        }
+
+        return Math.max(min, Math.min(25, min + bonus));
     }
 
     private static int parseClamped(String key, int fallback) {
