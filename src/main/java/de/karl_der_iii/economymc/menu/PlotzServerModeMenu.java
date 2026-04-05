@@ -3,6 +3,7 @@ package de.karl_der_iii.economymc.menu;
 import de.karl_der_iii.economymc.service.AdminSettingsManager;
 import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.LoanManager;
+import de.karl_der_iii.economymc.service.ServerModeConfirmManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,7 +67,8 @@ public class PlotzServerModeMenu extends ChestMenu {
             LanguageManager.tr("common.treasury") + ": $" + TreasuryManager.getTreasury(),
             List.of(
                 LanguageManager.tr("server.target_budget") + AdminSettingsManager.treasuryTargetBudget(),
-                LanguageManager.tr("server.reaction_strength") + AdminSettingsManager.autoTaxReactionStrength() + "/10"
+                LanguageManager.tr("server.reaction_strength") + AdminSettingsManager.autoTaxReactionStrength() + "/10",
+                LanguageManager.tr("server.reaction_start") + AdminSettingsManager.autoTaxStartStrength()
             )
         ));
 
@@ -75,28 +77,17 @@ public class PlotzServerModeMenu extends ChestMenu {
         box.setItem(12, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.tax_plus")));
         box.setItem(13, stateItem(AdminSettingsManager.autoTaxEnabled(), LanguageManager.tr("server.auto_tax")));
 
-        box.setItem(19, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.overdue_minus")));
-        box.setItem(20, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.overdue_penalty") + TreasuryManager.getOverduePenaltyPercent() + "%"));
-        box.setItem(21, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.overdue_plus")));
-
-        box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.cancel_minus")));
-        box.setItem(24, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.cancel_penalty") + TreasuryManager.getCancelPenaltyPercent() + "%"));
-        box.setItem(25, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.cancel_plus")));
-
-        box.setItem(28, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.days_minus")));
-        box.setItem(29, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.max_overdue_days") + TreasuryManager.getMaxOverdueDays()));
-        box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.days_plus")));
-
-        box.setItem(32, MenuUtil.named(
+        box.setItem(19, MenuUtil.named(
             Items.CHEST,
             LanguageManager.tr("server.target_budget") + AdminSettingsManager.treasuryTargetBudget(),
             List.of(
-                LanguageManager.tr("server.left_increase"),
-                LanguageManager.tr("server.right_decrease")
+                LanguageManager.tr("server.left_increase_10000"),
+                LanguageManager.tr("server.right_decrease_10000"),
+                LanguageManager.tr("server.confirm_needed")
             )
         ));
 
-        box.setItem(33, MenuUtil.named(
+        box.setItem(20, MenuUtil.named(
             Items.COMPARATOR,
             LanguageManager.tr("server.reaction_strength") + AdminSettingsManager.autoTaxReactionStrength(),
             List.of(
@@ -105,35 +96,55 @@ public class PlotzServerModeMenu extends ChestMenu {
             )
         ));
 
-        box.setItem(34, MenuUtil.named(
-            Items.CLOCK,
-            LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"
+        box.setItem(21, MenuUtil.named(
+            Items.REPEATER,
+            LanguageManager.tr("server.reaction_start") + AdminSettingsManager.autoTaxStartStrength(),
+            List.of(
+                LanguageManager.tr("server.left_increase"),
+                LanguageManager.tr("server.right_decrease")
+            )
         ));
 
+        box.setItem(23, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.overdue_minus")));
+        box.setItem(24, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.overdue_penalty") + TreasuryManager.getOverduePenaltyPercent() + "%"));
+        box.setItem(25, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.overdue_plus")));
+
+        box.setItem(28, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.cancel_minus")));
+        box.setItem(29, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.cancel_penalty") + TreasuryManager.getCancelPenaltyPercent() + "%"));
+        box.setItem(30, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.cancel_plus")));
+
+        box.setItem(32, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.days_minus")));
+        box.setItem(33, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.max_overdue_days") + TreasuryManager.getMaxOverdueDays()));
+        box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.days_plus")));
+
         if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
-            box.setItem(39, MenuUtil.named(
+            box.setItem(37, MenuUtil.named(
                 Items.REDSTONE_TORCH,
                 LanguageManager.tr("server.auto_tax.disable_pending"),
+                List.of(LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingAutoTaxDisableRequester())
+            ));
+        } else if (AdminSettingsManager.hasPendingBudgetChange()) {
+            box.setItem(37, MenuUtil.named(
+                Items.REDSTONE_TORCH,
+                LanguageManager.tr("server.budget.pending"),
                 List.of(
-                    LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingAutoTaxDisableRequester()
+                    LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingBudgetChangeRequester(),
+                    LanguageManager.tr("server.target_budget") + AdminSettingsManager.pendingBudgetValue()
                 )
             ));
         } else {
-            box.setItem(39, MenuUtil.named(
-                Items.PAPER,
-                LanguageManager.tr("server.open_jobs_hint")
-            ));
+            box.setItem(37, MenuUtil.named(Items.CLOCK, LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"));
         }
 
-        box.setItem(40, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
-        box.setItem(41, MenuUtil.named(
+        box.setItem(39, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
+        box.setItem(40, MenuUtil.named(
             Items.GOLD_INGOT,
             LanguageManager.tr("bank.title") + " §7(" + serverLoanRequests + ")",
             List.of("§7" + LanguageManager.tr("bank.target.server"))
         ));
-        box.setItem(42, MenuUtil.named(Items.CLOCK, LanguageManager.tr("common.treasury")));
+        box.setItem(41, MenuUtil.named(Items.CLOCK, LanguageManager.tr("history.treasury")));
+        box.setItem(42, MenuUtil.playerInfoHead(viewer));
 
-        box.setItem(45, MenuUtil.playerInfoHead(viewer));
         box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         broadcastChanges();
@@ -159,66 +170,66 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         if (slotId == 13) {
             if (AdminSettingsManager.autoTaxEnabled()) {
-                if (!AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
-                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_confirm")));
-                    AdminSettingsManager.createPendingAutoTaxDisableRequest(sp.getGameProfile().getName());
-                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_request_sent")));
-                } else {
-                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_pending")));
-                }
+                ServerModeConfirmManager.requestAutoTaxDisable(sp);
+                sp.closeContainer();
+                return;
             } else {
                 AdminSettingsManager.setAutoTaxEnabled(true);
             }
-            refresh();
-            return;
         }
 
         if (slotId == 19) {
-            TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
+            long current = AdminSettingsManager.treasuryTargetBudget();
+            long newValue = current + (button == 1 ? -10000L : 10000L);
+            ServerModeConfirmManager.requestBudgetChange(sp, newValue);
+            sp.closeContainer();
+            return;
         }
+
+        if (slotId == 20) {
+            AdminSettingsManager.setAutoTaxReactionStrength(AdminSettingsManager.autoTaxReactionStrength() + (button == 1 ? -1 : 1));
+        }
+
         if (slotId == 21) {
-            TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
+            AdminSettingsManager.setAutoTaxStartStrength(AdminSettingsManager.autoTaxStartStrength() + (button == 1 ? -1 : 1));
         }
 
         if (slotId == 23) {
-            TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
+            TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() - 1);
         }
         if (slotId == 25) {
-            TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
+            TreasuryManager.setOverduePenaltyPercent(TreasuryManager.getOverduePenaltyPercent() + 1);
         }
 
         if (slotId == 28) {
-            TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
+            TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() - 1);
         }
         if (slotId == 30) {
-            TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
+            TreasuryManager.setCancelPenaltyPercent(TreasuryManager.getCancelPenaltyPercent() + 1);
         }
 
         if (slotId == 32) {
-            long current = AdminSettingsManager.treasuryTargetBudget();
-            AdminSettingsManager.setTreasuryTargetBudget(current + (button == 1 ? -10000L : 10000L));
+            TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() - 1);
         }
-
-        if (slotId == 33) {
-            int current = AdminSettingsManager.autoTaxReactionStrength();
-            AdminSettingsManager.setAutoTaxReactionStrength(current + (button == 1 ? -1 : 1));
-        }
-
         if (slotId == 34) {
+            TreasuryManager.setMaxOverdueDays(TreasuryManager.getMaxOverdueDays() + 1);
+        }
+
+        if (slotId == 37 && !AdminSettingsManager.hasPendingAutoTaxDisableRequest() && !AdminSettingsManager.hasPendingBudgetChange()) {
             AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + (button == 1 ? -1 : 1));
         }
 
-        if (slotId == 40) {
+        if (slotId == 39) {
             PlotzJobsMenu.open(sp, 0, true, true);
             return;
         }
 
-        if (slotId == 41) {
+        if (slotId == 40) {
             PlotzBankMenu.open(sp);
             return;
         }
 
-        if (slotId == 42) {
+        if (slotId == 41) {
             PlotzHistoryMenu.open(sp, true);
             return;
         }

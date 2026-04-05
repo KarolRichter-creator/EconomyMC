@@ -387,9 +387,21 @@ public final class LanguageManager {
         en.put("server.auto_tax.disable_pending_by", "§7Requested by: ");
         en.put("server.auto_tax.disable_approved", "§aAuto tax disable request approved.");
         en.put("server.auto_tax.disable_denied", "§cAuto tax disable request denied.");
-        en.put("server.open_jobs_hint", "§7Open jobs to create server jobs there.");
+        en.put("server.open_jobs_hint", "§7Open server jobs to create jobs there.");
         en.put("admin.approve", "§aApprove");
         en.put("admin.deny", "§cDeny");
+        en.put("server.reaction_start", "§7Reaction starts at: ");
+        en.put("server.left_increase_10000", "§7Left click: +10000");
+        en.put("server.right_decrease_10000", "§7Right click: -10000");
+        en.put("server.confirm_needed", "§cConfirmation required");
+        en.put("server.confirm.type_phrase", "§eType the confirmation phrase in chat.");
+        en.put("server.confirm.type_phrase_exact", "§7Exact phrase: ");
+        en.put("server.confirm.failed", "§cConfirmation failed.");
+        en.put("server.budget.confirm", "§cDo you really want to change the target budget?");
+        en.put("server.budget.request_sent", "§eBudget change request sent to admin menu.");
+        en.put("server.budget.pending", "§eBudget change request pending");
+        en.put("server.budget.approved", "§aBudget change approved.");
+        en.put("server.budget.denied", "§cBudget change denied.");
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -756,9 +768,21 @@ public final class LanguageManager {
         de.put("server.auto_tax.disable_pending_by", "§7Angefragt von: ");
         de.put("server.auto_tax.disable_approved", "§aDeaktivierung der Auto-Steuer bestätigt.");
         de.put("server.auto_tax.disable_denied", "§cDeaktivierung der Auto-Steuer abgelehnt.");
-        de.put("server.open_jobs_hint", "§7Öffne die Server-Jobs, um dort Server-Jobs zu erstellen.");
+        de.put("server.open_jobs_hint", "§7Öffne Server-Jobs, um Jobs dort zu erstellen.");
         de.put("admin.approve", "§aBestätigen");
         de.put("admin.deny", "§cAblehnen");
+        de.put("server.reaction_start", "§7Reaktion beginnt bei: ");
+        de.put("server.left_increase_10000", "§7Linksklick: +10000");
+        de.put("server.right_decrease_10000", "§7Rechtsklick: -10000");
+        de.put("server.confirm_needed", "§cBestätigung nötig");
+        de.put("server.confirm.type_phrase", "§eSchreibe die Bestätigungsphrase in den Chat.");
+        de.put("server.confirm.type_phrase_exact", "§7Exakte Phrase: ");
+        de.put("server.confirm.failed", "§cBestätigung fehlgeschlagen.");
+        de.put("server.budget.confirm", "§cWillst du das Zielbudget wirklich ändern?");
+        de.put("server.budget.request_sent", "§eDie Budgetanfrage wurde an das Admin-Menü gesendet.");
+        de.put("server.budget.pending", "§eBudgetänderung wartet auf Bestätigung");
+        de.put("server.budget.approved", "§aBudgetänderung bestätigt.");
+        de.put("server.budget.denied", "§cBudgetänderung abgelehnt.");
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);

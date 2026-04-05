@@ -1,6 +1,7 @@
 package de.karl_der_iii.economymc;
 
 import com.mojang.brigadier.CommandDispatcher;
+import de.karl_der_iii.economymc.service.ServerModeConfirmManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.karl_der_iii.economymc.menu.PlotzMainMenu;
@@ -192,6 +193,9 @@ public class PlotzMod {
                 return;
             }
             if (BankInputManager.handleChat(player, event.getRawText())) {
+                event.setCanceled(true);
+            }
+            if (ServerModeConfirmManager.handleChat(player, event.getRawText())) {
                 event.setCanceled(true);
             }
         }

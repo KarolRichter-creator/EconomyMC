@@ -82,6 +82,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
         box.setItem(12, toggleItem(AdminSettingsManager.shopEnabled(), LanguageManager.tr("admin.shop")));
         box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), LanguageManager.tr("admin.plot_market")));
         box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), LanguageManager.tr("admin.server_mode")));
+        box.setItem(15, toggleItem(AdminSettingsManager.dailyEnabled(), LanguageManager.tr("main.daily")));
 
         box.setItem(19, MenuUtil.named(
             Items.PAPER,
@@ -115,6 +116,17 @@ public class PlotzAdminModeMenu extends ChestMenu {
             ));
             box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("admin.approve")));
             box.setItem(35, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("admin.deny")));
+        } else if (AdminSettingsManager.hasPendingBudgetChange()) {
+            box.setItem(33, MenuUtil.named(
+                Items.CHEST,
+                LanguageManager.tr("server.budget.pending"),
+                List.of(
+                    LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingBudgetChangeRequester(),
+                    LanguageManager.tr("server.target_budget") + AdminSettingsManager.pendingBudgetValue()
+                )
+            ));
+            box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("admin.approve")));
+            box.setItem(35, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("admin.deny")));
         }
 
         box.setItem(31, MenuUtil.playerInfoHead(viewer));
@@ -135,6 +147,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 12 -> AdminSettingsManager.setShopEnabled(!AdminSettingsManager.shopEnabled());
             case 13 -> AdminSettingsManager.setPlotMarketEnabled(!AdminSettingsManager.plotMarketEnabled());
             case 14 -> AdminSettingsManager.setServerModeEnabled(!AdminSettingsManager.serverModeEnabled());
+            case 15 -> AdminSettingsManager.setDailyEnabled(!AdminSettingsManager.dailyEnabled());
 
             case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
             case 20 -> AdminSettingsManager.setMinOverduePercent(AdminSettingsManager.minOverduePercent() + (button == 1 ? -1 : 1));
@@ -151,12 +164,18 @@ public class PlotzAdminModeMenu extends ChestMenu {
                 if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
                     AdminSettingsManager.approvePendingAutoTaxDisableRequest();
                     sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_approved")));
+                } else if (AdminSettingsManager.hasPendingBudgetChange()) {
+                    AdminSettingsManager.approvePendingBudgetChange();
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.budget.approved")));
                 }
             }
             case 35 -> {
                 if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
                     AdminSettingsManager.denyPendingAutoTaxDisableRequest();
                     sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_denied")));
+                } else if (AdminSettingsManager.hasPendingBudgetChange()) {
+                    AdminSettingsManager.denyPendingBudgetChange();
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.budget.denied")));
                 }
             }
 
