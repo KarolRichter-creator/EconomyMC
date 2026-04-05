@@ -71,7 +71,7 @@ public class PlotzServerModeMenu extends ChestMenu {
             List.of(
                 LanguageManager.tr("server.target_budget") + AdminSettingsManager.treasuryTargetBudget(),
                 LanguageManager.tr("server.reaction_strength") + AdminSettingsManager.autoTaxReactionStrength() + "/10",
-                LanguageManager.tr("server.reaction_start") + AdminSettingsManager.autoTaxStartStrength()
+                LanguageManager.tr("server.min_reaction_strength") + AdminSettingsManager.autoTaxMinReactionStrength()
             )
         ));
 
@@ -100,8 +100,8 @@ public class PlotzServerModeMenu extends ChestMenu {
         ));
 
         box.setItem(21, MenuUtil.named(
-            Items.REPEATER,
-            LanguageManager.tr("server.reaction_start") + AdminSettingsManager.autoTaxStartStrength(),
+            Items.PAPER,
+            LanguageManager.tr("server.min_reaction_strength") + AdminSettingsManager.autoTaxMinReactionStrength(),
             List.of(
                 LanguageManager.tr("server.left_increase"),
                 LanguageManager.tr("server.right_decrease")
@@ -123,13 +123,13 @@ public class PlotzServerModeMenu extends ChestMenu {
         if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
             box.setItem(37, MenuUtil.named(
                 Items.REDSTONE_TORCH,
-                LanguageManager.tr("server.auto_tax.disable_pending"),
+                LanguageManager.tr("server.auto_tax.disable_pending_title"),
                 List.of(LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingAutoTaxDisableRequester())
             ));
         } else if (AdminSettingsManager.hasPendingBudgetChange()) {
             box.setItem(37, MenuUtil.named(
                 Items.CHEST,
-                LanguageManager.tr("server.budget.pending"),
+                LanguageManager.tr("server.budget.pending_title"),
                 List.of(
                     LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingBudgetChangeRequester(),
                     LanguageManager.tr("server.target_budget") + AdminSettingsManager.pendingBudgetValue()
@@ -145,7 +145,7 @@ public class PlotzServerModeMenu extends ChestMenu {
             LanguageManager.tr("bank.title") + " §7(" + serverLoanRequests + ")",
             List.of("§7" + LanguageManager.tr("bank.target.server"))
         ));
-        box.setItem(41, MenuUtil.named(Items.CLOCK, LanguageManager.tr("history.treasury")));
+        box.setItem(41, MenuUtil.named(Items.CLOCK, LanguageManager.tr("common.treasury")));
         box.setItem(42, MenuUtil.playerInfoHead(viewer));
 
         box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
@@ -194,7 +194,7 @@ public class PlotzServerModeMenu extends ChestMenu {
         }
 
         if (slotId == 21) {
-            AdminSettingsManager.setAutoTaxStartStrength(AdminSettingsManager.autoTaxStartStrength() + (button == 1 ? -1 : 1));
+            AdminSettingsManager.setAutoTaxMinReactionStrength(AdminSettingsManager.autoTaxMinReactionStrength() + (button == 1 ? -1 : 1));
         }
 
         if (slotId == 23) {

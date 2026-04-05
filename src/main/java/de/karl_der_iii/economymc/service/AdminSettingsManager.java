@@ -47,10 +47,11 @@ public final class AdminSettingsManager {
 
             PROPS.setProperty("treasuryTargetBudget", "200000");
             PROPS.setProperty("autoTaxReactionStrength", "5");
-            PROPS.setProperty("autoTaxStartStrength", "1");
+            PROPS.setProperty("autoTaxMinReactionStrength", "1");
 
             PROPS.setProperty("pendingAutoTaxDisable", "false");
             PROPS.setProperty("pendingAutoTaxDisableRequester", "");
+
             PROPS.setProperty("pendingBudgetChange", "false");
             PROPS.setProperty("pendingBudgetChangeRequester", "");
             PROPS.setProperty("pendingBudgetValue", "200000");
@@ -291,18 +292,18 @@ public final class AdminSettingsManager {
         save();
     }
 
-    public static int autoTaxStartStrength() {
+    public static int autoTaxMinReactionStrength() {
         ensureLoaded();
         try {
-            return Math.max(0, Math.min(10, Integer.parseInt(PROPS.getProperty("autoTaxStartStrength", "1"))));
+            return Math.max(0, Math.min(10, Integer.parseInt(PROPS.getProperty("autoTaxMinReactionStrength", "1"))));
         } catch (NumberFormatException e) {
             return 1;
         }
     }
 
-    public static void setAutoTaxStartStrength(int value) {
+    public static void setAutoTaxMinReactionStrength(int value) {
         ensureLoaded();
-        PROPS.setProperty("autoTaxStartStrength", Integer.toString(Math.max(0, Math.min(10, value))));
+        PROPS.setProperty("autoTaxMinReactionStrength", Integer.toString(Math.max(0, Math.min(10, value))));
         save();
     }
 

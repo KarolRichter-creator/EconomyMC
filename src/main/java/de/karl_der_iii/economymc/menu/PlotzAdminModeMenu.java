@@ -97,6 +97,11 @@ public class PlotzAdminModeMenu extends ChestMenu {
             LanguageManager.tr("admin.min_cancel") + ": " + AdminSettingsManager.minCancelPercent() + "%"
         ));
 
+        box.setItem(22, MenuUtil.named(
+            Items.PAPER,
+            LanguageManager.tr("server.min_reaction_strength") + AdminSettingsManager.autoTaxMinReactionStrength()
+        ));
+
         box.setItem(23, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.previous")));
         box.setItem(24, MenuUtil.named(
             Items.GLOBE_BANNER_PATTERN,
@@ -111,7 +116,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
         if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
             box.setItem(33, MenuUtil.named(
                 Items.REDSTONE_TORCH,
-                LanguageManager.tr("server.auto_tax.disable_pending"),
+                LanguageManager.tr("server.auto_tax.disable_pending_title"),
                 List.of(LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingAutoTaxDisableRequester())
             ));
             box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("admin.approve")));
@@ -119,7 +124,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
         } else if (AdminSettingsManager.hasPendingBudgetChange()) {
             box.setItem(33, MenuUtil.named(
                 Items.CHEST,
-                LanguageManager.tr("server.budget.pending"),
+                LanguageManager.tr("server.budget.pending_title"),
                 List.of(
                     LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingBudgetChangeRequester(),
                     LanguageManager.tr("server.target_budget") + AdminSettingsManager.pendingBudgetValue()
@@ -152,6 +157,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
             case 20 -> AdminSettingsManager.setMinOverduePercent(AdminSettingsManager.minOverduePercent() + (button == 1 ? -1 : 1));
             case 21 -> AdminSettingsManager.setMinCancelPercent(AdminSettingsManager.minCancelPercent() + (button == 1 ? -1 : 1));
+            case 22 -> AdminSettingsManager.setAutoTaxMinReactionStrength(AdminSettingsManager.autoTaxMinReactionStrength() + (button == 1 ? -1 : 1));
 
             case 23 -> setLangByIndex(currentLangIndex() - 1);
             case 24, 25 -> setLangByIndex(currentLangIndex() + 1);

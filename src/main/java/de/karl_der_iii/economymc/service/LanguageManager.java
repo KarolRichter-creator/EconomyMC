@@ -402,7 +402,11 @@ public final class LanguageManager {
         en.put("server.budget.pending", "§eBudget change request pending");
         en.put("server.budget.approved", "§aBudget change approved.");
         en.put("server.budget.denied", "§cBudget change denied.");
-        en.put("server.confirm.admin_needed", "§cBecause this is a deep change to the economy system, admin approval is required. If you want to continue and forward the request to the admin, type the phrase below.");
+        en.put("server.confirm.admin_needed", "§cBecause this is a deep intervention in the economy system, approval by an admin is required. If you give your own consent and want to forward the request to the admin, type the phrase below.");
+        en.put("server.min_reaction_strength", "§7Minimum Reaction Strength: ");
+        en.put("server.confirm.phrase", "i am aware of the risk");
+        en.put("server.budget.pending_title", "§ePending: budget change");
+        en.put("server.auto_tax.disable_pending_title", "§ePending: auto tax disable");
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -784,7 +788,11 @@ public final class LanguageManager {
         de.put("server.budget.pending", "§eBudgetänderung wartet auf Bestätigung");
         de.put("server.budget.approved", "§aBudgetänderung bestätigt.");
         de.put("server.budget.denied", "§cBudgetänderung abgelehnt.");
-        de.put("server.confirm.admin_needed", "§cDa dies ein tiefer Eingriff ins Wirtschaftssystem ist, ist eine Bestätigung des Admins nötig. Wenn du zustimmen und die Nachricht an den Admin weiterleiten willst, schreibe die Phrase unten.");
+        de.put("server.confirm.admin_needed", "§cDa dies ein tiefer Eingriff ins Wirtschaftssystem ist, ist eine Bestätigung des Admins nötig. Wenn du deine eigene Zustimmung erteilst und die Anfrage an den Admin weiterleiten willst, schreibe die Phrase unten.");
+        de.put("server.min_reaction_strength", "§7Mindest-Reaktionsstärke: ");
+        de.put("server.confirm.phrase", "ich bin der gefahr bewusst");
+        de.put("server.budget.pending_title", "§eOffen: Budgetänderung");
+        de.put("server.auto_tax.disable_pending_title", "§eOffen: Auto-Steuer deaktivieren");
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);

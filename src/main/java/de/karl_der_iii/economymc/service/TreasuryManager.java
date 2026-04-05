@@ -161,11 +161,11 @@ public final class TreasuryManager {
     private static int computeAutoTaxPercent() {
         long treasury = getTreasury();
         long target = Math.max(10000L, AdminSettingsManager.treasuryTargetBudget());
-        int min = Math.max(0, AdminSettingsManager.minTaxPercent());
-        int reaction = AdminSettingsManager.autoTaxReactionStrength();
+        int minTax = Math.max(0, AdminSettingsManager.minTaxPercent());
+        int reaction = Math.max(AdminSettingsManager.autoTaxMinReactionStrength(), AdminSettingsManager.autoTaxReactionStrength());
 
         if (treasury >= target) {
-            return min;
+            return minTax;
         }
 
         double deficitRatio = (double) (target - treasury) / (double) target;
@@ -180,7 +180,7 @@ public final class TreasuryManager {
             bonus += 1;
         }
 
-        return Math.max(min, Math.min(25, min + bonus));
+        return Math.max(minTax, Math.min(25, minTax + bonus));
     }
 
     private static int parseClamped(String key, int fallback) {
