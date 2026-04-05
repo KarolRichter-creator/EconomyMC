@@ -14,6 +14,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
+
 public class PlotzAdminModeMenu extends ChestMenu {
     private static final String[] LANG_ORDER = {
         "de_de", "en_us", "pl_pl", "fr_fr", "es_es", "pt_br", "ru_ru", "tr_tr", "zh_cn", "ja_jp"
@@ -105,6 +107,16 @@ public class PlotzAdminModeMenu extends ChestMenu {
         box.setItem(29, MenuUtil.named(Items.GOLD_NUGGET, LanguageManager.tr("admin.daily.rate") + AdminSettingsManager.dailyIncreasePercent() + "%"));
         box.setItem(30, MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("admin.daily.max") + AdminSettingsManager.dailyMaxReward()));
 
+        if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
+            box.setItem(33, MenuUtil.named(
+                Items.REDSTONE_TORCH,
+                LanguageManager.tr("server.auto_tax.disable_pending"),
+                List.of(LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingAutoTaxDisableRequester())
+            ));
+            box.setItem(34, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("admin.approve")));
+            box.setItem(35, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("admin.deny")));
+        }
+
         box.setItem(31, MenuUtil.playerInfoHead(viewer));
         box.setItem(40, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
@@ -134,6 +146,19 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 28 -> AdminSettingsManager.setDailyBaseReward(AdminSettingsManager.dailyBaseReward() + (button == 1 ? -10 : 10));
             case 29 -> AdminSettingsManager.setDailyIncreasePercent(AdminSettingsManager.dailyIncreasePercent() + (button == 1 ? -1 : 1));
             case 30 -> AdminSettingsManager.setDailyMaxReward(AdminSettingsManager.dailyMaxReward() + (button == 1 ? -10 : 10));
+
+            case 34 -> {
+                if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
+                    AdminSettingsManager.approvePendingAutoTaxDisableRequest();
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_approved")));
+                }
+            }
+            case 35 -> {
+                if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
+                    AdminSettingsManager.denyPendingAutoTaxDisableRequest();
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_denied")));
+                }
+            }
 
             case 40 -> {
                 PlotzMainMenu.open(sp);

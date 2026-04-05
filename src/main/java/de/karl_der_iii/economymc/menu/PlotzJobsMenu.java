@@ -97,7 +97,6 @@ public class PlotzJobsMenu extends ChestMenu {
             if (slot % 9 == 8) {
                 slot += 2;
             }
-
             if (slot >= 45) {
                 break;
             }
@@ -118,7 +117,10 @@ public class PlotzJobsMenu extends ChestMenu {
         box.setItem(52, MenuUtil.named(Items.ARROW, LanguageManager.tr("common.next")));
 
         if (allowCreate) {
-            box.setItem(53, MenuUtil.named(Items.EMERALD, LanguageManager.tr("jobs.add")));
+            box.setItem(53, MenuUtil.named(
+                Items.EMERALD,
+                LanguageManager.tr(serverOnly ? "server.create_job" : "jobs.add")
+            ));
         } else {
             box.setItem(53, MenuUtil.named(Items.BOOK, LanguageManager.tr("jobs.create_hint")));
         }
@@ -151,7 +153,11 @@ public class PlotzJobsMenu extends ChestMenu {
 
         if (slotId == 53) {
             if (allowCreate) {
-                JobsInputManager.startPlayerJob(sp);
+                if (serverOnly) {
+                    JobsInputManager.startServerJob(sp);
+                } else {
+                    JobsInputManager.startPlayerJob(sp);
+                }
             }
             return;
         }

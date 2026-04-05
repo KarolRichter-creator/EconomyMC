@@ -1,7 +1,6 @@
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.service.AdminSettingsManager;
-import de.karl_der_iii.economymc.service.JobsInputManager;
 import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.LoanManager;
 import de.karl_der_iii.economymc.service.TreasuryManager;
@@ -66,20 +65,13 @@ public class PlotzServerModeMenu extends ChestMenu {
             Items.GOLD_BLOCK,
             LanguageManager.tr("common.treasury") + ": $" + TreasuryManager.getTreasury(),
             List.of(
-                "§7Target Budget: $" + TreasuryManager.getTargetBudget(),
-                "§7Reaction: " + TreasuryManager.getReactionStrength() + "/10"
+                LanguageManager.tr("server.target_budget") + AdminSettingsManager.treasuryTargetBudget(),
+                LanguageManager.tr("server.reaction_strength") + AdminSettingsManager.autoTaxReactionStrength() + "/10"
             )
         ));
 
         box.setItem(10, MenuUtil.named(Items.RED_CONCRETE, LanguageManager.tr("server.tax_minus")));
-        box.setItem(11, MenuUtil.named(
-            Items.PAPER,
-            LanguageManager.tr("server.tax_rate") + TreasuryManager.getTaxPercent() + "%",
-            List.of(
-                "§7Manual: " + TreasuryManager.getManualTaxPercent() + "%",
-                "§7Auto: " + (AdminSettingsManager.autoTaxEnabled() ? "ON" : "OFF")
-            )
-        ));
+        box.setItem(11, MenuUtil.named(Items.PAPER, LanguageManager.tr("server.tax_rate") + TreasuryManager.getTaxPercent() + "%"));
         box.setItem(12, MenuUtil.named(Items.LIME_CONCRETE, LanguageManager.tr("server.tax_plus")));
         box.setItem(13, stateItem(AdminSettingsManager.autoTaxEnabled(), LanguageManager.tr("server.auto_tax")));
 
@@ -97,20 +89,42 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         box.setItem(32, MenuUtil.named(
             Items.CHEST,
-            "§eTarget Budget: $" + AdminSettingsManager.treasuryTargetBudget(),
-            List.of("§7Left click: +10000", "§7Right click: -10000")
+            LanguageManager.tr("server.target_budget") + AdminSettingsManager.treasuryTargetBudget(),
+            List.of(
+                LanguageManager.tr("server.left_increase"),
+                LanguageManager.tr("server.right_decrease")
+            )
         ));
+
         box.setItem(33, MenuUtil.named(
             Items.COMPARATOR,
-            "§eReaction Strength: " + AdminSettingsManager.autoTaxReactionStrength(),
-            List.of("§7Left click: +1", "§7Right click: -1")
+            LanguageManager.tr("server.reaction_strength") + AdminSettingsManager.autoTaxReactionStrength(),
+            List.of(
+                LanguageManager.tr("server.left_increase"),
+                LanguageManager.tr("server.right_decrease")
+            )
         ));
+
         box.setItem(34, MenuUtil.named(
             Items.CLOCK,
             LanguageManager.tr("server.job_open_hour") + AdminSettingsManager.jobAcceptHour() + ":00"
         ));
 
-        box.setItem(39, MenuUtil.named(Items.EMERALD, LanguageManager.tr("server.create_job")));
+        if (AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
+            box.setItem(39, MenuUtil.named(
+                Items.REDSTONE_TORCH,
+                LanguageManager.tr("server.auto_tax.disable_pending"),
+                List.of(
+                    LanguageManager.tr("server.auto_tax.disable_pending_by") + AdminSettingsManager.pendingAutoTaxDisableRequester()
+                )
+            ));
+        } else {
+            box.setItem(39, MenuUtil.named(
+                Items.PAPER,
+                LanguageManager.tr("server.open_jobs_hint")
+            ));
+        }
+
         box.setItem(40, MenuUtil.named(Items.BOOK, LanguageManager.tr("server.open_jobs")));
         box.setItem(41, MenuUtil.named(
             Items.GOLD_INGOT,
@@ -142,8 +156,21 @@ public class PlotzServerModeMenu extends ChestMenu {
         if (slotId == 12 && !AdminSettingsManager.autoTaxEnabled()) {
             TreasuryManager.setTaxPercent(TreasuryManager.getManualTaxPercent() + 1);
         }
+
         if (slotId == 13) {
-            AdminSettingsManager.setAutoTaxEnabled(!AdminSettingsManager.autoTaxEnabled());
+            if (AdminSettingsManager.autoTaxEnabled()) {
+                if (!AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_confirm")));
+                    AdminSettingsManager.createPendingAutoTaxDisableRequest(sp.getGameProfile().getName());
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_request_sent")));
+                } else {
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("server.auto_tax.disable_pending")));
+                }
+            } else {
+                AdminSettingsManager.setAutoTaxEnabled(true);
+            }
+            refresh();
+            return;
         }
 
         if (slotId == 19) {
@@ -181,13 +208,8 @@ public class PlotzServerModeMenu extends ChestMenu {
             AdminSettingsManager.setJobAcceptHour(AdminSettingsManager.jobAcceptHour() + (button == 1 ? -1 : 1));
         }
 
-        if (slotId == 39) {
-            JobsInputManager.startServerJob(sp);
-            return;
-        }
-
         if (slotId == 40) {
-            PlotzJobsMenu.open(sp, 0, false, true);
+            PlotzJobsMenu.open(sp, 0, true, true);
             return;
         }
 

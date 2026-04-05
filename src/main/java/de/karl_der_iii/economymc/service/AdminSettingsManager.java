@@ -50,9 +50,11 @@ public final class AdminSettingsManager {
             PROPS.setProperty("dailyIncreasePercent", "1");
             PROPS.setProperty("dailyMaxReward", "200");
 
-            // 2.8
             PROPS.setProperty("treasuryTargetBudget", "200000");
             PROPS.setProperty("autoTaxReactionStrength", "5");
+
+            PROPS.setProperty("pendingAutoTaxDisable", "false");
+            PROPS.setProperty("pendingAutoTaxDisableRequester", "");
 
             save();
             return;
@@ -156,16 +158,6 @@ public final class AdminSettingsManager {
         save();
     }
 
-    public static String nextLanguage() {
-        ensureLoaded();
-        String current = language();
-        int idx = SUPPORTED_LANGUAGES.indexOf(current);
-        if (idx < 0 || idx + 1 >= SUPPORTED_LANGUAGES.size()) {
-            return SUPPORTED_LANGUAGES.get(0);
-        }
-        return SUPPORTED_LANGUAGES.get(idx + 1);
-    }
-
     public static int minTaxPercent() {
         ensureLoaded();
         return parseMin("minTaxPercent", 1);
@@ -259,7 +251,6 @@ public final class AdminSettingsManager {
         save();
     }
 
-    // 2.8
     public static long treasuryTargetBudget() {
         ensureLoaded();
         try {
@@ -287,6 +278,38 @@ public final class AdminSettingsManager {
     public static void setAutoTaxReactionStrength(int value) {
         ensureLoaded();
         PROPS.setProperty("autoTaxReactionStrength", Integer.toString(Math.max(1, Math.min(10, value))));
+        save();
+    }
+
+    public static boolean hasPendingAutoTaxDisableRequest() {
+        ensureLoaded();
+        return Boolean.parseBoolean(PROPS.getProperty("pendingAutoTaxDisable", "false"));
+    }
+
+    public static String pendingAutoTaxDisableRequester() {
+        ensureLoaded();
+        return PROPS.getProperty("pendingAutoTaxDisableRequester", "");
+    }
+
+    public static void createPendingAutoTaxDisableRequest(String requesterName) {
+        ensureLoaded();
+        PROPS.setProperty("pendingAutoTaxDisable", "true");
+        PROPS.setProperty("pendingAutoTaxDisableRequester", requesterName == null ? "" : requesterName);
+        save();
+    }
+
+    public static void approvePendingAutoTaxDisableRequest() {
+        ensureLoaded();
+        PROPS.setProperty("pendingAutoTaxDisable", "false");
+        PROPS.setProperty("pendingAutoTaxDisableRequester", "");
+        PROPS.setProperty("autoTaxEnabled", "false");
+        save();
+    }
+
+    public static void denyPendingAutoTaxDisableRequest() {
+        ensureLoaded();
+        PROPS.setProperty("pendingAutoTaxDisable", "false");
+        PROPS.setProperty("pendingAutoTaxDisableRequester", "");
         save();
     }
 

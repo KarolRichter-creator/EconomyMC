@@ -158,15 +158,6 @@ public final class TreasuryManager {
         return (int) Math.floor(reward * ((getOverduePenaltyPercent() / 100.0) * overdueDays));
     }
 
-    // 2.8
-    public static long getTargetBudget() {
-        return AdminSettingsManager.treasuryTargetBudget();
-    }
-
-    public static int getReactionStrength() {
-        return AdminSettingsManager.autoTaxReactionStrength();
-    }
-
     private static int computeAutoTaxPercent() {
         long treasury = getTreasury();
         long target = Math.max(10000L, AdminSettingsManager.treasuryTargetBudget());
@@ -185,7 +176,6 @@ public final class TreasuryManager {
         if (treasury < target / 4L) {
             bonus += Math.max(1, reaction / 2);
         }
-
         if (treasury < target / 10L) {
             bonus += 1;
         }
