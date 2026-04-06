@@ -33,6 +33,7 @@ public final class AdminSettingsManager {
             PROPS.setProperty("plotMarketEnabled", "true");
             PROPS.setProperty("serverModeEnabled", "true");
             PROPS.setProperty("dailyEnabled", "true");
+            PROPS.setProperty("serverShopEnabled", "true");
 
             PROPS.setProperty("minTaxPercent", "1");
             PROPS.setProperty("minOverduePercent", "1");
@@ -139,6 +140,17 @@ public final class AdminSettingsManager {
     public static void setDailyEnabled(boolean value) {
         ensureLoaded();
         PROPS.setProperty("dailyEnabled", Boolean.toString(value));
+        save();
+    }
+
+    public static boolean serverShopEnabled() {
+        ensureLoaded();
+        return Boolean.parseBoolean(PROPS.getProperty("serverShopEnabled", "true"));
+    }
+
+    public static void setServerShopEnabled(boolean value) {
+        ensureLoaded();
+        PROPS.setProperty("serverShopEnabled", Boolean.toString(value));
         save();
     }
 

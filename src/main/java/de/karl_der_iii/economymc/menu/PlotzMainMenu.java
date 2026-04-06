@@ -80,6 +80,12 @@ public class PlotzMainMenu extends ChestMenu {
             LanguageManager.tr("main.disabled.checks")
         ));
 
+        box.setItem(26, sectionItem(
+            AdminSettingsManager.serverShopEnabled(),
+            MenuUtil.named(Items.GOLD_BLOCK, LanguageManager.tr("main.server_shop")),
+            LanguageManager.tr("main.disabled.server_shop")
+        ));
+
         box.setItem(28, MenuUtil.named(Items.GOLD_INGOT, LanguageManager.tr("main.bank")));
         box.setItem(30, MenuUtil.named(Items.CLOCK, LanguageManager.tr("main.history")));
 
@@ -151,6 +157,13 @@ public class PlotzMainMenu extends ChestMenu {
                     PlotzChecksMenu.open(sp, 0);
                 } else {
                     sp.sendSystemMessage(Component.literal(LanguageManager.tr("msg.checks_disabled")));
+                }
+            }
+            case 26 -> {
+                if (AdminSettingsManager.serverShopEnabled()) {
+                    PlotzServerShopMenu.open(sp);
+                } else {
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("msg.server_shop_disabled")));
                 }
             }
             case 28 -> PlotzBankMenu.open(sp);

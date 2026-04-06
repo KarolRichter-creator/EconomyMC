@@ -83,6 +83,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
         box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), LanguageManager.tr("admin.plot_market")));
         box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), LanguageManager.tr("admin.server_mode")));
         box.setItem(15, toggleItem(AdminSettingsManager.dailyEnabled(), LanguageManager.tr("main.daily")));
+        box.setItem(16, toggleItem(AdminSettingsManager.serverShopEnabled(), LanguageManager.tr("admin.server_shop")));
 
         box.setItem(19, MenuUtil.named(
             Items.PAPER,
@@ -96,7 +97,6 @@ public class PlotzAdminModeMenu extends ChestMenu {
             Items.PAPER,
             LanguageManager.tr("admin.min_cancel") + ": " + AdminSettingsManager.minCancelPercent() + "%"
         ));
-
         box.setItem(22, MenuUtil.named(
             Items.PAPER,
             LanguageManager.tr("server.min_reaction_strength") + AdminSettingsManager.autoTaxMinReactionStrength()
@@ -153,6 +153,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 13 -> AdminSettingsManager.setPlotMarketEnabled(!AdminSettingsManager.plotMarketEnabled());
             case 14 -> AdminSettingsManager.setServerModeEnabled(!AdminSettingsManager.serverModeEnabled());
             case 15 -> AdminSettingsManager.setDailyEnabled(!AdminSettingsManager.dailyEnabled());
+            case 16 -> AdminSettingsManager.setServerShopEnabled(!AdminSettingsManager.serverShopEnabled());
 
             case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
             case 20 -> AdminSettingsManager.setMinOverduePercent(AdminSettingsManager.minOverduePercent() + (button == 1 ? -1 : 1));
