@@ -107,12 +107,12 @@ public class PlotzAdminModeMenu extends ChestMenu {
             LanguageManager.tr("admin.server_shop.min_strength") + AdminSettingsManager.serverShopMinPriceStrength()
         ));
 
-        box.setItem(23, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.previous")));
-        box.setItem(24, MenuUtil.named(
+        box.setItem(24, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.previous")));
+        box.setItem(25, MenuUtil.named(
             Items.GLOBE_BANNER_PATTERN,
             LanguageManager.tr("admin.language") + ": " + LanguageManager.languageName(currentLangCode())
         ));
-        box.setItem(25, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.next")));
+        box.setItem(26, MenuUtil.named(Items.ARROW, LanguageManager.tr("admin.language.next")));
 
         box.setItem(28, MenuUtil.named(
             Items.EMERALD,
@@ -182,8 +182,8 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 22 -> AdminSettingsManager.setAutoTaxMinReactionStrength(AdminSettingsManager.autoTaxMinReactionStrength() + (button == 1 ? -1 : 1));
             case 23 -> AdminSettingsManager.setServerShopMinPriceStrength(AdminSettingsManager.serverShopMinPriceStrength() + (button == 1 ? -1 : 1));
 
-            case 23 -> setLangByIndex(currentLangIndex() - 1);
-            case 24, 25 -> setLangByIndex(currentLangIndex() + 1);
+            case 24 -> setLangByIndex(currentLangIndex() - 1);
+            case 25, 26 -> setLangByIndex(currentLangIndex() + 1);
 
             case 28 -> AdminSettingsManager.setDailyBaseReward(AdminSettingsManager.dailyBaseReward() + (button == 1 ? -10 : 10));
             case 29 -> AdminSettingsManager.setDailyIncreasePercent(AdminSettingsManager.dailyIncreasePercent() + (button == 1 ? -1 : 1));
