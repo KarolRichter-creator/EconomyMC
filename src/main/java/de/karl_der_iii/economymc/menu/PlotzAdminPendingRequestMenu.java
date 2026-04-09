@@ -1,4 +1,3 @@
-cat > src/main/java/de/karl_der_iii/economymc/menu/PlotzAdminPendingRequestMenu.java <<'EOF'
 package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.service.AdminSettingsManager;
