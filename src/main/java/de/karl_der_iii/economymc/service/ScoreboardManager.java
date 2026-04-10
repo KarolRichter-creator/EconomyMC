@@ -45,58 +45,33 @@ public final class ScoreboardManager {
             entries.removeIf(e -> BalanceManager.TREASURY_ACCOUNT_ID.equals(e.getKey()));
             entries.sort(Map.Entry.<UUID, Long>comparingByValue(Comparator.reverseOrder()));
 
-            int score = 15;
-            int index = 0;
-
+            int shown = 0;
             for (Map.Entry<UUID, Long> entry : entries) {
-                if (index >= 5) {
+                if (shown >= 5) {
                     break;
                 }
 
-                String team = "ec_line_" + index;
-                String fake = hiddenEntry(index);
                 String name = clean(BalanceManager.resolveDisplayName(server, entry.getKey()));
                 if (name.isBlank()) {
                     name = "Player";
                 }
 
-                server.getCommands().performPrefixedCommand(source, "scoreboard teams add " + team);
                 server.getCommands().performPrefixedCommand(
                     source,
-                    "scoreboard teams modify " + team + " prefix \"" + escape(trim(name)) + "\""
-                );
-                server.getCommands().performPrefixedCommand(
-                    source,
-                    "scoreboard teams join " + team + " \"" + fake + "\""
-                );
-                server.getCommands().performPrefixedCommand(
-                    source,
-                    "scoreboard players set \"" + fake + "\" " + OBJECTIVE + " " + score
+                    "scoreboard players set \"" + escape(trim(name)) + "\" " + OBJECTIVE + " " + entry.getValue()
                 );
 
-                score--;
-                index++;
+                shown++;
             }
 
-            String treasuryTeam = "ec_treasury";
-            String treasuryFake = "§a";
-            String treasuryName = clean(LanguageManager.tr("common.treasury"));
-            if (treasuryName.isBlank() || treasuryName.equals("common.treasury")) {
-                treasuryName = "Treasury";
+            String treasury = clean(LanguageManager.tr("common.treasury"));
+            if (treasury.isBlank() || treasury.equals("common.treasury")) {
+                treasury = "Treasury";
             }
 
-            server.getCommands().performPrefixedCommand(source, "scoreboard teams add " + treasuryTeam);
             server.getCommands().performPrefixedCommand(
                 source,
-                "scoreboard teams modify " + treasuryTeam + " prefix \"" + escape(trim(treasuryName)) + "\""
-            );
-            server.getCommands().performPrefixedCommand(
-                source,
-                "scoreboard teams join " + treasuryTeam + " \"" + treasuryFake + "\""
-            );
-            server.getCommands().performPrefixedCommand(
-                source,
-                "scoreboard players set \"" + treasuryFake + "\" " + OBJECTIVE + " " + score
+                "scoreboard players set \"" + escape(trim(treasury)) + "\" " + OBJECTIVE + " " + TreasuryManager.getTreasury()
             );
         } catch (Exception ignored) {
         }
@@ -108,17 +83,9 @@ public final class ScoreboardManager {
                 .withSuppressedOutput()
                 .withPermission(4);
 
-            for (int i = 0; i < 5; i++) {
-                server.getCommands().performPrefixedCommand(source, "scoreboard teams remove ec_line_" + i);
-            }
-            server.getCommands().performPrefixedCommand(source, "scoreboard teams remove ec_treasury");
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives remove " + OBJECTIVE);
         } catch (Exception ignored) {
         }
-    }
-
-    private static String hiddenEntry(int index) {
-        return "§" + Integer.toHexString(index);
     }
 
     private static String clean(String input) {
@@ -129,7 +96,7 @@ public final class ScoreboardManager {
     }
 
     private static String trim(String s) {
-        return s.length() > 32 ? s.substring(0, 32) : s;
+        return s.length() > 40 ? s.substring(0, 40) : s;
     }
 
     private static String escape(String s) {
