@@ -23,12 +23,8 @@ public final class ScoreboardManager {
 
             clear(server);
 
-            if (!AdminSettingsManager.scoreboardEnabled()) {
-                return;
-            }
-
-            String title = clean(LanguageManager.tr("scoreboard.balance"));
-            if (title.isBlank() || title.equals("scoreboard.balance")) {
+            String title = clean(LanguageManager.tr("menu.player.balance"));
+            if (title.isBlank()) {
                 title = "Balance";
             }
 
@@ -51,27 +47,26 @@ public final class ScoreboardManager {
                     break;
                 }
 
-                String name = clean(BalanceManager.resolveDisplayName(server, entry.getKey()));
-                if (name.isBlank()) {
-                    name = "Player";
+                String playerName = clean(BalanceManager.resolveDisplayName(server, entry.getKey()));
+                if (playerName.isBlank()) {
+                    playerName = "Player";
                 }
 
                 server.getCommands().performPrefixedCommand(
                     source,
-                    "scoreboard players set \"" + escape(trim(name)) + "\" " + OBJECTIVE + " " + entry.getValue()
+                    "scoreboard players set " + quote(playerName) + " " + OBJECTIVE + " " + entry.getValue()
                 );
-
                 shown++;
             }
 
-            String treasury = clean(LanguageManager.tr("common.treasury"));
-            if (treasury.isBlank() || treasury.equals("common.treasury")) {
-                treasury = "Treasury";
+            String treasuryName = clean(LanguageManager.tr("history.treasury"));
+            if (treasuryName.isBlank()) {
+                treasuryName = "Treasury";
             }
 
             server.getCommands().performPrefixedCommand(
                 source,
-                "scoreboard players set \"" + escape(trim(treasury)) + "\" " + OBJECTIVE + " " + TreasuryManager.getTreasury()
+                "scoreboard players set " + quote(treasuryName) + " " + OBJECTIVE + " " + TreasuryManager.getTreasury()
             );
         } catch (Exception ignored) {
         }
@@ -82,7 +77,6 @@ public final class ScoreboardManager {
             CommandSourceStack source = server.createCommandSourceStack()
                 .withSuppressedOutput()
                 .withPermission(4);
-
             server.getCommands().performPrefixedCommand(source, "scoreboard objectives remove " + OBJECTIVE);
         } catch (Exception ignored) {
         }
@@ -95,11 +89,11 @@ public final class ScoreboardManager {
         return input.replaceAll("§.", "").trim();
     }
 
-    private static String trim(String s) {
-        return s.length() > 40 ? s.substring(0, 40) : s;
+    private static String escape(String input) {
+        return input.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
-    private static String escape(String s) {
-        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    private static String quote(String input) {
+        return "\"" + escape(input) + "\"";
     }
 }
