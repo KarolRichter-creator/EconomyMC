@@ -49,7 +49,7 @@ public final class ScoreboardManager {
                 if (line >= 5) break;
 
                 String team = "ec_line_" + line;
-                String fake = "§" + Integer.toHexString(line);
+                String fake = fakeEntry(line);
                 String name = clean(BalanceManager.resolveDisplayName(server, entry.getKey()));
                 if (name.isBlank()) {
                     name = "Player";
@@ -113,6 +113,10 @@ public final class ScoreboardManager {
             server.getCommands().performPrefixedCommand(source, "scoreboard teams remove ec_line_" + i);
         }
         server.getCommands().performPrefixedCommand(source, "scoreboard teams remove ec_treasury");
+    }
+
+    private static String fakeEntry(int index) {
+        return "§" + Integer.toHexString(index);
     }
 
     private static String clean(String input) {
