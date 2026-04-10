@@ -473,7 +473,8 @@ public final class LanguageManager {
         en.put("server.shop.strength.desc", "§7Left click: increase / Right click: decrease");
         en.put("server.shop.strength.min", "§7Minimum: ");
         en.put("admin.admin_tools", "Admin Tools");
-        en.put("server.shop.category.admin_tools", "Admin Tools");\n        LANG.put("en_us", en);
+        en.put("server.shop.category.admin_tools", "Admin Tools");
+        LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
         de.put("cmd.only_players", "Nur Spieler können diesen Befehl benutzen.");
@@ -925,7 +926,8 @@ public final class LanguageManager {
         de.put("server.shop.strength.desc", "§7Linksklick: erhöhen / Rechtsklick: verringern");
         de.put("server.shop.strength.min", "§7Minimum: ");
         de.put("admin.admin_tools", "Admin-Tools");
-        de.put("server.shop.category.admin_tools", "Admin-Tools");\n        LANG.put("de_de", de);
+        de.put("server.shop.category.admin_tools", "Admin-Tools");
+        LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);
         pl.put("common.close", "§cZamknij");
@@ -1343,7 +1345,8 @@ pl.put("bank.input.cancelled", "§cCancelled.");
         pl.put("server.shop.strength.desc", "§7Lewy klik: zwiększ / Prawy klik: zmniejsz");
         pl.put("server.shop.strength.min", "§7Minimum: ");
         pl.put("admin.admin_tools", "Narzędzia admina");
-        pl.put("server.shop.category.admin_tools", "Narzędzia admina");\n        LANG.put("pl_pl", pl);
+        pl.put("server.shop.category.admin_tools", "Narzędzia admina");
+        LANG.put("pl_pl", pl);
 
         Map<String, String> fr = new HashMap<>(en);
         fr.put("common.close", "§cFermer");
@@ -1761,7 +1764,8 @@ fr.put("bank.input.cancelled", "§cCancelled.");
         fr.put("server.shop.strength.desc", "§7Clic gauche : augmenter / Clic droit : diminuer");
         fr.put("server.shop.strength.min", "§7Minimum : ");
         fr.put("admin.admin_tools", "Outils admin");
-        fr.put("server.shop.category.admin_tools", "Outils admin");\n        LANG.put("fr_fr", fr);
+        fr.put("server.shop.category.admin_tools", "Outils admin");
+        LANG.put("fr_fr", fr);
 
         Map<String, String> es = new HashMap<>(en);
         es.put("common.close", "§cCerrar");
@@ -2179,7 +2183,8 @@ es.put("bank.input.cancelled", "§cCancelled.");
         es.put("server.shop.strength.desc", "§7Clic izquierdo: aumentar / Clic derecho: reducir");
         es.put("server.shop.strength.min", "§7Mínimo: ");
         es.put("admin.admin_tools", "Herramientas admin");
-        es.put("server.shop.category.admin_tools", "Herramientas admin");\n        LANG.put("es_es", es);
+        es.put("server.shop.category.admin_tools", "Herramientas admin");
+        LANG.put("es_es", es);
 
         Map<String, String> pt = new HashMap<>(en);
         pt.put("common.close", "§cFechar");
@@ -2597,7 +2602,8 @@ pt.put("bank.input.cancelled", "§cCancelled.");
         pt.put("server.shop.strength.desc", "§7Clique esquerdo: aumentar / Clique direito: reduzir");
         pt.put("server.shop.strength.min", "§7Mínimo: ");
         pt.put("admin.admin_tools", "Ferramentas admin");
-        pt.put("server.shop.category.admin_tools", "Ferramentas admin");\n        LANG.put("pt_br", pt);
+        pt.put("server.shop.category.admin_tools", "Ferramentas admin");
+        LANG.put("pt_br", pt);
 
         Map<String, String> ru = new HashMap<>(en);
         ru.put("common.close", "§cЗакрыть");
@@ -3015,7 +3021,8 @@ ru.put("bank.input.cancelled", "§cCancelled.");
         ru.put("server.shop.strength.desc", "§7ЛКМ: увеличить / ПКМ: уменьшить");
         ru.put("server.shop.strength.min", "§7Минимум: ");
         ru.put("admin.admin_tools", "Админ-инструменты");
-        ru.put("server.shop.category.admin_tools", "Админ-инструменты");\n        LANG.put("ru_ru", ru);
+        ru.put("server.shop.category.admin_tools", "Админ-инструменты");
+        LANG.put("ru_ru", ru);
 
         Map<String, String> tr = new HashMap<>(en);
         tr.put("common.close", "§cKapat");
@@ -3433,7 +3440,8 @@ tr.put("bank.input.cancelled", "§cCancelled.");
         tr.put("server.shop.strength.desc", "§7Sol tık: artır / Sağ tık: azalt");
         tr.put("server.shop.strength.min", "§7Minimum: ");
         tr.put("admin.admin_tools", "Yönetici araçları");
-        tr.put("server.shop.category.admin_tools", "Yönetici araçları");\n        LANG.put("tr_tr", tr);
+        tr.put("server.shop.category.admin_tools", "Yönetici araçları");
+        LANG.put("tr_tr", tr);
 
         Map<String, String> zh = new HashMap<>(en);
         zh.put("common.close", "§c关闭");
@@ -3851,7 +3859,8 @@ zh.put("bank.input.cancelled", "§cCancelled.");
         zh.put("server.shop.strength.desc", "§7左键：增加 / 右键：减少");
         zh.put("server.shop.strength.min", "§7最小值：");
         zh.put("admin.admin_tools", "管理员工具");
-        zh.put("server.shop.category.admin_tools", "管理员工具");\n        LANG.put("zh_cn", zh);
+        zh.put("server.shop.category.admin_tools", "管理员工具");
+        LANG.put("zh_cn", zh);
 
         Map<String, String> ja = new HashMap<>(en);
         ja.put("common.close", "§c閉じる");
@@ -4269,7 +4278,8 @@ ja.put("bank.input.cancelled", "§cCancelled.");
         ja.put("server.shop.strength.desc", "§7左クリック: 増加 / 右クリック: 減少");
         ja.put("server.shop.strength.min", "§7最小値：");
         ja.put("admin.admin_tools", "管理ツール");
-        ja.put("server.shop.category.admin_tools", "管理ツール");\n        LANG.put("ja_jp", ja);
+        ja.put("server.shop.category.admin_tools", "管理ツール");
+        LANG.put("ja_jp", ja);
     }
 
     private LanguageManager() {

@@ -159,27 +159,17 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 18 -> AdminSettingsManager.setAdminToolsEnabled(!AdminSettingsManager.adminToolsEnabled());
 
             case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
-                AdminSettingsManager.setScoreboardEnabled(!AdminSettingsManager.scoreboardEnabled());
-                de.karl_der_iii.economymc.service.ScoreboardManager.update(sp.server);
-            }
-
-            case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
             case 20 -> AdminSettingsManager.setMinOverduePercent(AdminSettingsManager.minOverduePercent() + (button == 1 ? -1 : 1));
             case 21 -> AdminSettingsManager.setMinCancelPercent(AdminSettingsManager.minCancelPercent() + (button == 1 ? -1 : 1));
             case 22 -> AdminSettingsManager.setAutoTaxMinReactionStrength(AdminSettingsManager.autoTaxMinReactionStrength() + (button == 1 ? -1 : 1));
             case 23 -> AdminSettingsManager.setServerShopMinPriceStrength(AdminSettingsManager.serverShopMinPriceStrength() + (button == 1 ? -1 : 1));
 
-            case 24 -> setLangByIndex(currentLangIndex() - 1);
-            case 25, 26 -> setLangByIndex(currentLangIndex() + 1);
-
             case 28 -> AdminSettingsManager.setDailyBaseReward(AdminSettingsManager.dailyBaseReward() + (button == 1 ? -10 : 10));
             case 29 -> AdminSettingsManager.setDailyIncreasePercent(AdminSettingsManager.dailyIncreasePercent() + (button == 1 ? -1 : 1));
             case 30 -> AdminSettingsManager.setDailyMaxReward(AdminSettingsManager.dailyMaxReward() + (button == 1 ? -10 : 10));
 
-            case 33 -> {
-            }
-            case 34 -> {
-            }
+            case 24 -> setLangByIndex(currentLangIndex() - 1);
+            case 25, 26 -> setLangByIndex(currentLangIndex() + 1);
 
             case 53 -> {
                 if (AdminSettingsManager.hasPendingBudgetChange() || AdminSettingsManager.hasPendingAutoTaxDisableRequest()) {
@@ -187,6 +177,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
                     return;
                 }
             }
+
             case 40 -> {
                 PlotzMainMenu.open(sp);
                 return;
