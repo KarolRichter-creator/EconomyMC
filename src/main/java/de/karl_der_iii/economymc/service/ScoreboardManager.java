@@ -38,37 +38,32 @@ public final class ScoreboardManager {
             entries.removeIf(e -> BalanceManager.TREASURY_ACCOUNT_ID.equals(e.getKey()));
             entries.sort(Map.Entry.<UUID, Long>comparingByValue(Comparator.reverseOrder()));
 
-            int score = 15;
-            int count = 0;
+            int line = 0;
             for (Map.Entry<UUID, Long> entry : entries) {
-                if (count >= 5) break;
+                if (line >= 5) break;
 
-                String team = "ec_line_" + count;
-                String fake = "§" + Integer.toHexString(count);
+                String team = "ec_line_" + line;
+                String fake = "§" + Integer.toHexString(line);
                 String name = BalanceManager.resolveDisplayName(server, entry.getKey());
-                String prefix = trim(LanguageManager.tr("scoreboard.balance") + ": " + name + " ");
-                String suffix = trim("$" + entry.getValue());
+                String prefix = trim(name);
+                long value = entry.getValue();
 
                 server.getCommands().performPrefixedCommand(source, "scoreboard teams add " + team);
                 server.getCommands().performPrefixedCommand(source, "scoreboard teams modify " + team + " prefix \"" + sanitize(prefix) + "\"");
-                server.getCommands().performPrefixedCommand(source, "scoreboard teams modify " + team + " suffix \"" + sanitize(suffix) + "\"");
                 server.getCommands().performPrefixedCommand(source, "scoreboard teams join " + team + " " + quote(fake));
-                server.getCommands().performPrefixedCommand(source, "scoreboard players set " + quote(fake) + " " + OBJECTIVE + " " + score);
+                server.getCommands().performPrefixedCommand(source, "scoreboard players set " + quote(fake) + " " + OBJECTIVE + " " + value);
 
-                score--;
-                count++;
+                line++;
             }
 
             String treasuryTeam = "ec_treasury";
             String treasuryFake = "§a";
-            String treasuryPrefix = trim(LanguageManager.tr("scoreboard.treasury") + ": ");
-            String treasurySuffix = trim("$" + TreasuryManager.getTreasury());
+            String treasuryPrefix = trim(LanguageManager.tr("scoreboard.treasury"));
 
             server.getCommands().performPrefixedCommand(source, "scoreboard teams add " + treasuryTeam);
             server.getCommands().performPrefixedCommand(source, "scoreboard teams modify " + treasuryTeam + " prefix \"" + sanitize(treasuryPrefix) + "\"");
-            server.getCommands().performPrefixedCommand(source, "scoreboard teams modify " + treasuryTeam + " suffix \"" + sanitize(treasurySuffix) + "\"");
             server.getCommands().performPrefixedCommand(source, "scoreboard teams join " + treasuryTeam + " " + quote(treasuryFake));
-            server.getCommands().performPrefixedCommand(source, "scoreboard players set " + quote(treasuryFake) + " " + OBJECTIVE + " " + (score - 1));
+            server.getCommands().performPrefixedCommand(source, "scoreboard players set " + quote(treasuryFake) + " " + OBJECTIVE + " " + TreasuryManager.getTreasury());
         } catch (Exception ignored) {
         }
     }

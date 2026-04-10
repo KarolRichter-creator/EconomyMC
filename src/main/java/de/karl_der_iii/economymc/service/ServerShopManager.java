@@ -254,7 +254,7 @@ public final class ServerShopManager {
             case STONE -> 22;
             case BLOCKS -> 25;
             case MISC -> 28;
-            case ADMIN_TOOLS -> 1200;
+            case ADMIN_TOOLS -> 50000;
         };
 
         Holder<Item> holder = BuiltInRegistries.ITEM.wrapAsHolder(item);
