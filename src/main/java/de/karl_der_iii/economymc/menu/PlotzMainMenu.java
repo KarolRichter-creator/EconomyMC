@@ -17,6 +17,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.fml.ModList;
 
 public class PlotzMainMenu extends ChestMenu {
     private final ServerPlayer viewer;
@@ -115,7 +116,13 @@ public class PlotzMainMenu extends ChestMenu {
         }
 
         switch (slotId) {
-            case 10 -> PlotzPlotsHubMenu.open(sp);
+            case 10 -> {
+                if (AdminSettingsManager.plotMarketEnabled() && net.neoforged.fml.ModList.get().isLoaded("openpartiesandclaims")) {
+                    PlotzPlotsHubMenu.open(sp);
+                } else {
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.opac.missing")));
+                }
+            }
             case 12 -> {
                 if (AdminSettingsManager.shopEnabled()) {
                     PlotzShopMenu.open(sp);
