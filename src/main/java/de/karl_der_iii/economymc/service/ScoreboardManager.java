@@ -15,6 +15,18 @@ public final class ScoreboardManager {
     private ScoreboardManager() {
     }
 
+
+    public static void clear(MinecraftServer server) {
+        try {
+            CommandSourceStack source = server.createCommandSourceStack()
+                .withSuppressedOutput()
+                .withPermission(4);
+            clearTeams(source, server);
+            server.getCommands().performPrefixedCommand(source, "scoreboard objectives remove " + OBJECTIVE);
+        } catch (Exception ignored) {
+        }
+    }
+
     public static void update(MinecraftServer server) {
         try {
             CommandSourceStack source = server.createCommandSourceStack()

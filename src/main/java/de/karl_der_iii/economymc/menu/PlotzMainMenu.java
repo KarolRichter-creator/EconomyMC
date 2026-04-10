@@ -55,7 +55,12 @@ public class PlotzMainMenu extends ChestMenu {
 
         box.setItem(4, MenuUtil.named(Items.NETHER_STAR, LanguageManager.tr("main.menu.title")));
 
-        box.setItem(10, MenuUtil.named(Items.MAP, LanguageManager.tr("main.plots")));
+        boolean plotsAvailable = AdminSettingsManager.plotMarketEnabled() && ModList.get().isLoaded("openpartiesandclaims");
+        box.setItem(10, sectionItem(
+            plotsAvailable,
+            MenuUtil.named(Items.MAP, LanguageManager.tr("main.plots")),
+            LanguageManager.tr("main.disabled.plots")
+        ));
 
         box.setItem(12, sectionItem(
             AdminSettingsManager.shopEnabled(),
@@ -117,10 +122,10 @@ public class PlotzMainMenu extends ChestMenu {
 
         switch (slotId) {
             case 10 -> {
-                if (AdminSettingsManager.plotMarketEnabled() && net.neoforged.fml.ModList.get().isLoaded("openpartiesandclaims")) {
+                if (AdminSettingsManager.plotMarketEnabled() && ModList.get().isLoaded("openpartiesandclaims")) {
                     PlotzPlotsHubMenu.open(sp);
                 } else {
-                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.opac.missing")));
+                    sp.sendSystemMessage(Component.literal(LanguageManager.tr("msg.plots_disabled")));
                 }
             }
             case 12 -> {

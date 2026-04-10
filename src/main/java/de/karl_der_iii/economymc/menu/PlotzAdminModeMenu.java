@@ -82,7 +82,14 @@ public class PlotzAdminModeMenu extends ChestMenu {
         box.setItem(10, toggleItem(AdminSettingsManager.jobsEnabled(), LanguageManager.tr("admin.jobs")));
         box.setItem(11, toggleItem(AdminSettingsManager.checksEnabled(), LanguageManager.tr("admin.checks")));
         box.setItem(12, toggleItem(AdminSettingsManager.shopEnabled(), LanguageManager.tr("admin.shop")));
-        box.setItem(13, toggleItem(AdminSettingsManager.plotMarketEnabled(), LanguageManager.tr("admin.plot_market")));
+        boolean opacInstalled = ModList.get().isLoaded("openpartiesandclaims");
+        box.setItem(13, opacInstalled
+            ? toggleItem(AdminSettingsManager.plotMarketEnabled(), LanguageManager.tr("admin.plot_market"))
+            : MenuUtil.named(
+                Items.BARRIER,
+                LanguageManager.tr("main.disabled.plots"),
+                java.util.List.of(LanguageManager.tr("admin.opac.required"))
+            ));
         box.setItem(14, toggleItem(AdminSettingsManager.serverModeEnabled(), LanguageManager.tr("admin.server_mode")));
         box.setItem(15, toggleItem(AdminSettingsManager.serverShopEnabled(), LanguageManager.tr("admin.server_shop")));
         box.setItem(16, toggleItem(AdminSettingsManager.dailyEnabled(), LanguageManager.tr("main.daily")));
@@ -163,14 +170,23 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 10 -> AdminSettingsManager.setJobsEnabled(!AdminSettingsManager.jobsEnabled());
             case 11 -> AdminSettingsManager.setChecksEnabled(!AdminSettingsManager.checksEnabled());
             case 12 -> AdminSettingsManager.setShopEnabled(!AdminSettingsManager.shopEnabled());
-            case 13 -> AdminSettingsManager.setPlotMarketEnabled(!AdminSettingsManager.plotMarketEnabled());
+            case 13 -> {
+                if (ModList.get().isLoaded("openpartiesandclaims")) {
+                    AdminSettingsManager.setPlotMarketEnabled(!AdminSettingsManager.plotMarketEnabled());
+                }
+            }
             case 14 -> AdminSettingsManager.setServerModeEnabled(!AdminSettingsManager.serverModeEnabled());
             case 15 -> AdminSettingsManager.setServerShopEnabled(!AdminSettingsManager.serverShopEnabled());
             case 16 -> AdminSettingsManager.setDailyEnabled(!AdminSettingsManager.dailyEnabled());
             case 17 -> AdminSettingsManager.setAdminToolsEnabled(!AdminSettingsManager.adminToolsEnabled());
             case 18 -> {
-                AdminSettingsManager.setScoreboardEnabled(!AdminSettingsManager.scoreboardEnabled());
-                de.karl_der_iii.economymc.service.ScoreboardManager.update(sp.server);
+                boolean next = !AdminSettingsManager.scoreboardEnabled();
+                AdminSettingsManager.setScoreboardEnabled(next);
+                if (next) {
+                    de.karl_der_iii.economymc.service.ScoreboardManager.update(sp.server);
+                } else {
+                    de.karl_der_iii.economymc.service.ScoreboardManager.clear(sp.server);
+                }
             }
 
             case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
