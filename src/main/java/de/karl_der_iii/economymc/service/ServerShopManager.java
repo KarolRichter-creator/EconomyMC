@@ -33,7 +33,8 @@ public final class ServerShopManager {
         NETHER("server.shop.category.nether", Items.NETHERRACK),
         END("server.shop.category.end", Items.END_STONE),
         MOB_DROPS("server.shop.category.mobdrops", Items.STRING),
-        MISC("server.shop.category.misc", Items.CHEST);
+        MISC("server.shop.category.misc", Items.CHEST),
+        ADMIN_TOOLS("server.shop.category.admin_tools", Items.COMMAND_BLOCK);
 
         private final String translationKey;
         private final Item icon;
@@ -62,7 +63,11 @@ public final class ServerShopManager {
     }
 
     public static List<Category> categories() {
-        return List.of(Category.values());
+        List<Category> out = new ArrayList<>(List.of(Category.values()));
+        if (!AdminSettingsManager.adminToolsEnabled()) {
+            out.remove(Category.ADMIN_TOOLS);
+        }
+        return out;
     }
 
     public static List<Entry> getEntries(Category category) {
@@ -111,9 +116,25 @@ public final class ServerShopManager {
         return true;
     }
 
+    private static boolean isAdminTool(Item item) {
+        return item == Items.COMMAND_BLOCK
+            || item == Items.CHAIN_COMMAND_BLOCK
+            || item == Items.REPEATING_COMMAND_BLOCK
+            || item == Items.STRUCTURE_BLOCK
+            || item == Items.STRUCTURE_VOID
+            || item == Items.BARRIER
+            || item == Items.LIGHT
+            || item == Items.DEBUG_STICK
+            || item == Items.JIGSAW;
+    }
+
     private static Category classify(Item item) {
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
         String path = id.getPath();
+
+        if (isAdminTool(item)) {
+            return Category.ADMIN_TOOLS;
+        }
 
         if (matches(path, "sword", "bow", "crossbow", "trident", "mace", "arrow", "spectral_arrow", "tipped_arrow")) {
             return Category.WEAPONS;
@@ -233,6 +254,7 @@ public final class ServerShopManager {
             case STONE -> 22;
             case BLOCKS -> 25;
             case MISC -> 28;
+            case ADMIN_TOOLS -> 1200;
         };
 
         Holder<Item> holder = BuiltInRegistries.ITEM.wrapAsHolder(item);

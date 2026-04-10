@@ -85,6 +85,7 @@ public class PlotzAdminModeMenu extends ChestMenu {
         box.setItem(15, toggleItem(AdminSettingsManager.serverShopEnabled(), LanguageManager.tr("admin.server_shop")));
         box.setItem(16, toggleItem(AdminSettingsManager.dailyEnabled(), LanguageManager.tr("main.daily")));
         box.setItem(17, toggleItem(AdminSettingsManager.scoreboardEnabled(), LanguageManager.tr("admin.scoreboard")));
+        box.setItem(18, toggleItem(AdminSettingsManager.adminToolsEnabled(), LanguageManager.tr("admin.admin_tools")));
 
         box.setItem(19, MenuUtil.named(
             Items.PAPER,
@@ -152,6 +153,12 @@ public class PlotzAdminModeMenu extends ChestMenu {
             case 15 -> AdminSettingsManager.setServerShopEnabled(!AdminSettingsManager.serverShopEnabled());
             case 16 -> AdminSettingsManager.setDailyEnabled(!AdminSettingsManager.dailyEnabled());
             case 17 -> {
+                AdminSettingsManager.setScoreboardEnabled(!AdminSettingsManager.scoreboardEnabled());
+                de.karl_der_iii.economymc.service.ScoreboardManager.update(sp.server);
+            }
+            case 18 -> AdminSettingsManager.setAdminToolsEnabled(!AdminSettingsManager.adminToolsEnabled());
+
+            case 19 -> AdminSettingsManager.setMinTaxPercent(AdminSettingsManager.minTaxPercent() + (button == 1 ? -1 : 1));
                 AdminSettingsManager.setScoreboardEnabled(!AdminSettingsManager.scoreboardEnabled());
                 de.karl_der_iii.economymc.service.ScoreboardManager.update(sp.server);
             }

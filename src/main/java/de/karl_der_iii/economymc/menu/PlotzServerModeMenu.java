@@ -139,6 +139,14 @@ public class PlotzServerModeMenu extends ChestMenu {
         ));
         box.setItem(41, MenuUtil.named(Items.CLOCK, LanguageManager.tr("common.treasury")));
         box.setItem(42, MenuUtil.playerInfoHead(viewer));
+        box.setItem(43, MenuUtil.named(
+            Items.GOLD_INGOT,
+            LanguageManager.tr("server.shop.strength") + AdminSettingsManager.serverShopPriceStrength(),
+            java.util.List.of(
+                LanguageManager.tr("server.shop.strength.desc"),
+                LanguageManager.tr("server.shop.strength.min") + AdminSettingsManager.serverShopMinPriceStrength()
+            )
+        ));
 
         box.setItem(49, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
@@ -220,6 +228,12 @@ public class PlotzServerModeMenu extends ChestMenu {
 
         if (slotId == 40) {
             PlotzBankMenu.open(sp);
+            return;
+        }
+
+        if (slotId == 43) {
+            AdminSettingsManager.setServerShopPriceStrength(AdminSettingsManager.serverShopPriceStrength() + (button == 1 ? -1 : 1));
+            refresh();
             return;
         }
 
