@@ -2,6 +2,7 @@ package de.karl_der_iii.economymc.menu;
 
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.LanguageManager;
+import de.karl_der_iii.economymc.service.OpacBridge;
 import de.karl_der_iii.economymc.service.PlotzLogic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +15,6 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.fml.ModList;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +42,7 @@ public class PlotzPlotsHubMenu extends ChestMenu {
     }
 
     private ItemStack connectorItem() {
-        boolean connected = ModList.get().isLoaded("openpartiesandclaims");
+        boolean connected = OpacBridge.isInstalled();
         return MenuUtil.named(
             connected ? Items.LIME_DYE : Items.RED_DYE,
             LanguageManager.tr("plots.connector"),
@@ -62,7 +62,8 @@ public class PlotzPlotsHubMenu extends ChestMenu {
 
         box.setItem(13, MenuUtil.named(
             Items.BOOK,
-            LanguageManager.tr("plots.buy.normal") + " §7(" + PlotzStore.getNormalCredits(id) + " | " + PlotzLogic.NORMAL_CHUNK_PRICE + "$)"
+            LanguageManager.tr("plots.price.normal"),
+            List.of("§7$" + PlotzLogic.NORMAL_CHUNK_PRICE, "§7Claim directly via OPAC selection")
         ));
         box.setItem(21, MenuUtil.named(
             Items.MAP,
@@ -70,7 +71,8 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         ));
         box.setItem(23, MenuUtil.named(
             Items.ENCHANTED_BOOK,
-            LanguageManager.tr("plots.buy.capital") + " §7(" + PlotzStore.getCapitalCredits(id) + " | " + PlotzLogic.CAPITAL_CHUNK_PRICE + "$)"
+            LanguageManager.tr("plots.price.capital"),
+            List.of("§7$" + PlotzLogic.CAPITAL_CHUNK_PRICE, "§7Claim directly via OPAC selection")
         ));
         box.setItem(31, MenuUtil.named(
             Items.COMPASS,
@@ -103,25 +105,8 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
-        if (slotId == 13) {
-            if (!PlotzLogic.canBuyNormalCredit(sp)) {
-                sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.normal.fail")));
-                return;
-            }
-            PlotzStore.addNormalCredit(sp.getUUID(), 1);
-            sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.normal.ok")));
-            refresh();
-            return;
-        }
-
-        if (slotId == 23) {
-            if (!PlotzLogic.canBuyCapitalCredit(sp)) {
-                sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.capital.fail")));
-                return;
-            }
-            PlotzStore.addCapitalCredit(sp.getUUID(), 1);
-            sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.capital.ok")));
-            refresh();
+        if (slotId == 13 || slotId == 23) {
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.direct.info")));
             return;
         }
 

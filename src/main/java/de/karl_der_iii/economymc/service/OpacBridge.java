@@ -197,6 +197,7 @@ public final class OpacBridge {
 
         BlockPos claimPos = new BlockPos(chunkX * 16 + 8, 64, chunkZ * 16 + 8);
         boolean capital = PlotzLogic.isCapital(claimPos);
+        int price = PlotzLogic.getClaimPrice(claimPos);
 
         if (previousOwner == null) {
             if (!PlotzLogic.isMinDistanceValid(claimPos, newOwner)) {
@@ -214,22 +215,18 @@ public final class OpacBridge {
                 return;
             }
 
-            boolean spent = capital
-                ? PlotzStore.spendCapitalCredit(newOwner)
-                : PlotzStore.spendNormalCredit(newOwner);
-
-            if (!spent) {
+            if (!PlotzLogic.chargeClaimToTreasury(player, claimPos)) {
                 try {
                     OpenPACServerAPI.get(server).getServerClaimsManager().unclaim(dimension, chunkX, chunkZ);
                     CLAIM_OWNER_CACHE.remove(key);
                     player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                         capital
-                            ? "§cClaim reverted: you need a capital claim credit."
-                            : "§cClaim reverted: you need a normal claim credit."
+                            ? "§cClaim reverted: you need $" + price + " for a capital claim."
+                            : "§cClaim reverted: you need $" + price + " for a normal claim."
                     ));
                 } catch (Exception e) {
                     player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                        "§cClaim detected without credits, but automatic rollback failed."
+                        "§cClaim detected without enough money, but automatic rollback failed."
                     ));
                 }
                 return;
@@ -237,8 +234,8 @@ public final class OpacBridge {
 
             player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                 capital
-                    ? "§aCapital claim detected. 1 capital credit was used."
-                    : "§aClaim detected. 1 normal credit was used."
+                    ? "§aCapital claim bought for $" + price + "."
+                    : "§aClaim bought for $" + price + "."
             ));
         }
 
