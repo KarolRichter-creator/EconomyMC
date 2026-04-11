@@ -92,6 +92,6 @@ public final class ScoreboardManager {
     }
 
     private static String scoreboardName(String input) {
-        return "\"" + escape(input) + "\"";
+        return escape(input);
     }
 }

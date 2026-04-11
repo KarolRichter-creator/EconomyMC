@@ -14,6 +14,7 @@ import de.karl_der_iii.economymc.service.DraftInputManager;
 import de.karl_der_iii.economymc.service.JobManager;
 import de.karl_der_iii.economymc.service.JobsInputManager;
 import de.karl_der_iii.economymc.service.LanguageManager;
+import de.karl_der_iii.economymc.service.OpacBridge;
 import de.karl_der_iii.economymc.service.PayInputManager;
 import de.karl_der_iii.economymc.service.ScoreboardManager;
 import de.karl_der_iii.economymc.service.ShopInputManager;
@@ -32,6 +33,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,11 +44,18 @@ public class PlotzMod {
 
     public PlotzMod(IEventBus modEventBus) {
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
+        NeoForge.EVENT_BUS.addListener(this::onOpacAddonRegister);
         NeoForge.EVENT_BUS.addListener(this::onServerChat);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLogin);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLogout);
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         System.out.println("[EconomyMC] Mod gestartet.");
+    }
+
+
+    private void onOpacAddonRegister(OPACServerAddonRegisterEvent event) {
+        OpacBridge.registerClaimsTracker(event);
+        System.out.println("[EconomyMC] OPAC tracker registered.");
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
@@ -220,5 +229,10 @@ public class PlotzMod {
         }
 
         ScoreboardManager.update(event.getServer());
+        if (OpacBridge.isInstalled()) {
+            for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+                OpacBridge.syncOwnedClaims(player);
+            }
+        }
     }
 }
