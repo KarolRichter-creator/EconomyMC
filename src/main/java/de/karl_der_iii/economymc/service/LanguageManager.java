@@ -498,8 +498,13 @@ public final class LanguageManager {
         en.put("plots.sell.sold.capital", "§aCapital claim sold for $%d.");
         en.put("plots.sell.failed.treasury", "§cSale failed: the treasury cannot pay you right now.");
         en.put("plots.buy.direct.info", "§7Claims are currently handled through the OPAC flow.");
-        en.put("plots.sell.draft.info", "§7A sale draft flow will replace direct selling here.");
+        en.put("plots.sell.draft.created", "§7A sale draft flow will replace direct selling here.");
         en.put("plots.sell.draft.created", "§aSale draft created. Default price: $%d.");
+        en.put("plots.sell.draft.created", "§aSale draft created. Open the EconomyMC plots menu to continue.");
+        en.put("plots.menu.market_only", "§6Market Offers");
+        en.put("plots.menu.sale_drafts", "§eSale Drafts");
+        en.put("plots.menu.buy_info", "§7Buy land directly through the OPAC map.");
+        en.put("plots.menu.sell_info", "§7Create sale drafts through the OPAC map.");
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -977,8 +982,13 @@ public final class LanguageManager {
         de.put("plots.sell.sold.capital", "§aHauptstadt-Claim für $%d verkauft.");
         de.put("plots.sell.failed.treasury", "§cVerkauf fehlgeschlagen: Die Staatskasse kann dich gerade nicht auszahlen.");
         de.put("plots.buy.direct.info", "§7Claims werden aktuell über den OPAC-Ablauf verarbeitet.");
-        de.put("plots.sell.draft.info", "§7Hier wird direkter Verkauf später durch einen Verkaufsentwurf ersetzt.");
+        de.put("plots.sell.draft.created", "§7Hier wird direkter Verkauf später durch einen Verkaufsentwurf ersetzt.");
         de.put("plots.sell.draft.created", "§aVerkaufsentwurf erstellt. Standardpreis: $%d.");
+        de.put("plots.sell.draft.created", "§aVerkaufsentwurf erstellt. Öffne das EconomyMC-Grundstücksmenü, um fortzufahren.");
+        de.put("plots.menu.market_only", "§6Marktangebote");
+        de.put("plots.menu.sale_drafts", "§eVerkaufsentwürfe");
+        de.put("plots.menu.buy_info", "§7Kaufe Land direkt über die OPAC-Karte.");
+        de.put("plots.menu.sell_info", "§7Erstelle Verkaufsentwürfe über die OPAC-Karte.");
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);
@@ -1405,6 +1415,11 @@ pl.put("bank.input.cancelled", "§cCancelled.");
         pl.put("plots.sell.sold.capital", "§aDziałka stołeczna sprzedana za $%d.");
         pl.put("plots.sell.failed.treasury", "§cSprzedaż nieudana: skarb państwa nie może teraz zapłacić.");
         pl.put("plots.sell.draft.created", "§aUtworzono szkic sprzedaży. Domyślna cena: $%d.");
+        pl.put("plots.sell.draft.created", "§aUtworzono szkic sprzedaży. Otwórz menu działek EconomyMC, aby kontynuować.");
+        pl.put("plots.menu.market_only", "§6Oferty rynku");
+        pl.put("plots.menu.sale_drafts", "§eSzkice sprzedaży");
+        pl.put("plots.menu.buy_info", "§7Kupuj ziemię bezpośrednio przez mapę OPAC.");
+        pl.put("plots.menu.sell_info", "§7Twórz szkice sprzedaży przez mapę OPAC.");
         LANG.put("pl_pl", pl);
 
         Map<String, String> fr = new HashMap<>(en);
@@ -1831,6 +1846,11 @@ fr.put("bank.input.cancelled", "§cCancelled.");
         fr.put("plots.sell.sold.capital", "§aClaim capitale vendu pour $%d.");
         fr.put("plots.sell.failed.treasury", "§cVente échouée : le trésor ne peut pas vous payer maintenant.");
         fr.put("plots.sell.draft.created", "§aBrouillon de vente créé. Prix par défaut : $%d.");
+        fr.put("plots.sell.draft.created", "§aBrouillon de vente créé. Ouvrez le menu des terrains EconomyMC pour continuer.");
+        fr.put("plots.menu.market_only", "§6Offres du marché");
+        fr.put("plots.menu.sale_drafts", "§eBrouillons de vente");
+        fr.put("plots.menu.buy_info", "§7Achetez le terrain directement via la carte OPAC.");
+        fr.put("plots.menu.sell_info", "§7Créez des brouillons de vente via la carte OPAC.");
         LANG.put("fr_fr", fr);
 
         Map<String, String> es = new HashMap<>(en);
@@ -2257,6 +2277,11 @@ es.put("bank.input.cancelled", "§cCancelled.");
         es.put("plots.sell.sold.capital", "§aParcela de capital vendida por $%d.");
         es.put("plots.sell.failed.treasury", "§cVenta fallida: el tesoro no puede pagarte ahora mismo.");
         es.put("plots.sell.draft.created", "§aBorrador de venta creado. Precio predeterminado: $%d.");
+        es.put("plots.sell.draft.created", "§aBorrador de venta creado. Abre el menú de terrenos de EconomyMC para continuar.");
+        es.put("plots.menu.market_only", "§6Ofertas del mercado");
+        es.put("plots.menu.sale_drafts", "§eBorradores de venta");
+        es.put("plots.menu.buy_info", "§7Compra terreno directamente a través del mapa de OPAC.");
+        es.put("plots.menu.sell_info", "§7Crea borradores de venta a través del mapa de OPAC.");
         LANG.put("es_es", es);
 
         Map<String, String> pt = new HashMap<>(en);
@@ -2683,6 +2708,11 @@ pt.put("bank.input.cancelled", "§cCancelled.");
         pt.put("plots.sell.sold.capital", "§aTerreno da capital vendido por $%d.");
         pt.put("plots.sell.failed.treasury", "§cVenda falhou: o tesouro não pode te pagar agora.");
         pt.put("plots.sell.draft.created", "§aRascunho de venda criado. Preço padrão: $%d.");
+        pt.put("plots.sell.draft.created", "§aRascunho de venda criado. Abra o menu de terrenos do EconomyMC para continuar.");
+        pt.put("plots.menu.market_only", "§6Ofertas do mercado");
+        pt.put("plots.menu.sale_drafts", "§eRascunhos de venda");
+        pt.put("plots.menu.buy_info", "§7Compre terrenos diretamente pelo mapa do OPAC.");
+        pt.put("plots.menu.sell_info", "§7Crie rascunhos de venda pelo mapa do OPAC.");
         LANG.put("pt_br", pt);
 
         Map<String, String> ru = new HashMap<>(en);
@@ -3109,6 +3139,11 @@ ru.put("bank.input.cancelled", "§cCancelled.");
         ru.put("plots.sell.sold.capital", "§aСтоличный участок продан за $%d.");
         ru.put("plots.sell.failed.treasury", "§cПродажа не удалась: казна сейчас не может вам заплатить.");
         ru.put("plots.sell.draft.created", "§aЧерновик продажи создан. Стандартная цена: $%d.");
+        ru.put("plots.sell.draft.created", "§aЧерновик продажи создан. Откройте меню участков EconomyMC, чтобы продолжить.");
+        ru.put("plots.menu.market_only", "§6Рыночные предложения");
+        ru.put("plots.menu.sale_drafts", "§eЧерновики продажи");
+        ru.put("plots.menu.buy_info", "§7Покупайте землю напрямую через карту OPAC.");
+        ru.put("plots.menu.sell_info", "§7Создавайте черновики продажи через карту OPAC.");
         LANG.put("ru_ru", ru);
 
         Map<String, String> tr = new HashMap<>(en);
@@ -3535,6 +3570,11 @@ tr.put("bank.input.cancelled", "§cCancelled.");
         tr.put("plots.sell.sold.capital", "§aBaşkent claimi $%d karşılığında satıldı.");
         tr.put("plots.sell.failed.treasury", "§cSatış başarısız: hazine şu anda sana ödeme yapamıyor.");
         tr.put("plots.sell.draft.created", "§aSatış taslağı oluşturuldu. Varsayılan fiyat: $%d.");
+        tr.put("plots.sell.draft.created", "§aSatış taslağı oluşturuldu. Devam etmek için EconomyMC arsa menüsünü aç.");
+        tr.put("plots.menu.market_only", "§6Pazar teklifleri");
+        tr.put("plots.menu.sale_drafts", "§eSatış taslakları");
+        tr.put("plots.menu.buy_info", "§7Araziyi doğrudan OPAC haritasından satın al.");
+        tr.put("plots.menu.sell_info", "§7Satış taslaklarını OPAC haritası üzerinden oluştur.");
         LANG.put("tr_tr", tr);
 
         Map<String, String> zh = new HashMap<>(en);
@@ -3961,6 +4001,11 @@ zh.put("bank.input.cancelled", "§cCancelled.");
         zh.put("plots.sell.sold.capital", "§a首都领地已售出，获得 $%d。");
         zh.put("plots.sell.failed.treasury", "§c出售失败：国库当前无法向你付款。");
         zh.put("plots.sell.draft.created", "§a已创建出售草稿。默认价格：$%d。");
+        zh.put("plots.sell.draft.created", "§a已创建出售草稿。请打开 EconomyMC 地块菜单继续。");
+        zh.put("plots.menu.market_only", "§6市场报价");
+        zh.put("plots.menu.sale_drafts", "§e出售草稿");
+        zh.put("plots.menu.buy_info", "§7通过 OPAC 地图直接购买土地。");
+        zh.put("plots.menu.sell_info", "§7通过 OPAC 地图创建出售草稿。");
         LANG.put("zh_cn", zh);
 
         Map<String, String> ja = new HashMap<>(en);
@@ -4387,6 +4432,11 @@ ja.put("bank.input.cancelled", "§cCancelled.");
         ja.put("plots.sell.sold.capital", "§a首都の土地を $%d で売却しました。");
         ja.put("plots.sell.failed.treasury", "§c売却失敗: 国庫が今は支払えません。");
         ja.put("plots.sell.draft.created", "§a売却ドラフトを作成しました。初期価格: $%d。");
+        ja.put("plots.sell.draft.created", "§a売却ドラフトを作成しました。続行するには EconomyMC の土地メニューを開いてください。");
+        ja.put("plots.menu.market_only", "§6市場オファー");
+        ja.put("plots.menu.sale_drafts", "§e売却ドラフト");
+        ja.put("plots.menu.buy_info", "§7土地は OPAC マップから直接購入します。");
+        ja.put("plots.menu.sell_info", "§7売却ドラフトは OPAC マップから作成します。");
         LANG.put("ja_jp", ja);
     }
 
