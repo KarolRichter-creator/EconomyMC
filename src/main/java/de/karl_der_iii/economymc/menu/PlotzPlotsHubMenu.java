@@ -3,6 +3,7 @@ package de.karl_der_iii.economymc.menu;
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.LanguageManager;
 import de.karl_der_iii.economymc.service.OpacBridge;
+import de.karl_der_iii.economymc.service.PlotzLogic;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -55,23 +56,44 @@ public class PlotzPlotsHubMenu extends ChestMenu {
         }
 
         UUID id = viewer.getUUID();
+        boolean capitalHere = PlotzLogic.isCapital(viewer.blockPosition());
 
-        box.setItem(4, MenuUtil.named(Items.MAP, LanguageManager.tr("plots.menu.title")));
+        box.setItem(22, connectorItem());
+
+        box.setItem(13, MenuUtil.named(
+            Items.BOOK,
+            LanguageManager.tr("plots.price.normal"),
+            List.of("§7$" + PlotzLogic.NORMAL_CHUNK_PRICE, "§7Claim directly via OPAC selection")
+        ));
+        box.setItem(21, MenuUtil.named(
+            Items.MAP,
+            LanguageManager.tr("plots.mine") + " §7(" + PlotzStore.getOwnedPlots(id).size() + ")"
+        ));
+        box.setItem(23, MenuUtil.named(
+            Items.ENCHANTED_BOOK,
+            LanguageManager.tr("plots.price.capital"),
+            List.of("§7$" + PlotzLogic.CAPITAL_CHUNK_PRICE, "§7Claim directly via OPAC selection")
+        ));
+        box.setItem(31, MenuUtil.named(
+            Items.COMPASS,
+            capitalHere ? LanguageManager.tr("plots.position.capital") : LanguageManager.tr("plots.position.normal")
+        ));
+
         box.setItem(11, MenuUtil.named(
             Items.CHEST,
-            LanguageManager.tr("plots.menu.market_only") + " §7(" + PlotzStore.getListings().size() + ")"
+            LanguageManager.tr("plots.market") + " §7(" + PlotzStore.getListings().size() + ")"
         ));
-        box.setItem(13, MenuUtil.named(
-            Items.GOLD_INGOT,
-            LanguageManager.tr("plots.menu.buy_info")
-        ));
-        box.setItem(22, connectorItem());
-        box.setItem(29, MenuUtil.named(
+        box.setItem(15, MenuUtil.named(
             Items.WRITABLE_BOOK,
-            LanguageManager.tr("plots.menu.sale_drafts"),
-            List.of(LanguageManager.tr("plots.menu.sell_info"))
+            LanguageManager.tr("plots.sales") + " §7(" + PlotzStore.getListingsBySeller(id).size() + ")"
+        ));
+
+        box.setItem(29, MenuUtil.named(
+            Items.EMERALD,
+            LanguageManager.tr("plots.create.sale")
         ));
         box.setItem(33, MenuUtil.playerInfoHead(viewer));
+
         box.setItem(40, MenuUtil.named(Items.BARRIER, LanguageManager.tr("common.back")));
 
         broadcastChanges();
@@ -83,8 +105,23 @@ public class PlotzPlotsHubMenu extends ChestMenu {
             return;
         }
 
+        if (slotId == 13 || slotId == 23) {
+            sp.sendSystemMessage(Component.literal(LanguageManager.tr("plots.buy.direct.info")));
+            return;
+        }
+
+        if (slotId == 21) {
+            PlotzMyPlotsMenu.open(sp);
+            return;
+        }
+
         if (slotId == 11) {
             PlotzMarketMenu.open(sp);
+            return;
+        }
+
+        if (slotId == 15) {
+            PlotzMySalesMenu.open(sp);
             return;
         }
 
