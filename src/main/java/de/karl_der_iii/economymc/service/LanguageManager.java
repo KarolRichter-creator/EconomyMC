@@ -494,6 +494,9 @@ public final class LanguageManager {
         en.put("plots.claim.rollback_fail_money", "§cClaim detected without enough money, but automatic rollback failed.");
         en.put("plots.claim.bought.normal", "§aClaim bought for $%d.");
         en.put("plots.claim.bought.capital", "§aCapital claim bought for $%d.");
+        en.put("plots.sell.sold.normal", "§aClaim sold for $%d.");
+        en.put("plots.sell.sold.capital", "§aCapital claim sold for $%d.");
+        en.put("plots.sell.failed.treasury", "§cSale failed: the treasury cannot pay you right now.");
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -967,6 +970,9 @@ public final class LanguageManager {
         de.put("plots.claim.rollback_fail_money", "§cClaim erkannt ohne genug Geld, aber automatisches Zurücksetzen fehlgeschlagen.");
         de.put("plots.claim.bought.normal", "§aClaim für $%d gekauft.");
         de.put("plots.claim.bought.capital", "§aHauptstadt-Claim für $%d gekauft.");
+        de.put("plots.sell.sold.normal", "§aClaim für $%d verkauft.");
+        de.put("plots.sell.sold.capital", "§aHauptstadt-Claim für $%d verkauft.");
+        de.put("plots.sell.failed.treasury", "§cVerkauf fehlgeschlagen: Die Staatskasse kann dich gerade nicht auszahlen.");
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);
@@ -1389,6 +1395,9 @@ pl.put("bank.input.cancelled", "§cCancelled.");
         pl.put("msg.plots_disabled", "§cDziałki są obecnie wyłączone.");
         pl.put("admin.opac.required", "§7Wymaga Open Parties and Claims.");
         pl.put("shop.sell.admin_tool_blocked", "§cPrzedmioty admina nie mogą być sprzedawane w sklepie graczy.");
+        pl.put("plots.sell.sold.normal", "§aDziałka sprzedana za $%d.");
+        pl.put("plots.sell.sold.capital", "§aDziałka stołeczna sprzedana za $%d.");
+        pl.put("plots.sell.failed.treasury", "§cSprzedaż nieudana: skarb państwa nie może teraz zapłacić.");
         LANG.put("pl_pl", pl);
 
         Map<String, String> fr = new HashMap<>(en);
@@ -1811,6 +1820,9 @@ fr.put("bank.input.cancelled", "§cCancelled.");
         fr.put("msg.plots_disabled", "§cLes parcelles sont actuellement désactivées.");
         fr.put("admin.opac.required", "§7Nécessite Open Parties and Claims.");
         fr.put("shop.sell.admin_tool_blocked", "§cLes objets admin ne peuvent pas être vendus dans la boutique des joueurs.");
+        fr.put("plots.sell.sold.normal", "§aClaim vendu pour $%d.");
+        fr.put("plots.sell.sold.capital", "§aClaim capitale vendu pour $%d.");
+        fr.put("plots.sell.failed.treasury", "§cVente échouée : le trésor ne peut pas vous payer maintenant.");
         LANG.put("fr_fr", fr);
 
         Map<String, String> es = new HashMap<>(en);
@@ -2233,6 +2245,9 @@ es.put("bank.input.cancelled", "§cCancelled.");
         es.put("msg.plots_disabled", "§cLas parcelas están desactivadas actualmente.");
         es.put("admin.opac.required", "§7Requiere Open Parties and Claims.");
         es.put("shop.sell.admin_tool_blocked", "§cLos objetos admin no se pueden vender en la tienda de jugadores.");
+        es.put("plots.sell.sold.normal", "§aParcela vendida por $%d.");
+        es.put("plots.sell.sold.capital", "§aParcela de capital vendida por $%d.");
+        es.put("plots.sell.failed.treasury", "§cVenta fallida: el tesoro no puede pagarte ahora mismo.");
         LANG.put("es_es", es);
 
         Map<String, String> pt = new HashMap<>(en);
@@ -2655,6 +2670,9 @@ pt.put("bank.input.cancelled", "§cCancelled.");
         pt.put("msg.plots_disabled", "§cOs terrenos estão desativados no momento.");
         pt.put("admin.opac.required", "§7Requer Open Parties and Claims.");
         pt.put("shop.sell.admin_tool_blocked", "§cItens admin não podem ser vendidos na loja de jogadores.");
+        pt.put("plots.sell.sold.normal", "§aTerreno vendido por $%d.");
+        pt.put("plots.sell.sold.capital", "§aTerreno da capital vendido por $%d.");
+        pt.put("plots.sell.failed.treasury", "§cVenda falhou: o tesouro não pode te pagar agora.");
         LANG.put("pt_br", pt);
 
         Map<String, String> ru = new HashMap<>(en);
@@ -3077,6 +3095,9 @@ ru.put("bank.input.cancelled", "§cCancelled.");
         ru.put("msg.plots_disabled", "§cУчастки сейчас отключены.");
         ru.put("admin.opac.required", "§7Требуется Open Parties and Claims.");
         ru.put("shop.sell.admin_tool_blocked", "§cАдмин-предметы нельзя продавать в магазине игроков.");
+        ru.put("plots.sell.sold.normal", "§aУчасток продан за $%d.");
+        ru.put("plots.sell.sold.capital", "§aСтоличный участок продан за $%d.");
+        ru.put("plots.sell.failed.treasury", "§cПродажа не удалась: казна сейчас не может вам заплатить.");
         LANG.put("ru_ru", ru);
 
         Map<String, String> tr = new HashMap<>(en);
@@ -3499,6 +3520,9 @@ tr.put("bank.input.cancelled", "§cCancelled.");
         tr.put("msg.plots_disabled", "§cParseller şu anda kapalı.");
         tr.put("admin.opac.required", "§7Open Parties and Claims gerekir.");
         tr.put("shop.sell.admin_tool_blocked", "§cYönetici eşyaları oyuncu mağazasında satılamaz.");
+        tr.put("plots.sell.sold.normal", "§aClaim $%d karşılığında satıldı.");
+        tr.put("plots.sell.sold.capital", "§aBaşkent claimi $%d karşılığında satıldı.");
+        tr.put("plots.sell.failed.treasury", "§cSatış başarısız: hazine şu anda sana ödeme yapamıyor.");
         LANG.put("tr_tr", tr);
 
         Map<String, String> zh = new HashMap<>(en);
@@ -3921,6 +3945,9 @@ zh.put("bank.input.cancelled", "§cCancelled.");
         zh.put("msg.plots_disabled", "§c地皮当前已禁用。");
         zh.put("admin.opac.required", "§7需要 Open Parties and Claims。");
         zh.put("shop.sell.admin_tool_blocked", "§c管理员物品不能在玩家商店出售。");
+        zh.put("plots.sell.sold.normal", "§a领地已售出，获得 $%d。");
+        zh.put("plots.sell.sold.capital", "§a首都领地已售出，获得 $%d。");
+        zh.put("plots.sell.failed.treasury", "§c出售失败：国库当前无法向你付款。");
         LANG.put("zh_cn", zh);
 
         Map<String, String> ja = new HashMap<>(en);
@@ -4343,6 +4370,9 @@ ja.put("bank.input.cancelled", "§cCancelled.");
         ja.put("msg.plots_disabled", "§c土地機能は現在無効です。");
         ja.put("admin.opac.required", "§7Open Parties and Claims が必要です。");
         ja.put("shop.sell.admin_tool_blocked", "§c管理アイテムはプレイヤーショップで販売できません。");
+        ja.put("plots.sell.sold.normal", "§a土地を $%d で売却しました。");
+        ja.put("plots.sell.sold.capital", "§a首都の土地を $%d で売却しました。");
+        ja.put("plots.sell.failed.treasury", "§c売却失敗: 国庫が今は支払えません。");
         LANG.put("ja_jp", ja);
     }
 

@@ -171,10 +171,34 @@ public final class OpacBridge {
 
         if (claim == null) {
             CLAIM_OWNER_CACHE.remove(key);
+
             if (previousOwner != null) {
-                ServerPlayer oldOwner = server.getPlayerList().getPlayer(previousOwner);
-                if (oldOwner != null) {
-                    syncOwnedClaims(oldOwner);
+                BlockPos oldClaimPos = new BlockPos(chunkX * 16 + 8, 64, chunkZ * 16 + 8);
+                boolean capital = PlotzLogic.isCapital(oldClaimPos);
+                int price = PlotzLogic.getClaimPrice(oldClaimPos);
+
+                if (TreasuryManager.removeTreasury(price)) {
+                    BalanceManager.addBalance(previousOwner, price);
+
+                    ServerPlayer oldOwner = server.getPlayerList().getPlayer(previousOwner);
+                    if (oldOwner != null) {
+                        ScoreboardManager.update(oldOwner.server);
+                        oldOwner.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                            LanguageManager.format(
+                                capital ? "plots.sell.sold.capital" : "plots.sell.sold.normal",
+                                price
+                            )
+                        ));
+                        syncOwnedClaims(oldOwner);
+                    }
+                } else {
+                    ServerPlayer oldOwner = server.getPlayerList().getPlayer(previousOwner);
+                    if (oldOwner != null) {
+                        oldOwner.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                            LanguageManager.tr("plots.sell.failed.treasury")
+                        ));
+                        syncOwnedClaims(oldOwner);
+                    }
                 }
             }
             return;
