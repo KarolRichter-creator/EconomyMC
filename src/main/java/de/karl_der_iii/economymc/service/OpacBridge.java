@@ -1,5 +1,6 @@
 package de.karl_der_iii.economymc.service;
 
+import de.karl_der_iii.economymc.service.PendingPlotSelectionManager;
 import de.karl_der_iii.economymc.data.PlotzStore;
 import de.karl_der_iii.economymc.service.LanguageManager;
 import net.minecraft.core.BlockPos;
@@ -249,4 +250,23 @@ public final class OpacBridge {
             }
         }
     }
+
+    public static boolean claimPendingSelection(ServerPlayer player, PendingPlotSelectionManager.PendingSelection selection) {
+        if (!isInstalled()) {
+            return false;
+        }
+
+        try {
+            for (int x = selection.minChunkX(); x <= selection.maxChunkX(); x++) {
+                for (int z = selection.minChunkZ(); z <= selection.maxChunkZ(); z++) {
+                    OpenPACServerAPI.get(player.server).getServerClaimsManager().claim(selection.dimension(), player.getUUID(), x, z, 0, false);
+                }
+            }
+            syncOwnedClaims(player);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
