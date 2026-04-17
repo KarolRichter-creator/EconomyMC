@@ -494,6 +494,16 @@ public final class LanguageManager {
         en.put("plots.claim.rollback_fail_money", "§cClaim detected without enough money, but automatic rollback failed.");
         en.put("plots.claim.bought.normal", "§aClaim bought for $%d.");
         en.put("plots.claim.bought.capital", "§aCapital claim bought for $%d.");
+        en.put("plots.confirm.menu", "Confirm Purchase");
+        en.put("plots.confirm.no_selection", "No selection");
+        en.put("plots.confirm.buy", "Buy");
+        en.put("plots.confirm.chunks", "Chunks: ");
+        en.put("plots.confirm.type", "Type: ");
+        en.put("plots.confirm.capital", "Capital");
+        en.put("plots.confirm.normal", "Normal");
+        en.put("plots.confirm.price", "Price: ");
+        en.put("plots.confirm.success", "Purchase successful for $%d.");
+        en.put("plots.confirm.failed", "Purchase failed.");
         LANG.put("en_us", en);
 
         Map<String, String> de = new HashMap<>(en);
@@ -967,6 +977,16 @@ public final class LanguageManager {
         de.put("plots.claim.rollback_fail_money", "§cClaim erkannt ohne genug Geld, aber automatisches Zurücksetzen fehlgeschlagen.");
         de.put("plots.claim.bought.normal", "§aClaim für $%d gekauft.");
         de.put("plots.claim.bought.capital", "§aHauptstadt-Claim für $%d gekauft.");
+        de.put("plots.confirm.menu", "Kauf bestätigen");
+        de.put("plots.confirm.no_selection", "Keine Auswahl");
+        de.put("plots.confirm.buy", "Kaufen");
+        de.put("plots.confirm.chunks", "Chunks: ");
+        de.put("plots.confirm.type", "Typ: ");
+        de.put("plots.confirm.capital", "Hauptstadt");
+        de.put("plots.confirm.normal", "Normal");
+        de.put("plots.confirm.price", "Preis: ");
+        de.put("plots.confirm.success", "Kauf erfolgreich für $%d.");
+        de.put("plots.confirm.failed", "Kauf fehlgeschlagen.");
         LANG.put("de_de", de);
 
         Map<String, String> pl = new HashMap<>(en);

@@ -8,6 +8,7 @@ version="${mod_version}"
 displayName="${mod_name}"
 logoFile="icon.png"
 authors="Karl_der_III-creator"
+mixinConfig="plotz.mixins.json"
 description='''
 Economymc is an economy and land-management mod for NeoForge.
 It combines plot trading, jobs, treasury management, shop systems,
